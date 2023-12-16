@@ -1,0 +1,156 @@
+#![feature(prelude_import)]
+#[prelude_import]
+use std::prelude::rust_2018::*;
+#[macro_use]
+extern crate std;
+use median::{
+    atom::Atom,
+    attr::{AttrBuilder, AttrType},
+    builder::MaxWrappedBuilder,
+    class::Class,
+    max_sys::{t_atom, t_atom_long, t_atomarray},
+    num::Float64,
+    object::MaxObj,
+    post,
+    symbol::SymbolRef,
+    wrapper::{attr_get_tramp, attr_set_tramp, MaxObjWrapped, MaxObjWrapper},
+};
+use rytm_rs::prelude::*;
+use std::sync::{atomic::AtomicBool, atomic::Ordering::*, Arc, Mutex};
+impl median::wrapper::ObjWrapped<Rytm> for Rytm {
+    fn class_name() -> &'static str {
+        "rytm"
+    }
+}
+impl MaxObjWrapped<Rytm> for Rytm {
+    fn new(builder: &mut dyn MaxWrappedBuilder<Self>) -> Self {
+        builder.add_int_outlet_with_assist("sysex output ( connect to midiout )");
+        Self {
+            buffering_sysex: AtomicBool::new(false),
+            sysex_in_buffer: Arc::new(Mutex::new(Vec::default())),
+            project: Arc::new(Mutex::new(RytmProject::default())),
+            fvalue: Float64::default(),
+        }
+    }
+    fn class_setup(class: &mut Class<MaxObjWrapper<Self>>) {
+        class
+            .add_attribute(
+                AttrBuilder::new_accessors(
+                    "foo",
+                    AttrType::Float64,
+                    Self::foo_tramp,
+                    Self::set_foo_tramp,
+                )
+                .build()
+                .unwrap(),
+            )
+            .expect("failed to add attribute");
+        class
+            .add_method(median::method::Method::Bang(Self::bang_tramp))
+            .unwrap();
+        class
+            .add_method(median::method::Method::Int(Self::int_tramp))
+            .unwrap();
+    }
+}
+pub struct Rytm {
+    fvalue: Float64,
+    project: Arc<Mutex<RytmProject>>,
+    sysex_in_buffer: Arc<Mutex<Vec<u8>>>,
+    buffering_sysex: AtomicBool,
+}
+impl Rytm {
+    /// Utility to register your wrapped class with Max
+    pub(crate) unsafe fn register() {
+        median::wrapper::MaxObjWrapper::<Rytm>::register(false)
+    }
+}
+impl Rytm {
+    pub fn bang(&self) {
+        let i = median::inlet::Proxy::get_inlet(self.max_obj());
+        median::object::post(self.max_obj(), {
+            let res = ::alloc::fmt::format(format_args!("bang inlet {0}", i));
+            res
+        });
+    }
+    pub fn int(&self, value: t_atom_long) {
+        let _inlet_index = median::inlet::Proxy::get_inlet(self.max_obj());
+        if value == 0xF0 || self.buffering_sysex.load(Relaxed) {
+            self.buffering_sysex.store(true, Relaxed);
+            let mut sysex_in_buffer = self.sysex_in_buffer.lock().unwrap();
+            sysex_in_buffer.push(value as u8);
+            if value == 0xF7 {
+                self.buffering_sysex.store(false, Relaxed);
+                let mut project = self.project.lock().unwrap();
+                match project.update_from_sysex_response(&sysex_in_buffer) {
+                    Ok(_) => {}
+                    Err(err) => {
+                        median::object::post(self.max_obj(), err.to_string());
+                    }
+                }
+                sysex_in_buffer.clear();
+            }
+        }
+    }
+    pub fn foo(&self) -> f64 {
+        self.fvalue.get()
+    }
+    pub fn set_foo(&self, v: f64) {
+        self.fvalue.set(v);
+    }
+    pub fn query(&self, sel: &SymbolRef, atoms: &[Atom]) {
+        median::post({
+            let res = {
+                let res = ::alloc::fmt::format(format_args!(
+                    "got any with sel {0} and length {1}",
+                    sel,
+                    atoms.len()
+                ));
+                res
+            };
+            res
+        })
+    }
+    pub extern "C" fn query_tramp(
+        wrapper: &::median::wrapper::MaxObjWrapper<Rytm>,
+        sel: *mut ::median::max_sys::t_symbol,
+        ac: ::std::os::raw::c_long,
+        av: *const ::median::max_sys::t_atom,
+    ) {
+        median::method::sel_list(sel, ac, av, |sym, atoms| {
+            median::wrapper::WrapperWrapped::wrapped(wrapper).query(&sym, atoms);
+        });
+    }
+    pub extern "C" fn bang_tramp(wrapper: &::median::wrapper::MaxObjWrapper<Rytm>) {
+        median::wrapper::WrapperWrapped::wrapped(wrapper).bang()
+    }
+    pub extern "C" fn int_tramp(wrapper: &::median::wrapper::MaxObjWrapper<Rytm>, v: t_atom_long) {
+        median::wrapper::WrapperWrapped::wrapped(wrapper).int(v)
+    }
+    pub extern "C" fn foo_tramp(
+        wrapper: &::median::wrapper::MaxObjWrapper<Rytm>,
+        _attr: ::std::ffi::c_void,
+        ac: *mut ::std::os::raw::c_long,
+        av: *mut *mut ::median::max_sys::t_atom,
+    ) {
+        median::attr::get(ac, av, || {
+            median::wrapper::WrapperWrapped::wrapped(wrapper).foo()
+        });
+    }
+    pub extern "C" fn set_foo_tramp(
+        wrapper: &::median::wrapper::MaxObjWrapper<Rytm>,
+        _attr: ::std::ffi::c_void,
+        ac: ::std::os::raw::c_long,
+        av: *mut ::median::max_sys::t_atom,
+    ) {
+        median::attr::set(ac, av, |v: f64| {
+            median::wrapper::WrapperWrapped::wrapped(wrapper).set_foo(v)
+        });
+    }
+}
+#[no_mangle]
+pub unsafe extern "C" fn ext_main(_r: *mut ::std::ffi::c_void) {
+    if std::panic::catch_unwind(|| Rytm::register()).is_err() {
+        std::process::exit(1);
+    }
+}

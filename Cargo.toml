@@ -1,0 +1,19 @@
+[package]
+name = "rytm"
+version = "0.1.0"
+authors = [ "Ali Somay <alisomay@runbox.com>" ]
+edition = "2018"
+
+[lib]
+name = "rytm"
+crate-type = ["cdylib"]
+
+[dependencies]
+median = { git = "https://github.com/Cycling74/median" }
+rytm-rs = { path = "../rytm-rs/rytm" }
+thiserror = "1.0.24"
+lazy_static = "1.4.0"
+
+[profile.release]
+lto = true
+panic = "abort"
