@@ -1,3 +1,5 @@
+pub mod action;
+pub mod api;
 pub mod class;
 pub mod const_sym;
 pub mod error;
@@ -5,6 +7,7 @@ pub mod rytm;
 pub mod traits;
 pub mod trampoline;
 pub mod types;
+pub mod util;
 
 use rytm::Rytm;
 use traits::*;
