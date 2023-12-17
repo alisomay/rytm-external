@@ -7,7 +7,7 @@ use rytm_rs::error::RytmError;
 pub enum QueryError {
     #[error("Invalid query selector: Query selector must be one of pattern, pattern_wb, kit, kit_wb, global, global_wb, sound, sound_wb or settings.")]
     InvalidSelector,
-    #[error("Invalid query format: Query format is <selector> <index> for pattern, kit, global, sound and <selector> for pattern_wb, kit_wb, global_wb, sound_wb, settings types.")]
+    #[error("Invalid query format: Query format is <selector> <index> for pattern, kit, global, sound, sound_wb and <selector> for pattern_wb, kit_wb, global_wb, settings types.")]
     InvalidFormat,
     #[error("Invalid index type: Index must be an integer.")]
     InvalidIndexType,
@@ -28,6 +28,12 @@ pub enum RytmExternalError {
 impl From<&str> for RytmExternalError {
     fn from(s: &str) -> Self {
         Self::Custom(s.to_string())
+    }
+}
+
+impl From<String> for RytmExternalError {
+    fn from(s: String) -> Self {
+        Self::Custom(s)
     }
 }
 

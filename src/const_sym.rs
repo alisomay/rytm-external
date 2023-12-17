@@ -18,3 +18,59 @@ pub mod object_type {
         pub static ref SETTINGS: SymbolRef = SymbolRef::try_from("settings").unwrap();
     }
 }
+
+pub mod object_sub_type {
+    use super::*;
+
+    lazy_static! {
+        pub static ref TRACK: SymbolRef = SymbolRef::try_from("track").unwrap();
+        pub static ref TRIG: SymbolRef = SymbolRef::try_from("trig").unwrap();
+    }
+}
+
+pub mod trig_action_type {
+    use crate::error::RytmExternalError;
+
+    use super::*;
+
+    lazy_static! {
+        pub static ref ENABLE: SymbolRef = SymbolRef::try_from("enable").unwrap();
+        pub static ref RETRIG: SymbolRef = SymbolRef::try_from("retrig").unwrap();
+        pub static ref MUTE: SymbolRef = SymbolRef::try_from("mute").unwrap();
+        pub static ref ACCENT: SymbolRef = SymbolRef::try_from("accent").unwrap();
+        pub static ref SWING: SymbolRef = SymbolRef::try_from("swing").unwrap();
+        pub static ref SLIDE: SymbolRef = SymbolRef::try_from("slide").unwrap();
+    }
+
+    #[derive(Debug, Copy, Clone)]
+    pub enum TrigActionType {
+        Enable,
+        Retrig,
+        Mute,
+        Accent,
+        Swing,
+        Slide,
+    }
+
+    impl TryFrom<SymbolRef> for TrigActionType {
+        type Error = RytmExternalError;
+
+        fn try_from(sym: SymbolRef) -> Result<Self, Self::Error> {
+            if sym == *ENABLE {
+                Ok(Self::Enable)
+            } else if sym == *RETRIG {
+                Ok(Self::Retrig)
+            } else if sym == *MUTE {
+                Ok(Self::Mute)
+            } else if sym == *ACCENT {
+                Ok(Self::Accent)
+            } else if sym == *SWING {
+                Ok(Self::Swing)
+            } else if sym == *SLIDE {
+                Ok(Self::Slide)
+            } else {
+                Err("Invalid trig action type".into())
+            }
+        }
+    }
+}

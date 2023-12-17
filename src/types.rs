@@ -20,6 +20,19 @@ pub enum ObjectTypeSelector {
     Settings,
 }
 
+impl ObjectTypeSelector {
+    pub fn indexable(&self) -> bool {
+        matches!(
+            self,
+            Self::Pattern(_)
+                | Self::Kit(_)
+                | Self::Sound(_)
+                | Self::SoundWorkBuffer(_)
+                | Self::Global(_)
+        )
+    }
+}
+
 impl TryFrom<(&Atom, Option<&Atom>)> for ObjectTypeSelector {
     type Error = RytmExternalError;
 

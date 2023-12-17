@@ -22,6 +22,7 @@ impl MaxObjWrapped<Rytm> for Rytm {
             buffering_sysex: AtomicBool::new(false),
             sysex_in_buffer: Arc::new(Mutex::new(Vec::default())),
             sysex_out: builder.add_int_outlet_with_assist("sysex output ( connect to midiout )"),
+            get_out: builder.add_anything_outlet_with_assist("get query result"),
         }
     }
 
@@ -29,10 +30,7 @@ impl MaxObjWrapped<Rytm> for Rytm {
     fn class_setup(class: &mut Class<MaxObjWrapper<Self>>) {
         class.add_method(Method::Int(Self::int_tramp)).unwrap();
         class
-            .add_method(Method::Anything(Self::query_tramp))
-            .unwrap();
-        class
-            .add_method(Method::Anything(Self::send_tramp))
+            .add_method(Method::Anything(Self::anything_with_selector_tramp))
             .unwrap();
     }
 }
