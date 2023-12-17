@@ -445,7 +445,9 @@ dependencies = [
 
 [[package]]
 name = "rytm-rs-macro"
-version = "0.1.1"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f94ec563b37821986c6366f0462572b38513a134b1aa7fc2b65f4d74fcc741d9"
 dependencies = [
  "proc-macro2",
  "quote",

@@ -31,7 +31,7 @@ pub struct Rytm {
     pub sysex_in_buffer: Arc<Mutex<Vec<u8>>>,
     pub buffering_sysex: AtomicBool,
     pub sysex_out: OutInt,
-    pub get_out: OutAnything,
+    pub query_out: OutAnything,
 }
 
 // The main trait for your object
@@ -41,13 +41,14 @@ impl median::wrapper::ObjWrapped<Rytm> for Rytm {
     }
 
     // You can modify the object here such as adding assists etc.
+    // TODO: Maybe add notification handling.
 }
 
 impl Rytm {
-    const SELECTOR_QUERY: &str = "query";
-    const SELECTOR_SEND: &str = "send";
-    const SELECTOR_SET: &str = "set";
-    const SELECTOR_GET: &str = "get";
+    const SELECTOR_QUERY: &'static str = "query";
+    const SELECTOR_SEND: &'static str = "send";
+    const SELECTOR_SET: &'static str = "set";
+    const SELECTOR_GET: &'static str = "get";
 
     /// Utility to register your wrapped class with Max
     pub(crate) unsafe fn register() {

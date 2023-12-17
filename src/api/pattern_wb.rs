@@ -79,7 +79,7 @@ pub fn handle_pattern_wb_get(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExte
         AtomValue::Symbol(action) => handle_get_action(GetAction::Pattern(PatternGetAction {
             pattern: rytm.project.lock().unwrap().work_buffer_mut().pattern_mut(),
             action,
-            out: &rytm.get_out,
+            out: &rytm.query_out,
         })),
         AtomValue::Int(track_index) => {
             if !(0..=12).contains(&track_index) {
@@ -95,7 +95,7 @@ pub fn handle_pattern_wb_get(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExte
                         .pattern()
                         .tracks()[track_index as usize],
                     action,
-                    out: &rytm.get_out,
+                    out: &rytm.query_out,
                 })),
                 AtomValue::Int(trig_index) => {
                     if !(0..=63).contains(&track_index) {
@@ -113,7 +113,7 @@ pub fn handle_pattern_wb_get(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExte
                                     .tracks()[track_index as usize]
                                     .trigs()[trig_index as usize],
                                 action,
-                                out: &rytm.get_out,
+                                out: &rytm.query_out,
                             }))
                         }
                         _ => Err("Only symbols and integers are allowed in setters.".into()),
