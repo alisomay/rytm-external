@@ -1,5 +1,4 @@
-use crate::traits::*;
-use median::{max_sys, object::MaxObj};
+use median::max_sys;
 use rytm_rs::error::RytmError;
 
 #[derive(thiserror::Error, Debug)]
@@ -45,6 +44,9 @@ pub enum RytmExternalError {
     RytmSdk(#[from] RytmError),
     #[error("{0}")]
     StringConversionError(#[from] std::str::Utf8Error),
+
+    #[error("Not implemented, if you need it open an issue in https://github.com/alisomay/rytm-external.")]
+    NotYetImplemented,
 }
 
 impl From<rytm_rs::error::ConversionError> for RytmExternalError {
@@ -74,6 +76,9 @@ impl RytmExternalError {
             Self::Action(err) => median::object::error(obj, err.to_string()),
             Self::RytmSdk(err) => median::object::error(obj, err.to_string()),
             Self::StringConversionError(err) => median::object::error(obj, err.to_string()),
+            Self::NotYetImplemented => {
+                median::object::error(obj, "Not yet implemented.".to_string())
+            }
         }
     }
 
@@ -85,6 +90,7 @@ impl RytmExternalError {
             Self::Action(err) => median::error(err.to_string()),
             Self::RytmSdk(err) => median::error(err.to_string()),
             Self::StringConversionError(err) => median::error(err.to_string()),
+            Self::NotYetImplemented => median::error("Not yet implemented.".to_string()),
         }
     }
 }

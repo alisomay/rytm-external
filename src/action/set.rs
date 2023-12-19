@@ -6,6 +6,7 @@ use self::{
     trig::{handle_trig_set_action, TrigSetAction},
 };
 
+pub mod kit;
 pub mod pattern;
 pub mod track;
 pub mod trig;

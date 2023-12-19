@@ -1,3 +1,5 @@
+pub mod kit;
+pub mod kit_wb;
 pub mod pattern;
 pub mod pattern_wb;
 
@@ -19,17 +21,10 @@ use crate::{
         },
     },
     error::RytmExternalError,
-    traits::*,
     util::try_get_action_value_from_atom_slice,
 };
 use lazy_static::lazy_static;
-use median::{
-    atom::Atom,
-    max_sys::t_atom_long,
-    object::MaxObj,
-    outlet::{OutAnything, OutInt},
-    symbol::SymbolRef,
-};
+use median::{atom::Atom, outlet::OutAnything, symbol::SymbolRef};
 use rytm_rs::object::Pattern;
 use std::convert::TryFrom;
 
@@ -51,16 +46,96 @@ pub mod object_type {
     }
 }
 
-pub mod object_sub_type {
-    use super::*;
+/*** Object Element Types ***/
 
-    lazy_static! {
-        pub static ref TRACK: SymbolRef = SymbolRef::try_from("track").unwrap();
-        pub static ref TRIG: SymbolRef = SymbolRef::try_from("trig").unwrap();
-    }
+pub mod kit_element_type {
+    pub const TRACK_LEVEL: &str = "tracklevel";
+    pub const TRACK_RETRIG_RATE: &str = "trackretrigrate";
+    pub const TRACK_RETRIG_LENGTH: &str = "trackretriglength";
+    pub const TRACK_RETRIG_VEL_OFFSET: &str = "trackretrigveloffset";
+    pub const TRACK_RETRIG_ALWAYS_ON: &str = "trackretrigalwayson";
+    pub const SOUND: &str = "sound";
+
+    pub const KIT_ELEMENTS: &[&str] = &[
+        TRACK_LEVEL,
+        TRACK_RETRIG_RATE,
+        TRACK_RETRIG_LENGTH,
+        TRACK_RETRIG_VEL_OFFSET,
+        TRACK_RETRIG_ALWAYS_ON,
+        SOUND,
+    ];
 }
 
 /*** Action Types ***/
+
+pub mod kit_action_type {
+    pub const VERSION: &str = "version";
+    pub const INDEX: &str = "index";
+    pub const NAME: &str = "name";
+
+    pub const FX_DELAY_TIME: &str = "fxdelaytime";
+    pub const FX_DELAY_PING_PONG: &str = "fxdelaypingpong";
+    pub const FX_DELAY_STEREO_WIDTH: &str = "fxdelaystereowidth";
+    pub const FX_DELAY_FEEDBACK: &str = "fxdelayfeedback";
+    pub const FX_DELAY_HPF: &str = "fxdelayhpf";
+    pub const FX_DELAY_LPF: &str = "fxdelaylpf";
+    pub const FX_DELAY_REVERB_SEND: &str = "fxdelayreverbsend";
+    pub const FX_DELAY_VOLUME: &str = "fxdelayvolume";
+
+    pub const FX_REVERB_PRE_DELAY: &str = "fxreverbpredelay";
+    pub const FX_REVERB_DECAY: &str = "fxreverbdecay";
+    pub const FX_REVERB_FREQ: &str = "fxreverbfreq";
+    pub const FX_REVERB_GAIN: &str = "fxreverbgain";
+    pub const FX_REVERB_HPF: &str = "fxreverbhpf";
+    pub const FX_REVERB_LPF: &str = "fxreverblpf";
+    pub const FX_REVERB_VOLUME: &str = "fxreverbvolume";
+
+    pub const FX_COMP_THRESHOLD: &str = "fxcompthreshold";
+    pub const FX_COMP_GAIN: &str = "fxcompgain";
+    pub const FX_COMP_MIX: &str = "fxcompmix";
+    pub const FX_COMP_VOLUME: &str = "fxcompvolume";
+
+    pub const FX_LFO_SPEED: &str = "fxlfospeed";
+    pub const FX_LFO_FADE: &str = "fxlfofade";
+    pub const FX_LFO_START_PHASE_OR_SLEW: &str = "fxlfostartphase";
+    pub const FX_LFO_DEPTH: &str = "fxlfodepth";
+
+    // TODO: Enable and revise after fixing the dist in the SDK
+    // pub const FX_DISTORTION_REVERB_SEND: &str = "fxdistortionreverbsend";
+    // pub const FX_DISTORTION_DELAY_OVERDRIVE: &str = "fxdistortiondelayoverdrive";
+    // pub const FX_DISTORTION_REVERB_POST: &str = "fxdistortionreverbpost";
+    // pub const FX_DISTORTION_AMOUNT: &str = "fxdistortionamount";
+    // pub const FX_DISTORTION_SYMMETRY: &str = "fxdistortionsymmetry";
+
+    pub const KIT_ACTION_TYPES: &[&str] = &[
+        VERSION,
+        INDEX,
+        NAME,
+        FX_DELAY_TIME,
+        FX_DELAY_PING_PONG,
+        FX_DELAY_STEREO_WIDTH,
+        FX_DELAY_FEEDBACK,
+        FX_DELAY_HPF,
+        FX_DELAY_LPF,
+        FX_DELAY_REVERB_SEND,
+        FX_DELAY_VOLUME,
+        FX_REVERB_PRE_DELAY,
+        FX_REVERB_DECAY,
+        FX_REVERB_FREQ,
+        FX_REVERB_GAIN,
+        FX_REVERB_HPF,
+        FX_REVERB_LPF,
+        FX_REVERB_VOLUME,
+        FX_COMP_THRESHOLD,
+        FX_COMP_GAIN,
+        FX_COMP_MIX,
+        FX_COMP_VOLUME,
+        FX_LFO_SPEED,
+        FX_LFO_FADE,
+        FX_LFO_START_PHASE_OR_SLEW,
+        FX_LFO_DEPTH,
+    ];
+}
 
 pub mod trig_action_type {
 
@@ -83,7 +158,7 @@ pub mod trig_action_type {
 
     pub const NOTE: &str = "note";
     pub const VELOCITY: &str = "velocity";
-    pub const RETRIG_VELOCITY_OFFSET: &str = "retrigvelocityoffset";
+    pub const RETRIG_VELOCITY_OFFSET: &str = "retrigveloffset";
     pub const SOUND_LOCK: &str = "soundlock";
 }
 
@@ -146,6 +221,16 @@ pub mod kit_enum_type {
     pub const FX_COMP_RELEASE: &str = "fxcomprelease";
     pub const FX_COMP_RATIO: &str = "fxcompratio";
     pub const FX_COMP_SIDE_CHAIN_EQ: &str = "fxcompsidechaineq";
+
+    pub const KIT_ENUM_TYPES: &[&str] = &[
+        CONTROL_IN_MOD_TARGET,
+        FX_LFO_DESTINATION,
+        FX_DELAY_TIME_ON_THE_GRID,
+        FX_COMP_ATTACK,
+        FX_COMP_RELEASE,
+        FX_COMP_RATIO,
+        FX_COMP_SIDE_CHAIN_EQ,
+    ];
 }
 
 pub mod settings_enum_type {

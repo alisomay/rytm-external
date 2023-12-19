@@ -1,14 +1,10 @@
-use crate::traits::*;
 use median::{
     builder::MaxWrappedBuilder,
     class::Class,
     wrapper::{MaxObjWrapped, MaxObjWrapper},
 };
 use rytm_rs::prelude::*;
-use std::sync::{
-    atomic::{AtomicBool, AtomicI64},
-    Arc, Mutex,
-};
+use std::sync::{atomic::AtomicBool, Arc, Mutex};
 
 use crate::rytm::Rytm;
 use median::method::*;

@@ -1,6 +1,6 @@
 use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
-use crate::util::only_allow_numbers;
+use crate::util::only_allow_numbers_as_action_parameter;
 use crate::{api::pattern_action_type::*, api::pattern_enum_type::*, error::RytmExternalError};
 use median::atom::Atom;
 use median::symbol::SymbolRef;
@@ -20,7 +20,7 @@ pub fn handle_pattern_set_action(action: PatternSetAction) -> Result<(), RytmExt
         parameter,
     } = action;
 
-    only_allow_numbers(parameter)?;
+    only_allow_numbers_as_action_parameter(parameter)?;
 
     match action.to_string()?.as_str() {
         MASTER_LENGTH => Ok(pattern.set_master_length(parameter.get_int() as usize)?),

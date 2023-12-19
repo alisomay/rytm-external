@@ -1,24 +1,14 @@
-use crate::{
-    action::set::{
-        handle_set_action, pattern::PatternSetAction, track::TrackSetAction, trig::TrigSetAction,
-        SetAction,
-    },
-    error::RytmExternalError,
-    rytm::Rytm,
-    traits::Post,
-};
+use crate::{error::RytmExternalError, rytm::Rytm, traits::Post};
 use median::{
     atom::{Atom, AtomValue},
     object::MaxObj,
 };
 
-use crate::util::{
-    try_get_action_value_from_atom_slice, try_get_atom_value_assuming_action_or_index_or_enum_value,
-};
-
 use super::{pattern_get, pattern_set, track_get, track_set, trig_get, trig_set};
+use crate::util::try_get_atom_value_assuming_action_or_index_or_enum_value;
 
-const ERR: &str = "Only symbols and integers are allowed in setters.";
+const ERR: &str =
+    "Invalid value: Only symbols or integers are allowed in pattern setters or getters.";
 
 pub fn handle_pattern_set(
     rytm: &Rytm,

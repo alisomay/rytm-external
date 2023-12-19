@@ -1,8 +1,6 @@
-use crate::error::QueryError;
 use crate::error::QueryError::InvalidFormat;
 use crate::error::QueryError::InvalidIndexType;
 use crate::error::QueryError::InvalidSelector;
-use crate::traits::*;
 use crate::{api::object_type::*, error::RytmExternalError};
 use median::atom::{Atom, AtomType, AtomValue};
 use std::convert::TryFrom;

@@ -1,4 +1,3 @@
-use crate::traits::*;
 use median::max_sys::{t_atom, t_atom_long, t_symbol};
 use median::object::MaxObj;
 use median::wrapper::MaxObjWrapper;

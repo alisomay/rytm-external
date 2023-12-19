@@ -4,21 +4,9 @@ use crate::{
     traits::*,
 };
 use median::outlet::OutAnything;
-use median::{
-    atom::{Atom, AtomValue},
-    max_sys::t_atom_long,
-    object::MaxObj,
-    outlet::OutInt,
-    symbol::SymbolRef,
-};
-use rytm_rs::{
-    object::{
-        pattern::{track::Track, Trig},
-        Pattern,
-    },
-    prelude::*,
-};
-use std::sync::atomic::{AtomicI16, AtomicI64};
+use median::{atom::Atom, max_sys::t_atom_long, object::MaxObj, outlet::OutInt, symbol::SymbolRef};
+use rytm_rs::prelude::*;
+
 use std::{
     convert::TryFrom,
     sync::{atomic::AtomicBool, atomic::Ordering::*, Arc, Mutex},
@@ -228,8 +216,8 @@ impl Rytm {
             ObjectTypeSelector::PatternWorkBuffer => {
                 crate::api::pattern_wb::handle_pattern_wb_set(self, atoms)
             }
-            ObjectTypeSelector::Kit(index) => todo!(),
-            ObjectTypeSelector::KitWorkBuffer => todo!(),
+            ObjectTypeSelector::Kit(index) => crate::api::kit::handle_kit_set(self, atoms, index),
+            ObjectTypeSelector::KitWorkBuffer => crate::api::kit_wb::handle_kit_wb_set(self, atoms),
             ObjectTypeSelector::Sound(index) => todo!(),
             ObjectTypeSelector::SoundWorkBuffer(index) => todo!(),
             ObjectTypeSelector::Global(index) => todo!(),
@@ -261,12 +249,14 @@ impl Rytm {
         }?;
 
         match ObjectTypeSelector::try_from(atom_pair)? {
-            ObjectTypeSelector::Pattern(pattern_index) => todo!(),
+            ObjectTypeSelector::Pattern(index) => {
+                crate::api::pattern::handle_pattern_get(self, atoms, index)
+            }
             ObjectTypeSelector::PatternWorkBuffer => {
                 crate::api::pattern_wb::handle_pattern_wb_get(self, atoms)
             }
-            ObjectTypeSelector::Kit(index) => todo!(),
-            ObjectTypeSelector::KitWorkBuffer => todo!(),
+            ObjectTypeSelector::Kit(index) => crate::api::kit::handle_kit_set(self, atoms, index),
+            ObjectTypeSelector::KitWorkBuffer => crate::api::kit_wb::handle_kit_wb_get(self, atoms),
             ObjectTypeSelector::Sound(index) => todo!(),
             ObjectTypeSelector::SoundWorkBuffer(index) => todo!(),
             ObjectTypeSelector::Global(index) => todo!(),

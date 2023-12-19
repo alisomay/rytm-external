@@ -2,7 +2,7 @@ use std::convert::TryInto;
 
 use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
-use crate::util::{get_bool_from_0_or_1, only_allow_numbers};
+use crate::util::{get_bool_from_0_or_1, only_allow_numbers_as_action_parameter};
 use crate::{api::track_action_type::*, api::track_enum_type::*, error::RytmExternalError};
 use median::atom::Atom;
 use median::symbol::SymbolRef;
@@ -21,7 +21,7 @@ pub fn handle_track_set_action(action: TrackSetAction) -> Result<(), RytmExterna
         parameter,
     } = action;
 
-    only_allow_numbers(parameter)?;
+    only_allow_numbers_as_action_parameter(parameter)?;
 
     match action.to_string()?.as_str() {
         DEF_TRIG_NOTE => Ok(track.set_default_trig_note(parameter.get_int() as usize)?),

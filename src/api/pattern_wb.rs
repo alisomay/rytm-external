@@ -1,39 +1,14 @@
-use crate::{
-    action::{
-        get::{
-            handle_get_action,
-            pattern::{handle_pattern_enum_get_action, PatternGetAction},
-            track::{handle_track_enum_get_action, TrackGetAction},
-            trig::{handle_trig_enum_get_action, TrigGetAction},
-            GetAction,
-        },
-        set::{
-            handle_set_action,
-            pattern::{handle_pattern_enum_set_action, PatternSetAction},
-            track::{handle_track_enum_set_action, TrackSetAction},
-            trig::{handle_trig_enum_set_action, TrigSetAction},
-            SetAction,
-        },
-    },
-    error::RytmExternalError,
-    rytm::Rytm,
-    traits::Post,
-};
+use crate::{error::RytmExternalError, rytm::Rytm, traits::Post};
 use median::{
     atom::{Atom, AtomValue},
     object::MaxObj,
-    outlet::OutAnything,
-    symbol::SymbolRef,
-};
-use rytm_rs::object::Pattern;
-
-use crate::util::{
-    try_get_action_value_from_atom_slice, try_get_atom_value_assuming_action_or_index_or_enum_value,
 };
 
 use super::{pattern_get, pattern_set, track_get, track_set, trig_get, trig_set};
+use crate::util::try_get_atom_value_assuming_action_or_index_or_enum_value;
 
-const ERR: &str = "Only symbols and integers are allowed in setters.";
+const ERR: &str =
+    "Invalid value: Only symbols or integers are allowed in pattern setters or getters.";
 
 pub fn handle_pattern_wb_set(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExternalError> {
     let mut guard = rytm.project.lock().unwrap();
