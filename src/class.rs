@@ -5,7 +5,10 @@ use median::{
     wrapper::{MaxObjWrapped, MaxObjWrapper},
 };
 use rytm_rs::prelude::*;
-use std::sync::{atomic::AtomicBool, Arc, Mutex};
+use std::sync::{
+    atomic::{AtomicBool, AtomicI64},
+    Arc, Mutex,
+};
 
 use crate::rytm::Rytm;
 use median::method::*;
@@ -20,7 +23,7 @@ impl MaxObjWrapped<Rytm> for Rytm {
         Self {
             project: Arc::new(Mutex::new(RytmProject::default())),
             buffering_sysex: AtomicBool::new(false),
-            sysex_in_buffer: Arc::new(Mutex::new(Vec::default())),
+            sysex_in_buffer: Arc::new(Mutex::new(Vec::with_capacity(1024 * 18))),
             sysex_out: builder.add_int_outlet_with_assist("sysex output (connect to midiout)"),
             query_out: builder.add_anything_outlet_with_assist("get query results (list)"),
         }

@@ -1,7 +1,6 @@
 pub mod action;
 pub mod api;
 pub mod class;
-pub mod const_sym;
 pub mod error;
 pub mod rytm;
 pub mod traits;

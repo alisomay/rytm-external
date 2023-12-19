@@ -18,6 +18,7 @@ use rytm_rs::{
     },
     prelude::*,
 };
+use std::sync::atomic::{AtomicI16, AtomicI64};
 use std::{
     convert::TryFrom,
     sync::{atomic::AtomicBool, atomic::Ordering::*, Arc, Mutex},
