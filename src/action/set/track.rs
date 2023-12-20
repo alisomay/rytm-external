@@ -2,16 +2,38 @@ use std::convert::TryInto;
 
 use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
-use crate::util::{get_bool_from_0_or_1, only_allow_numbers_as_action_parameter};
+use crate::util::{
+    get_bool_from_0_or_1, only_allow_numbers_as_action_parameter,
+    try_get_action_value_from_atom_slice,
+};
 use crate::{api::track_action_type::*, api::track_enum_type::*, error::RytmExternalError};
 use median::atom::Atom;
 use median::symbol::SymbolRef;
 use rytm_rs::object::pattern::track::Track;
 
+use super::{handle_set_action, SetAction};
+
 pub struct TrackSetAction<'a> {
     pub track: &'a mut Track,
     pub action: SymbolRef,
     pub parameter: &'a Atom,
+}
+
+pub fn track_set(
+    action_or_enum_value: SymbolRef,
+    track: &mut rytm_rs::object::pattern::track::Track,
+    atoms: &[Atom],
+    select: usize,
+) -> Result<(), RytmExternalError> {
+    if let Some((enum_type, enum_variant)) = action_or_enum_value.to_string()?.split_once(':') {
+        handle_track_enum_set_action(track, enum_type, enum_variant)
+    } else {
+        handle_set_action(SetAction::Track(TrackSetAction {
+            track,
+            action: action_or_enum_value,
+            parameter: try_get_action_value_from_atom_slice(select, atoms)?,
+        }))
+    }
 }
 
 pub fn handle_track_set_action(action: TrackSetAction) -> Result<(), RytmExternalError> {

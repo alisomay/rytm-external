@@ -3,16 +3,37 @@ use crate::api::trig_enum_type::*;
 use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
 use crate::util::only_allow_numbers_as_action_parameter;
+use crate::util::try_get_action_value_from_atom_slice;
 use crate::{error::RytmExternalError, util::get_bool_from_0_or_1};
 use median::atom::Atom;
 use median::symbol::SymbolRef;
 use rytm_rs::object::pattern::{track::trig::HoldsTrigFlags, Trig};
 use std::convert::TryInto;
 
+use super::handle_set_action;
+use super::SetAction;
+
 pub struct TrigSetAction<'a> {
     pub trig: &'a mut Trig,
     pub action: SymbolRef,
     pub parameter: &'a Atom,
+}
+
+pub fn trig_set(
+    action_or_enum_value: SymbolRef,
+    trig: &mut rytm_rs::object::pattern::track::trig::Trig,
+    atoms: &[Atom],
+    select: usize,
+) -> Result<(), RytmExternalError> {
+    if let Some((enum_type, enum_variant)) = action_or_enum_value.to_string()?.split_once(':') {
+        handle_trig_enum_set_action(trig, enum_type, enum_variant)
+    } else {
+        handle_set_action(SetAction::Trig(TrigSetAction {
+            trig,
+            action: action_or_enum_value,
+            parameter: try_get_action_value_from_atom_slice(select, atoms)?,
+        }))
+    }
 }
 
 pub fn handle_trig_set_action(action: TrigSetAction) -> Result<(), RytmExternalError> {

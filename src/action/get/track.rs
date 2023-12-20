@@ -12,10 +12,29 @@ use median::{
 };
 use rytm_rs::object::pattern::track::Track;
 
+use super::handle_get_action;
+use super::GetAction;
+
 pub struct TrackGetAction<'a> {
     pub track: &'a Track,
     pub action: SymbolRef,
     pub out: &'a OutAnything,
+}
+
+pub fn track_get(
+    action_or_enum_type: SymbolRef,
+    track: &rytm_rs::object::pattern::track::Track,
+    out: &OutAnything,
+) -> Result<(), RytmExternalError> {
+    if let Some((enum_type, _)) = action_or_enum_type.to_string()?.split_once(':') {
+        handle_track_enum_get_action(track, enum_type, out)
+    } else {
+        handle_get_action(GetAction::Track(TrackGetAction {
+            track,
+            action: action_or_enum_type,
+            out,
+        }))
+    }
 }
 
 pub fn handle_track_get_action(action: TrackGetAction) -> Result<(), RytmExternalError> {

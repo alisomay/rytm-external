@@ -107,7 +107,7 @@ pub fn handle_kit_get(
             // Send for handling..  // Next value should be a param
             handle_kit_get_action(&guard.kits()[kit_index], action, out)
         }
-        KitElementOrActionOrEnumTypeAndValue::EnumTypeAndValue(t, v) => {
+        KitElementOrActionOrEnumTypeAndValue::EnumTypeAndValue(t, _) => {
             // Send for handling..
             handle_kit_get_enum_value(&guard.kits()[kit_index], &t, out)
         }

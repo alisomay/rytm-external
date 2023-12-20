@@ -1,5 +1,9 @@
 use crate::{
-    action::plock::{handle_trig_plock_getter_action, handle_trig_plock_setter_action},
+    action::{
+        get::{pattern::pattern_get, track::track_get, trig::trig_get},
+        plock::{handle_trig_plock_getter_action, handle_trig_plock_setter_action},
+        set::{pattern::pattern_set, track::track_set, trig::trig_set},
+    },
     error::RytmExternalError,
     rytm::Rytm,
     traits::Post,
@@ -9,9 +13,7 @@ use median::{
     object::MaxObj,
 };
 
-use super::{
-    pattern_get, pattern_set, plock_type::ALL_PLOCK_TYPES, track_get, track_set, trig_get, trig_set,
-};
+use super::plock_type::ALL_PLOCK_TYPES;
 use crate::util::try_get_atom_value_assuming_action_or_index_or_enum_value;
 
 const ERR: &str =

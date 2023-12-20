@@ -12,10 +12,29 @@ use median::{
 };
 use rytm_rs::object::Pattern;
 
+use super::handle_get_action;
+use super::GetAction;
+
 pub struct PatternGetAction<'a> {
     pub pattern: &'a Pattern,
     pub action: SymbolRef,
     pub out: &'a OutAnything,
+}
+
+pub fn pattern_get(
+    action_or_enum_type: SymbolRef,
+    pattern: &Pattern,
+    out: &OutAnything,
+) -> Result<(), RytmExternalError> {
+    if let Some((enum_type, _)) = action_or_enum_type.to_string()?.split_once(':') {
+        handle_pattern_enum_get_action(pattern, enum_type, out)
+    } else {
+        handle_get_action(GetAction::Pattern(PatternGetAction {
+            pattern,
+            action: action_or_enum_type,
+            out,
+        }))
+    }
 }
 
 pub fn handle_pattern_get_action(action: PatternGetAction) -> Result<(), RytmExternalError> {

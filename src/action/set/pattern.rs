@@ -1,16 +1,35 @@
 use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
-use crate::util::only_allow_numbers_as_action_parameter;
+use crate::util::{only_allow_numbers_as_action_parameter, try_get_action_value_from_atom_slice};
 use crate::{api::pattern_action_type::*, api::pattern_enum_type::*, error::RytmExternalError};
 use median::atom::Atom;
 use median::symbol::SymbolRef;
 use rytm_rs::object::Pattern;
 use std::convert::TryInto;
 
+use super::{handle_set_action, SetAction};
+
 pub struct PatternSetAction<'a> {
     pub pattern: &'a mut Pattern,
     pub action: SymbolRef,
     pub parameter: &'a Atom,
+}
+
+pub fn pattern_set(
+    action_or_enum_value: SymbolRef,
+    pattern: &mut Pattern,
+    atoms: &[Atom],
+    select: usize,
+) -> Result<(), RytmExternalError> {
+    if let Some((enum_type, enum_variant)) = action_or_enum_value.to_string()?.split_once(':') {
+        handle_pattern_enum_set_action(pattern, enum_type, enum_variant)
+    } else {
+        handle_set_action(SetAction::Pattern(PatternSetAction {
+            pattern,
+            action: action_or_enum_value,
+            parameter: try_get_action_value_from_atom_slice(select, atoms)?,
+        }))
+    }
 }
 
 pub fn handle_pattern_set_action(action: PatternSetAction) -> Result<(), RytmExternalError> {

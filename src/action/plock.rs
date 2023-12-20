@@ -36,7 +36,7 @@ pub fn handle_trig_plock_setter_action(
                 Err("Invalid plock action ({action_or_enum_value_str}): You may use {PLOCK_SET} and {PLOCK_CLEAR} with setters and {PLOCK_GET} with getters.".into())
             }
             PLOCK_CLEAR => {
-                if let Some((enum_type, enum_value)) = enum_pair {
+                if let Some((enum_type, _)) = enum_pair {
                     handle_trig_plock_clear_enum_value(trig, enum_type)
                 } else {
                     handle_trig_plock_clear_action(trig, action_or_enum_value)
@@ -65,7 +65,7 @@ pub fn handle_trig_plock_getter_action(
 
         return match selector {
             PLOCK_SET | PLOCK_CLEAR => {
-                Err("Invalid plock action ({action_or_enum_value_str}): You may use {PLOCK_SET} and {PLOCK_CLEAR} with setters and {PLOCK_GET} with getters.".into())
+                Err(format!("Invalid plock action ({action_or_enum_value_str}): You may use {PLOCK_SET} and {PLOCK_CLEAR} with setters and {PLOCK_GET} with getters.").into())
             }
             PLOCK_GET => {
                 if let Some((enum_type, _)) = enum_pair {

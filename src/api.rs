@@ -81,7 +81,68 @@ pub mod plock_type {
     pub const ALL_PLOCK_TYPES: &[&str] = &[PLOCK_GET, PLOCK_SET, PLOCK_CLEAR];
 }
 
+// TODO:
+pub mod machine_parameter_type {
+    // TODO: For the first version we'll omit machine parameters.
+}
+
 /*** Action Types ***/
+
+// pub struct Settings {
+//     /// Version of the settings structure.
+//     version: u32,
+
+//     bpm_project: f32,
+
+//     selected_track: u8,
+
+//     selected_page: u8,
+
+//     mute_flags: u16,
+
+//     fixed_velocity_enable: bool,
+//     fixed_velocity_amount: u8,
+
+//     sample_recorder_thr: u8,
+//     sample_recorder_monitor_enable: bool,
+
+// }
+
+pub mod settings_action_type {
+    const VERSION: &str = "version";
+    const BPM_PROJECT: &str = "bpmproject";
+    const SELECTED_TRACK: &str = "selectedtrack";
+    const SELECTED_PAGE: &str = "selectedpage";
+    // Flags set
+    const MUTE: &str = "mute";
+    const FIXED_VELOCITY_ENABLE: &str = "fixedvelocity";
+    const FIXED_VELOCITY_AMOUNT: &str = "fixedvelocityamount";
+    const SAMPLE_RECORDER_THR: &str = "samplerecorderthr";
+    const SAMPLE_RECORDER_MONITOR_ENABLE: &str = "samplerecordermonitor";
+}
+
+pub mod global_action_type {
+    pub const VERSION: &str = "version";
+    pub const INDEX: &str = "index";
+    pub const IS_WORK_BUFFER: &str = "iswb";
+    pub const KIT_RELOAD_ON_CHANGE: &str = "kitreloadonchg";
+    pub const QUANTIZE_LIVE_REC: &str = "quantizeliverec";
+    pub const AUTO_TRACK_SWITCH: &str = "autotrackswitch";
+    pub const ROUTE_TO_MAIN: &str = "routetomain";
+    pub const SEND_TO_FX: &str = "sendtofx";
+    pub const CLOCK_RECEIVE: &str = "clockreceive";
+    pub const CLOCK_SEND: &str = "clocksend";
+    pub const TRANSPORT_RECEIVE: &str = "transportreceive";
+    pub const TRANSPORT_SEND: &str = "transportsend";
+    pub const PROGRAM_CHANGE_RECEIVE: &str = "programchangereceive";
+    pub const PROGRAM_CHANGE_SEND: &str = "programchangesend";
+    pub const RECEIVE_NOTES: &str = "receivenotes";
+    pub const RECEIVE_CC_NRPN: &str = "receiveccnrpn";
+    pub const TURBO_SPEED: &str = "turbospeed";
+    pub const METRONOME_ACTIVE: &str = "metronomeactive";
+    pub const METRONOME_PRE_ROLL_BARS: &str = "metronomeprerollbars";
+    pub const METRONOME_VOLUME: &str = "metronomevolume";
+}
 
 pub mod kit_action_type {
     pub const VERSION: &str = "version";
@@ -162,6 +223,7 @@ pub mod trig_action_type {
     pub const SLIDE: &str = "slide";
 
     // TODO: I need to understand how these behave first.
+    // Also maybe we expose them in the parameter lock set action?
     // pub const PARAMETER_LOCK_LFO_SWITCH: &str = "parameterlocklfoswitch";
     // pub const PARAMETER_LOCK_LFO: &str = "parameterlocklfo";
     // pub const PARAMETER_LOCK_SYNTH_SWITCH: &str = "parameterlocksynthswitch";
@@ -254,6 +316,46 @@ pub mod sound_action_type {
     pub const SAMP_END: &str = "sampend";
     pub const SAMP_LOOP_FLAG: &str = "samploopflag";
     pub const SAMP_VOLUME: &str = "sampvolume";
+
+    pub const SOUND_ACTION_TYPES: &[&str] = &[
+        VERSION,
+        INDEX,
+        NAME,
+        IS_POOL,
+        IS_KIT,
+        IS_WORK_BUFFER,
+        KIT_NUMBER,
+        SOUND_TYPE,
+        ACCENT_LEVEL,
+        MACHINE,
+        AMP_ATTACK,
+        AMP_HOLD,
+        AMP_DECAY,
+        AMP_OVERDRIVE,
+        AMP_DELAY_SEND,
+        AMP_REVERB_SEND,
+        AMP_PAN,
+        AMP_VOLUME,
+        FILT_ATTACK,
+        FILT_HOLD,
+        FILT_DECAY,
+        FILT_RELEASE,
+        FILT_CUTOFF,
+        FILT_RESONANCE,
+        FILT_ENVELOPE_AMOUNT,
+        LFO_SPEED,
+        LFO_FADE,
+        LFO_START_PHASE_OR_SLEW,
+        LFO_DEPTH,
+        SAMP_TUNE,
+        SAMP_FINE_TUNE,
+        SAMP_NUMBER,
+        SAMP_BIT_REDUCTION,
+        SAMP_START,
+        SAMP_END,
+        SAMP_LOOP_FLAG,
+        SAMP_VOLUME,
+    ];
 }
 
 /*** Enum Types ***/
@@ -316,6 +418,18 @@ pub mod sound_enum_type {
     pub const LFO_WAVEFORM: &str = "lfowaveform";
     pub const LFO_MODE: &str = "lfomode";
     pub const SOUND_SETTINGS_CHROMATIC_MODE: &str = "chromaticmode";
+
+    pub const SOUND_ENUM_TYPES: &[&str] = &[
+        MACHINE_PARAMETERS,
+        MACHINE_TYPE,
+        LFO_DESTINATION,
+        SOUND_MOD_TARGET,
+        FILTER_TYPE,
+        LFO_MULTIPLIER,
+        LFO_WAVEFORM,
+        LFO_MODE,
+        SOUND_SETTINGS_CHROMATIC_MODE,
+    ];
 }
 
 pub mod sound_machine_enum_type {
@@ -327,115 +441,56 @@ pub mod sound_machine_enum_type {
     pub const SY_RAW_WAVEFORM_2: &str = "syrawwaveform2";
 }
 
+// pub struct MetronomeSettings {
+//     time_signature: TimeSignature,
+// }
+// pub struct Routing {
+//     usb_in: RoutingUsbInOptions,
+//     usb_out: RoutingUsbOutOptions,
+//     usb_to_main_db: RoutingUsbToMainDb,
+// }
+// pub struct PortConfig {
+//     out_port_func: MidiPortFunction,
+//     thru_port_func: MidiPortFunction,
+//     input_from: MidiTransportLayer,
+//     output_to: MidiTransportLayer,
+//     param_output: MidiParameterOutput,
+//     pad_dest: ParameterDestination,
+//     pressure_dest: ParameterDestination,
+//     encoder_dest: ParameterDestination,
+//     mute_dest: ParameterDestination,
+//     ports_output_channel: MidiPortsOutputChannel,
+// }
+// pub struct Channels {
+//     auto_channel: MidiChannel,
+//     track_channels: [MidiChannel; 12],
+//     track_fx_channel: MidiChannel,
+//     program_change_in_channel: MidiChannel,
+//     program_change_out_channel: MidiChannel,
+//     performance_channel: MidiChannel,
+// }
 pub mod global_enum_type {
-    pub const TIME_SIGNATURE: &str = "timesignature";
-    pub const MIDI_CHANNEL: &str = "midichannel";
-    pub const MIDI_PORT_FUNCTION: &str = "midiportfunction";
-    pub const MIDI_TRANSPORT_LAYER: &str = "miditransportlayer";
-    pub const PARAMETER_DESTINATION: &str = "parameterdestination";
+    pub const METRONOME_TIME_SIGNATURE: &str = "metronometimesignature";
+
+    pub const ROUTING_USB_IN_OPTIONS: &str = "routingusbin";
+    pub const ROUTING_USB_OUT_OPTIONS: &str = "routingusbout";
     pub const ROUTING_USB_TO_MAIN_DB: &str = "routingusbtomaindb";
-    pub const MIDI_PARAMETER_OUTPUT: &str = "midiparameteroutput";
-    pub const MIDI_PORTS_OUTPUT_CHANNEL: &str = "midiportsoutputchannel";
-    pub const HARDWARE_TRACK: &str = "hardwaretrack";
-    pub const ROUTING_USB_IN_OPTIONS: &str = "routingusbinoptions";
-    pub const ROUTING_USB_OUT_OPTIONS: &str = "routingusboutoptions";
-}
 
-pub fn pattern_get(
-    action_or_enum_type: SymbolRef,
-    pattern: &Pattern,
-    out: &OutAnything,
-) -> Result<(), RytmExternalError> {
-    if let Some((enum_type, _)) = action_or_enum_type.to_string()?.split_once(':') {
-        handle_pattern_enum_get_action(pattern, enum_type, out)
-    } else {
-        handle_get_action(GetAction::Pattern(PatternGetAction {
-            pattern,
-            action: action_or_enum_type,
-            out,
-        }))
-    }
-}
+    pub const OUT_PORT_FUNCTION: &str = "outportfunction";
+    pub const THRU_PORT_FUNCTION: &str = "thruportfunction";
+    pub const INPUT_FROM: &str = "inputfrom";
+    pub const OUTPUT_TO: &str = "outputto";
+    pub const PARAM_OUTPUT: &str = "paramoutput";
+    pub const PAD_DEST: &str = "paddest";
+    pub const PRESSURE_DEST: &str = "pressuredest";
+    pub const ENCODER_DEST: &str = "encoderdest";
+    pub const MUTE_DEST: &str = "mutedest";
+    pub const PORTS_OUTPUT_CHANNEL: &str = "portsoutputchannel";
 
-pub fn track_get(
-    action_or_enum_type: SymbolRef,
-    track: &rytm_rs::object::pattern::track::Track,
-    out: &OutAnything,
-) -> Result<(), RytmExternalError> {
-    if let Some((enum_type, _)) = action_or_enum_type.to_string()?.split_once(':') {
-        handle_track_enum_get_action(track, enum_type, out)
-    } else {
-        handle_get_action(GetAction::Track(TrackGetAction {
-            track,
-            action: action_or_enum_type,
-            out,
-        }))
-    }
-}
-
-pub fn trig_get(
-    action_or_enum_type: SymbolRef,
-    trig: &rytm_rs::object::pattern::track::trig::Trig,
-    out: &OutAnything,
-) -> Result<(), RytmExternalError> {
-    if let Some((enum_type, _)) = action_or_enum_type.to_string()?.split_once(':') {
-        handle_trig_enum_get_action(trig, enum_type, out)
-    } else {
-        handle_get_action(GetAction::Trig(TrigGetAction {
-            trig,
-            action: action_or_enum_type,
-            out,
-        }))
-    }
-}
-
-pub fn pattern_set(
-    action_or_enum_value: SymbolRef,
-    pattern: &mut Pattern,
-    atoms: &[Atom],
-    select: usize,
-) -> Result<(), RytmExternalError> {
-    if let Some((enum_type, enum_variant)) = action_or_enum_value.to_string()?.split_once(':') {
-        handle_pattern_enum_set_action(pattern, enum_type, enum_variant)
-    } else {
-        handle_set_action(SetAction::Pattern(PatternSetAction {
-            pattern,
-            action: action_or_enum_value,
-            parameter: try_get_action_value_from_atom_slice(select, atoms)?,
-        }))
-    }
-}
-
-pub fn track_set(
-    action_or_enum_value: SymbolRef,
-    track: &mut rytm_rs::object::pattern::track::Track,
-    atoms: &[Atom],
-    select: usize,
-) -> Result<(), RytmExternalError> {
-    if let Some((enum_type, enum_variant)) = action_or_enum_value.to_string()?.split_once(':') {
-        handle_track_enum_set_action(track, enum_type, enum_variant)
-    } else {
-        handle_set_action(SetAction::Track(TrackSetAction {
-            track,
-            action: action_or_enum_value,
-            parameter: try_get_action_value_from_atom_slice(select, atoms)?,
-        }))
-    }
-}
-
-pub fn trig_set(
-    action_or_enum_value: SymbolRef,
-    trig: &mut rytm_rs::object::pattern::track::trig::Trig,
-    atoms: &[Atom],
-    select: usize,
-) -> Result<(), RytmExternalError> {
-    if let Some((enum_type, enum_variant)) = action_or_enum_value.to_string()?.split_once(':') {
-        handle_trig_enum_set_action(trig, enum_type, enum_variant)
-    } else {
-        handle_set_action(SetAction::Trig(TrigSetAction {
-            trig,
-            action: action_or_enum_value,
-            parameter: try_get_action_value_from_atom_slice(select, atoms)?,
-        }))
-    }
+    pub const AUTO_CHANNEL: &str = "autochannel";
+    pub const TRACK_CHANNELS: &str = "trackchannels";
+    pub const TRACK_FX_CHANNEL: &str = "trackfxchannel";
+    pub const PROGRAM_CHANGE_IN_CHANNEL: &str = "programchangeinchannel";
+    pub const PROGRAM_CHANGE_OUT_CHANNEL: &str = "programchangeoutchannel";
+    pub const PERFORMANCE_CHANNEL: &str = "performancechannel";
 }

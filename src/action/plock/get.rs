@@ -25,9 +25,9 @@ pub fn handle_trig_plock_get_action(
         kit_action_type::FX_DELAY_PING_PONG => trig
             .plock_get_fx_delay_ping_pong()?
             .map(|val| Atom::from(val as isize)),
-        kit_action_type::FX_DELAY_STEREO_WIDTH => trig
-            .plock_get_fx_delay_stereo_width()?
-            .map(|val| Atom::from(val as isize)),
+        kit_action_type::FX_DELAY_STEREO_WIDTH => {
+            trig.plock_get_fx_delay_stereo_width()?.map(Atom::from)
+        }
         kit_action_type::FX_DELAY_FEEDBACK => trig
             .plock_get_fx_delay_feedback()?
             .map(|val| Atom::from(val as isize)),
@@ -79,8 +79,8 @@ pub fn handle_trig_plock_get_action(
             .plock_get_fx_compressor_volume()?
             .map(|val| Atom::from(val as isize)),
 
-        kit_action_type::FX_LFO_SPEED => trig.plock_get_fx_lfo_speed()?.map(|val| Atom::from(val)),
-        kit_action_type::FX_LFO_FADE => trig.plock_get_fx_lfo_fade()?.map(|val| Atom::from(val)),
+        kit_action_type::FX_LFO_SPEED => trig.plock_get_fx_lfo_speed()?.map(Atom::from),
+        kit_action_type::FX_LFO_FADE => trig.plock_get_fx_lfo_fade()?.map(Atom::from),
         kit_action_type::FX_LFO_START_PHASE_OR_SLEW => trig
             .plock_get_fx_lfo_start_phase()?
             .map(|val| Atom::from(val as isize)),
@@ -109,7 +109,7 @@ pub fn handle_trig_plock_get_action(
         sound_action_type::AMP_REVERB_SEND => trig
             .plock_get_amplitude_reverb_send()?
             .map(|val| Atom::from(val as isize)),
-        sound_action_type::AMP_PAN => trig.plock_get_amplitude_pan()?.map(|val| Atom::from(val)),
+        sound_action_type::AMP_PAN => trig.plock_get_amplitude_pan()?.map(Atom::from),
         sound_action_type::AMP_VOLUME => trig
             .plock_get_amplitude_volume()?
             .map(|val| Atom::from(val as isize)),
@@ -132,12 +132,12 @@ pub fn handle_trig_plock_get_action(
         sound_action_type::FILT_RESONANCE => trig
             .plock_get_filter_resonance()?
             .map(|val| Atom::from(val as isize)),
-        sound_action_type::FILT_ENVELOPE_AMOUNT => trig
-            .plock_get_filter_envelope_amount()?
-            .map(|val| Atom::from(val)),
+        sound_action_type::FILT_ENVELOPE_AMOUNT => {
+            trig.plock_get_filter_envelope_amount()?.map(Atom::from)
+        }
 
-        sound_action_type::LFO_SPEED => trig.plock_get_lfo_speed()?.map(|val| Atom::from(val)),
-        sound_action_type::LFO_FADE => trig.plock_get_lfo_fade()?.map(|val| Atom::from(val)),
+        sound_action_type::LFO_SPEED => trig.plock_get_lfo_speed()?.map(Atom::from),
+        sound_action_type::LFO_FADE => trig.plock_get_lfo_fade()?.map(Atom::from),
         sound_action_type::LFO_START_PHASE_OR_SLEW => trig
             .plock_get_lfo_start_phase()?
             .map(|val| Atom::from(val as isize)),
@@ -145,10 +145,8 @@ pub fn handle_trig_plock_get_action(
             .plock_get_lfo_depth()?
             .map(|val| Atom::from(val as f64)),
 
-        sound_action_type::SAMP_TUNE => trig.plock_get_sample_tune()?.map(|val| Atom::from(val)),
-        sound_action_type::SAMP_FINE_TUNE => trig
-            .plock_get_sample_fine_tune()?
-            .map(|val| Atom::from(val)),
+        sound_action_type::SAMP_TUNE => trig.plock_get_sample_tune()?.map(Atom::from),
+        sound_action_type::SAMP_FINE_TUNE => trig.plock_get_sample_fine_tune()?.map(Atom::from),
         sound_action_type::SAMP_NUMBER => trig
             .plock_get_sample_number()?
             .map(|val| Atom::from(val as isize)),

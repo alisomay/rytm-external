@@ -12,10 +12,29 @@ use median::{
 };
 use rytm_rs::object::pattern::{track::trig::HoldsTrigFlags, Trig};
 
+use super::handle_get_action;
+use super::GetAction;
+
 pub struct TrigGetAction<'a> {
     pub trig: &'a Trig,
     pub action: SymbolRef,
     pub out: &'a OutAnything,
+}
+
+pub fn trig_get(
+    action_or_enum_type: SymbolRef,
+    trig: &rytm_rs::object::pattern::track::trig::Trig,
+    out: &OutAnything,
+) -> Result<(), RytmExternalError> {
+    if let Some((enum_type, _)) = action_or_enum_type.to_string()?.split_once(':') {
+        handle_trig_enum_get_action(trig, enum_type, out)
+    } else {
+        handle_get_action(GetAction::Trig(TrigGetAction {
+            trig,
+            action: action_or_enum_type,
+            out,
+        }))
+    }
 }
 
 pub fn handle_trig_get_action(action: TrigGetAction) -> Result<(), RytmExternalError> {

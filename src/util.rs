@@ -70,7 +70,7 @@ impl TryFrom<SymbolRef> for KitElementOrActionOrEnumTypeAndValue {
         let value_str = value.to_string()?;
         if KIT_ACTION_TYPES.contains(&value_str.as_str()) {
             Ok(KitElementOrActionOrEnumTypeAndValue::Action(value))
-        } else if value_str.find(":").is_some() {
+        } else if value_str.contains(":") {
             let (t, v) = value_str.split_once(':').ok_or_else(||RytmExternalError::from("Invalid value: A kit setter should be followed by either a kit element or action or enum value."))?;
             if KIT_ENUM_TYPES.contains(&t) {
                 return Ok(KitElementOrActionOrEnumTypeAndValue::EnumTypeAndValue(
