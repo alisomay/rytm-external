@@ -6,8 +6,11 @@ use self::{
     trig::{handle_trig_set_action, TrigSetAction},
 };
 
+pub mod global;
 pub mod kit;
 pub mod pattern;
+pub mod settings;
+pub mod sound;
 pub mod track;
 pub mod trig;
 

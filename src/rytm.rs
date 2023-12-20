@@ -180,14 +180,6 @@ impl Rytm {
     }
 
     fn set(&self, _sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
-        // Format is set <object type> ...
-
-        // Patterns
-        // Format is set pattern <pattern-index> <track-index> <trig-index> <action> <value>
-        // Other formats are set pattern <pattern-index> <action> <value>
-        // set pattern <pattern-index> <track-index> <action> <value>
-        // set pattern <pattern-index> <track-index> <trig-index> <action> <value>
-
         let first_atom = atoms.get(0).ok_or(InvalidFormat)?;
         let indexable = matches!(
             ObjectTypeSelector::try_from((first_atom, None))?,

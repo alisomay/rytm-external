@@ -31,9 +31,11 @@ pub fn handle_kit_set_action(
 
     match action_str.as_str() {
         FX_DELAY_TIME => Ok(kit.fx_delay_mut().set_time(parameter.get_int() as usize)?),
-        FX_DELAY_PING_PONG => Ok(kit
-            .fx_delay_mut()
-            .set_ping_pong(get_bool_from_0_or_1(parameter)?)),
+        FX_DELAY_PING_PONG => {
+            kit.fx_delay_mut()
+                .set_ping_pong(get_bool_from_0_or_1(parameter)?);
+            Ok(())
+        }
         FX_DELAY_STEREO_WIDTH => Ok(kit.fx_delay_mut().set_stereo_width(parameter.get_int())?),
         FX_DELAY_FEEDBACK => Ok(kit
             .fx_delay_mut()
@@ -133,27 +135,29 @@ pub fn handle_kit_set_kit_element(
             let (_, enum_value) = param_str.as_str().split_once(':').ok_or_else(|| {
                 RytmExternalError::from("Invalid value: kit element requires an enum value.")
             })?;
-            Ok(kit
-                .track_retrig_settings_mut(element_index)?
-                .set_rate(enum_value.try_into()?))
+            kit.track_retrig_settings_mut(element_index)?
+                .set_rate(enum_value.try_into()?);
+            Ok(())
         }
         TRACK_RETRIG_LENGTH => {
             let param_str = element_parameter.get_symbol().to_string()?;
             let (_, enum_value) = param_str.as_str().split_once(':').ok_or_else(|| {
                 RytmExternalError::from("Invalid value: kit element requires an enum value.")
             })?;
-            Ok(kit
-                .track_retrig_settings_mut(element_index)?
-                .set_length(enum_value.try_into()?))
+            kit.track_retrig_settings_mut(element_index)?
+                .set_length(enum_value.try_into()?);
+            Ok(())
         }
         TRACK_RETRIG_VEL_OFFSET => Ok(kit
             .track_retrig_settings_mut(element_index)?
             .set_velocity_curve(element_parameter.get_int())?),
-        TRACK_RETRIG_ALWAYS_ON => Ok(kit
-            .track_retrig_settings_mut(element_index)?
-            .set_always_on(get_bool_from_0_or_1(element_parameter)?)),
+        TRACK_RETRIG_ALWAYS_ON => {
+            kit.track_retrig_settings_mut(element_index)?
+                .set_always_on(get_bool_from_0_or_1(element_parameter)?);
+            Ok(())
+        }
 
-        other => return Err(InvalidActionType(other.to_string()).into()),
+        other => Err(InvalidActionType(other.to_string()).into()),
     }
 }
 

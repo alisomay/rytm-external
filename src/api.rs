@@ -1,7 +1,13 @@
+pub mod global;
+pub mod global_wb;
 pub mod kit;
 pub mod kit_wb;
 pub mod pattern;
 pub mod pattern_wb;
+pub mod settings;
+pub mod sound;
+pub mod sound_kit;
+pub mod sound_wb;
 
 use crate::{
     action::{
@@ -64,6 +70,15 @@ pub mod kit_element_type {
         TRACK_RETRIG_ALWAYS_ON,
         SOUND,
     ];
+}
+
+pub mod plock_type {
+    pub const PLOCK_GET: &str = "plockget";
+    pub const PLOCK_SET: &str = "plockset";
+    pub const PLOCK_CLEAR: &str = "plockclear";
+
+    pub const PLOCK_TYPES: &[&str] = &[PLOCK_GET, PLOCK_SET, PLOCK_CLEAR];
+    pub const ALL_PLOCK_TYPES: &[&str] = &[PLOCK_GET, PLOCK_SET, PLOCK_CLEAR];
 }
 
 /*** Action Types ***/
@@ -192,6 +207,55 @@ pub mod pattern_action_type {
     pub const BPM: &str = "bpm";
 }
 
+pub mod sound_action_type {
+    pub const VERSION: &str = "version";
+    pub const INDEX: &str = "index";
+    pub const NAME: &str = "name";
+
+    pub const IS_POOL: &str = "ispool";
+    pub const IS_KIT: &str = "iskit";
+    pub const IS_WORK_BUFFER: &str = "iswb";
+
+    pub const KIT_NUMBER: &str = "kitnumber";
+
+    pub const SOUND_TYPE: &str = "type";
+
+    pub const ACCENT_LEVEL: &str = "accentlevel";
+
+    pub const MACHINE: &str = "machine";
+
+    pub const AMP_ATTACK: &str = "ampattack";
+    pub const AMP_HOLD: &str = "amphold";
+    pub const AMP_DECAY: &str = "ampdecay";
+    pub const AMP_OVERDRIVE: &str = "ampoverdrive";
+    pub const AMP_DELAY_SEND: &str = "ampdelaysend";
+    pub const AMP_REVERB_SEND: &str = "ampreverbsend";
+    pub const AMP_PAN: &str = "amppan";
+    pub const AMP_VOLUME: &str = "ampvolume";
+
+    pub const FILT_ATTACK: &str = "filtattack";
+    pub const FILT_HOLD: &str = "filthold";
+    pub const FILT_DECAY: &str = "filtdecay";
+    pub const FILT_RELEASE: &str = "filtrelease";
+    pub const FILT_CUTOFF: &str = "filtcutoff";
+    pub const FILT_RESONANCE: &str = "filtres";
+    pub const FILT_ENVELOPE_AMOUNT: &str = "filtenvamt";
+
+    pub const LFO_SPEED: &str = "lfospeed";
+    pub const LFO_FADE: &str = "lfofade";
+    pub const LFO_START_PHASE_OR_SLEW: &str = "lfostartphase";
+    pub const LFO_DEPTH: &str = "lfodepth";
+
+    pub const SAMP_TUNE: &str = "samptune";
+    pub const SAMP_FINE_TUNE: &str = "sampfinetune";
+    pub const SAMP_NUMBER: &str = "sampnumber";
+    pub const SAMP_BIT_REDUCTION: &str = "sampbitreduction";
+    pub const SAMP_START: &str = "sampstart";
+    pub const SAMP_END: &str = "sampend";
+    pub const SAMP_LOOP_FLAG: &str = "samploopflag";
+    pub const SAMP_VOLUME: &str = "sampvolume";
+}
+
 /*** Enum Types ***/
 
 pub mod pattern_enum_type {
@@ -245,7 +309,7 @@ pub mod settings_enum_type {
 pub mod sound_enum_type {
     pub const MACHINE_PARAMETERS: &str = "machineparameters";
     pub const MACHINE_TYPE: &str = "machinetype";
-    pub const LO_DESTINATION: &str = "lodestination";
+    pub const LFO_DESTINATION: &str = "lfodestination";
     pub const SOUND_MOD_TARGET: &str = "soundmodtarget";
     pub const FILTER_TYPE: &str = "filtertype";
     pub const LFO_MULTIPLIER: &str = "lfomultiplier";
