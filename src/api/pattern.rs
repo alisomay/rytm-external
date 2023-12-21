@@ -4,9 +4,9 @@ use crate::{
         plock::{handle_trig_plock_getter_action, handle_trig_plock_setter_action},
         set::{pattern::pattern_set, track::track_set, trig::trig_set},
     },
-    error::RytmExternalError,
+    error::{GetError, RytmExternalError},
     rytm::Rytm,
-    traits::Post,
+    traits::Post, util::string_from_atom_slice,
 };
 use median::{
     atom::{Atom, AtomValue},
@@ -24,10 +24,6 @@ pub fn handle_pattern_set(
     atoms: &[Atom],
     pattern_index: usize,
 ) -> Result<(), RytmExternalError> {
-    if !(0..=127).contains(&pattern_index) {
-        "Pattern index must be an integer between 0 and 127".obj_error(rytm.max_obj());
-    }
-
     let mut guard = rytm.project.lock().unwrap();
 
     match try_get_atom_value_assuming_action_or_index_or_enum_value(2, atoms)? {
@@ -92,10 +88,6 @@ pub fn handle_pattern_get(
     atoms: &[Atom],
     pattern_index: usize,
 ) -> Result<(), RytmExternalError> {
-    if !(0..=127).contains(&pattern_index) {
-        "Pattern index must be an integer between 0 and 127".obj_error(rytm.max_obj());
-    }
-
     let guard = rytm.project.lock().unwrap();
     let out = &rytm.query_out;
 
@@ -137,12 +129,17 @@ pub fn handle_pattern_get(
 
                             trig_get(action_or_enum_type, trig, out)
                         }
-                        _ => Err(ERR.into()),
+                        _ => Err(GetError::InvalidPatternGetterFormat(string_from_atom_slice(
+                            atoms,
+                        ))
+                        .into()),
                     }
                 }
-                _ => Err(ERR.into()),
+                _ => {
+                    Err(GetError::InvalidPatternGetterFormat(string_from_atom_slice(atoms)).into())
+                }
             }
         }
-        _ => Err(ERR.into()),
+        _ => Err(GetError::InvalidPatternGetterFormat(string_from_atom_slice(atoms)).into()),
     }
 }

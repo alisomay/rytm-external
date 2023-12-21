@@ -13,6 +13,8 @@ use lazy_static::lazy_static;
 use median::symbol::SymbolRef;
 use std::convert::TryFrom;
 
+// TODO: Sub module error types insert
+
 /*** Object Types ***/
 
 pub mod object_type {
@@ -59,7 +61,7 @@ pub mod plock_type {
     pub const ALL_PLOCK_TYPES: &[&str] = &[PLOCK_GET, PLOCK_SET, PLOCK_CLEAR];
 }
 
-// TODO:
+// TODO: MACHINE
 pub mod machine_parameter_type {
     // TODO: For the first version we'll omit machine parameters.
 }

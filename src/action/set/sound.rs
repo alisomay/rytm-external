@@ -1,10 +1,10 @@
 use crate::api::sound_action_type::*;
 use crate::api::sound_enum_type::*;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use crate::util::get_bool_from_0_or_1;
-use crate::util::only_allow_numbers_as_action_parameter;
+use crate::util::only_allow_numbers_as_identifier_parameter;
 use median::atom::Atom;
 use median::atom::AtomValue;
 use median::symbol::SymbolRef;
@@ -49,10 +49,11 @@ pub fn handle_sound_set_enum_value(
                         3 => sound
                             .settings_mut()
                             .set_velocity_modulation_target_4(enum_value.try_into()?),
-                        _ => {
-                            return Err(
-                                "velmod index parameter index must be between 0 and 3.".into()
+                        other => {
+                            return Err(format!(
+                                "Invalid range: The index {other} is out of range for velmodtarget."
                             )
+                            .into())
                         }
                     }
                     return Ok(());
@@ -77,10 +78,11 @@ pub fn handle_sound_set_enum_value(
                         3 => sound
                             .settings_mut()
                             .set_after_touch_modulation_target_4(enum_value.try_into()?),
-                        _ => {
-                            return Err(
-                                "atmod index parameter index must be between 0 and 3.".into()
+                        other => {
+                            return Err(format!(
+                                "Invalid range: The index {other} is out of range for atmodtarget."
                             )
+                            .into())
                         }
                     }
                     return Ok(());
@@ -127,11 +129,11 @@ pub fn handle_sound_set_action(
     if action_or_enum_value_str.as_str() == NAME {
         match parameter_atom.get_value().unwrap() {
             AtomValue::Symbol(symbol) => return Ok(sound.set_name(symbol.to_string()?.as_str())?),
-            _ => return Err("Invalid value: Name must be a symbol with maximum 15 characters long and use only ascii characters.".into()),
+            _ => return Err("Invalid parameter: name must be a symbol with maximum 15 characters long and use only ascii characters.".into()),
         }
     }
 
-    only_allow_numbers_as_action_parameter(parameter_atom)?;
+    only_allow_numbers_as_identifier_parameter(parameter_atom)?;
 
     match action_or_enum_value_str.as_str() {
         ACCENT_LEVEL => Ok(sound.set_accent_level(parameter_atom.get_int() as usize)?),
@@ -221,10 +223,11 @@ pub fn handle_sound_set_action(
                         1 => sound.settings_mut().set_velocity_modulation_amt_2(value)?,
                         2 => sound.settings_mut().set_velocity_modulation_amt_3(value)?,
                         3 => sound.settings_mut().set_velocity_modulation_amt_4(value)?,
-                        _ => {
-                            return Err(
-                                "velmod index parameter index must be between 0 and 3.".into()
+                        other => {
+                            return Err(format!(
+                                "Invalid range: The index {other} is out of range for velmodamt."
                             )
+                            .into())
                         }
                     }
                     return Ok(());
@@ -251,10 +254,11 @@ pub fn handle_sound_set_action(
                         3 => sound
                             .settings_mut()
                             .set_after_touch_modulation_amt_4(value)?,
-                        _ => {
-                            return Err(
-                                "atmod index parameter index must be between 0 and 3.".into()
+                        other => {
+                            return Err(format!(
+                                "Invalid range: The index {other} is out of range for atmodamt."
                             )
+                            .into())
                         }
                     }
                     return Ok(());
@@ -264,6 +268,6 @@ pub fn handle_sound_set_action(
             Err("Invalid setter format: atmodamt should be followed by an integer atmod index. Format: atmodamt <atmod index> <amount>. Example: atmodamt 2 100".into())
         }
 
-        other => Err(InvalidActionType(other.to_owned()).into()),
+        other => Err(IdentifierError::InvalidType(other.to_owned()).into()),
     }
 }

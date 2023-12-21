@@ -1,9 +1,9 @@
 use std::convert::TryInto;
 
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::util::{
-    get_bool_from_0_or_1, only_allow_numbers_as_action_parameter,
+    get_bool_from_0_or_1, only_allow_numbers_as_identifier_parameter,
     try_get_action_value_from_atom_slice,
 };
 use crate::{api::track_action_type::*, api::track_enum_type::*, error::RytmExternalError};
@@ -43,7 +43,7 @@ pub fn handle_track_set_action(action: TrackSetAction) -> Result<(), RytmExterna
         parameter,
     } = action;
 
-    only_allow_numbers_as_action_parameter(parameter)?;
+    only_allow_numbers_as_identifier_parameter(parameter)?;
 
     match action.to_string()?.as_str() {
         DEF_TRIG_NOTE => Ok(track.set_default_trig_note(parameter.get_int() as usize)?),
@@ -65,7 +65,7 @@ pub fn handle_track_set_action(action: TrackSetAction) -> Result<(), RytmExterna
         EUCLIDEAN_RO2 => Ok(track.set_euclidean_ro2(parameter.get_int() as usize)?),
         EUCLIDEAN_TRO => Ok(track.set_euclidean_tro(parameter.get_int() as usize)?),
 
-        other => Err(InvalidActionType(other.to_owned()).into()),
+        other => Err(IdentifierError::InvalidType(other.to_owned()).into()),
     }
 }
 

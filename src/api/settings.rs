@@ -3,9 +3,9 @@ use crate::{
         get::settings::{handle_settings_get_action, handle_settings_get_enum_value},
         set::settings::{handle_settings_set_action, handle_settings_set_enum_value},
     },
-    error::RytmExternalError,
+    error::{GetError, RytmExternalError},
     rytm::Rytm,
-    util::try_get_action_value_from_atom_slice,
+    util::{try_get_action_value_from_atom_slice, string_from_atom_slice},
 };
 use median::atom::{Atom, AtomValue};
 
@@ -58,6 +58,6 @@ pub fn handle_settings_get(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExtern
                 )
             }
         }
-        _ => Err(ERR.into()),
+        _ => Err(GetError::InvalidSettingsGetterFormat(string_from_atom_slice(atoms)).into()),
     }
 }

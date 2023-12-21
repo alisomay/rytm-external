@@ -1,7 +1,7 @@
 use crate::api::kit_action_type;
 use crate::api::sound_action_type;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use median::symbol::SymbolRef;
 use rytm_rs::object::pattern::Trig;
@@ -41,7 +41,7 @@ pub fn handle_trig_plock_clear_action(
         kit_action_type::FX_LFO_DEPTH => Ok(trig.plock_clear_fx_lfo_depth()?),
         //
         // TODO: Do the dist setters after fixing the dist in the SDK
-        // TODO: Do Machine plocks
+        // TODO: MACHINE Do Machine plocks
         //
         sound_action_type::AMP_ATTACK => Ok(trig.plock_clear_amplitude_attack()?),
         sound_action_type::AMP_HOLD => Ok(trig.plock_clear_amplitude_hold()?),
@@ -74,7 +74,7 @@ pub fn handle_trig_plock_clear_action(
         sound_action_type::SAMP_LOOP_FLAG => Ok(trig.plock_clear_sample_loop_flag()?),
         sound_action_type::SAMP_VOLUME => Ok(trig.plock_clear_sample_volume()?),
 
-        other => Err(InvalidActionType(other.to_owned()).into()),
+        other => Err(IdentifierError::InvalidType(other.to_owned()).into()),
     }
 }
 
@@ -94,7 +94,7 @@ pub fn handle_trig_plock_clear_enum_value(
         kit_enum_type::FX_COMP_SIDE_CHAIN_EQ => Ok(trig.plock_clear_fx_compressor_side_chain_eq()?),
         kit_enum_type::FX_LFO_DESTINATION => Ok(trig.plock_clear_fx_lfo_destination()?),
 
-        // TODO:
+        // TODO: MACHINE
         // sound_enum_type::MACHINE_PARAMETERS => todo!(),
         sound_enum_type::LFO_DESTINATION => Ok(trig.plock_clear_lfo_destination()?),
         sound_enum_type::FILTER_TYPE => Ok(trig.plock_clear_filter_type()?),

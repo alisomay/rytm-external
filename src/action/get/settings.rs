@@ -1,7 +1,7 @@
 use crate::api::settings_action_type::*;
 use crate::api::settings_enum_type::*;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use median::atom::Atom;
 use median::outlet::OutAnything;
@@ -37,54 +37,6 @@ pub fn handle_settings_get_enum_value(
     Ok(())
 }
 
-// pub fn handle_settings_set_action(
-//     settings: &mut Settings,
-//     action_or_enum_value_str: &str,
-//     parameter_atom: &Atom,
-// ) -> Result<(), RytmExternalError> {
-//     let action_or_enum_value = SymbolRef::try_from(action_or_enum_value_str)?;
-//     let action_or_enum_value_str = action_or_enum_value.to_string()?;
-
-//     only_allow_numbers_as_action_parameter(parameter_atom)?;
-
-//     match action_or_enum_value_str.as_str() {
-//         BPM_PROJECT => {
-//             settings.set_bpm(parameter_atom.get_float() as f32)?;
-//             Ok(())
-//         }
-//         SELECTED_TRACK => {
-//             settings.set_selected_track(parameter_atom.get_int() as usize)?;
-//             Ok(())
-//         }
-//         SELECTED_PAGE => {
-//             settings.set_selected_page(parameter_atom.get_int() as usize)?;
-//             Ok(())
-//         }
-//         MUTE => {
-//             settings.mute_sound(parameter_atom.get_int() as usize)?;
-//             Ok(())
-//         }
-//         FIXED_VELOCITY_ENABLE => {
-//             settings.set_fixed_velocity_enable(get_bool_from_0_or_1(parameter_atom)?);
-//             Ok(())
-//         }
-//         FIXED_VELOCITY_AMOUNT => {
-//             settings.set_fixed_velocity_amount(parameter_atom.get_int() as usize)?;
-//             Ok(())
-//         }
-//         SAMPLE_RECORDER_THR => {
-//             settings.set_sample_recorder_threshold(parameter_atom.get_int() as usize)?;
-//             Ok(())
-//         }
-//         SAMPLE_RECORDER_MONITOR_ENABLE => {
-//             settings.set_sample_recorder_monitor_enable(get_bool_from_0_or_1(parameter_atom)?);
-//             Ok(())
-//         }
-
-//         other => Err(InvalidActionType(other.to_owned()).into()),
-//     }
-// }
-
 pub fn handle_settings_get_action(
     settings: &Settings,
     action: &str,
@@ -97,7 +49,7 @@ pub fn handle_settings_get_action(
         SELECTED_PAGE => Atom::from(settings.selected_page() as isize),
         MUTE => {
             let index = maybe_next_atom
-                .ok_or("Invalid format: mute should be followed by an integer sound index.")?
+                .ok_or("Invalid getter format: mute should be followed by an integer sound index.")?
                 .get_int();
             Atom::from(isize::from(settings.is_sound_muted(index as usize)?))
         }
@@ -108,7 +60,7 @@ pub fn handle_settings_get_action(
             Atom::from(isize::from(settings.sample_recorder_monitor_enabled()))
         }
 
-        other => return Err(InvalidActionType(other.to_owned()).into()),
+        other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(SymbolRef::from(CString::new(action).unwrap()));

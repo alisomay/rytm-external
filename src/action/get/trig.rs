@@ -2,8 +2,8 @@ use std::convert::TryFrom;
 
 use crate::api::trig_action_type::*;
 use crate::api::trig_enum_type::*;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use median::{
     atom::{Atom, AtomValue},
@@ -53,7 +53,7 @@ pub fn handle_trig_get_action(action: TrigGetAction) -> Result<(), RytmExternalE
         RETRIG_VELOCITY_OFFSET => trig.retrig_velocity_offset(),
         SOUND_LOCK => trig.sound_lock() as isize,
 
-        other => return Err(InvalidActionType(other.to_owned()).into()),
+        other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(action);

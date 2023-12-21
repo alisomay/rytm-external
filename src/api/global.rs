@@ -1,3 +1,7 @@
+use crate::error::GetError;
+use crate::util::{
+    string_from_atom_slice, try_get_atom_value_assuming_action_or_index_or_enum_value,
+};
 use crate::{
     action::{
         get::global::{handle_global_get_action, handle_global_get_enum_value},
@@ -5,15 +9,9 @@ use crate::{
     },
     error::RytmExternalError,
     rytm::Rytm,
-    traits::Post,
     util::try_get_action_value_from_atom_slice,
 };
-use median::{
-    atom::{Atom, AtomValue},
-    object::MaxObj,
-};
-
-use crate::util::try_get_atom_value_assuming_action_or_index_or_enum_value;
+use median::atom::{Atom, AtomValue};
 
 //TODO:
 const ERR: &str =
@@ -24,9 +22,6 @@ pub fn handle_global_set(
     atoms: &[Atom],
     global_index: usize,
 ) -> Result<(), RytmExternalError> {
-    if !(0..=3).contains(&global_index) {
-        "Global slot index must be an integer between 0 and 3".obj_error(rytm.max_obj());
-    }
     let mut guard = rytm.project.lock().unwrap();
 
     match try_get_atom_value_assuming_action_or_index_or_enum_value(2, atoms)? {
@@ -34,7 +29,7 @@ pub fn handle_global_set(
             let action_or_enum_value_str = action_or_enum_value.to_string()?;
             let enum_pair = action_or_enum_value_str.split_once(':');
 
-            let global_mut = guard.work_buffer_mut().global_mut();
+            let global_mut = &mut guard.globals_mut()[global_index];
 
             if let Some((enum_type, enum_value)) = enum_pair {
                 // Some set calls might require an additional argument,
@@ -54,9 +49,6 @@ pub fn handle_global_get(
     atoms: &[Atom],
     global_index: usize,
 ) -> Result<(), RytmExternalError> {
-    if !(0..=3).contains(&global_index) {
-        "Global slot index must be an integer between 0 and 3".obj_error(rytm.max_obj());
-    }
     let guard = rytm.project.lock().unwrap();
     let out = &rytm.query_out;
     match try_get_atom_value_assuming_action_or_index_or_enum_value(2, atoms)? {
@@ -64,7 +56,7 @@ pub fn handle_global_get(
             let action_or_enum_value_str = action_or_enum_value.to_string()?;
             let enum_pair = action_or_enum_value_str.split_once(':');
 
-            let global = guard.work_buffer().global();
+            let global = &guard.globals()[global_index];
 
             if let Some((enum_type, enum_value)) = enum_pair {
                 handle_global_get_enum_value(global, enum_type, enum_value, out)
@@ -73,6 +65,6 @@ pub fn handle_global_get(
                 handle_global_get_action(global, &action_or_enum_value_str, maybe_next_atom, out)
             }
         }
-        _ => Err(ERR.into()),
+        _ => Err(GetError::InvalidGlobalGetterFormat(string_from_atom_slice(atoms)).into()),
     }
 }

@@ -1,8 +1,8 @@
 use crate::api::trig_action_type::*;
 use crate::api::trig_enum_type::*;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
-use crate::util::only_allow_numbers_as_action_parameter;
+use crate::error::IdentifierError;
+use crate::util::only_allow_numbers_as_identifier_parameter;
 use crate::util::try_get_action_value_from_atom_slice;
 use crate::{error::RytmExternalError, util::get_bool_from_0_or_1};
 use median::atom::Atom;
@@ -43,7 +43,7 @@ pub fn handle_trig_set_action(action: TrigSetAction) -> Result<(), RytmExternalE
         parameter,
     } = action;
 
-    only_allow_numbers_as_action_parameter(parameter)?;
+    only_allow_numbers_as_identifier_parameter(parameter)?;
 
     match action.to_string()?.as_str() {
         ENABLE => trig.set_trig_enable(get_bool_from_0_or_1(parameter, ENABLE)?),
@@ -58,7 +58,7 @@ pub fn handle_trig_set_action(action: TrigSetAction) -> Result<(), RytmExternalE
         RETRIG_VELOCITY_OFFSET => trig.set_retrig_velocity_offset(parameter.get_int())?,
         SOUND_LOCK => trig.set_sound_lock(parameter.get_int() as usize)?,
 
-        other => return Err(InvalidActionType(other.to_owned()).into()),
+        other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     }
 
     Ok(())

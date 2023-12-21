@@ -1,7 +1,7 @@
 use crate::api::global_action_type::*;
 use crate::api::global_enum_type::*;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use median::atom::{Atom, AtomValue};
 use median::outlet::OutAnything;
@@ -127,13 +127,13 @@ pub fn handle_global_get_action(
                         .into()
                 } else {
                     return Err(
-                        "Invalid getter format: routetomain requires to be followed by an integer track index."
+                        "Invalid getter format: routetomain should be followed by an integer track index."
                             .into(),
                     );
                 }
             } else {
                 return Err(
-                    "Invalid getter format: routetomain requires to be followed by an integer track index.".into(),
+                    "Invalid getter format: routetomain should be followed by an integer track index.".into(),
                 );
             }
         }
@@ -144,13 +144,13 @@ pub fn handle_global_get_action(
                     global.routing().is_track_sent_to_fx(value as usize).into()
                 } else {
                     return Err(
-                        "Invalid format: sendtofx requires to be followed by a track index (integer)"
+                        "Invalid getter format: sendtofx should be followed by a track index (integer)"
                             .into(),
                     );
                 }
             } else {
                 return Err(
-                    "Invalid format: sendtofx requires to be followed by a track index (integer)"
+                    "Invalid getter format: sendtofx should be followed by a track index (integer)"
                         .into(),
                 );
             }
@@ -171,7 +171,7 @@ pub fn handle_global_get_action(
         METRONOME_PRE_ROLL_BARS => global.metronome_settings().pre_roll_bars() as isize,
         METRONOME_VOLUME => global.metronome_settings().volume() as isize,
 
-        other => return Err(InvalidActionType(other.to_owned()).into()),
+        other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(SymbolRef::from(CString::new(action).unwrap()));

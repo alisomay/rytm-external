@@ -2,8 +2,8 @@ use std::convert::TryFrom;
 
 use crate::api::pattern_action_type::*;
 use crate::api::pattern_enum_type::*;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use median::{
     atom::{Atom, AtomValue},
@@ -55,7 +55,7 @@ pub fn handle_pattern_get_action(action: PatternGetAction) -> Result<(), RytmExt
         GLOBAL_QUANTIZE => Atom::from(pattern.global_quantize() as isize),
         BPM => Atom::from(f64::from(pattern.bpm())),
 
-        other => return Err(InvalidActionType(other.to_owned()).into()),
+        other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(action);

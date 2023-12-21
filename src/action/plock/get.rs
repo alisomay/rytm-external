@@ -2,8 +2,8 @@ use crate::api::kit_action_type;
 use crate::api::kit_enum_type;
 use crate::api::sound_action_type;
 use crate::api::sound_enum_type;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use median::atom::{Atom, AtomValue};
 use median::outlet::OutAnything;
@@ -90,7 +90,7 @@ pub fn handle_trig_plock_get_action(
             .map(|val| Atom::from(f64::from(val))),
         //
         // TODO: Do the dist setters after fixing the dist in the SDK
-        // TODO: Do Machine plocks
+        // TODO: MACHINE Do Machine plocks
         //
         sound_action_type::AMP_ATTACK => trig
             .plock_get_amplitude_attack()?
@@ -167,7 +167,7 @@ pub fn handle_trig_plock_get_action(
             .plock_get_sample_volume()?
             .map(|val| Atom::from(val as isize)),
 
-        other => return Err(InvalidActionType(other.to_owned()).into()),
+        other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     };
     let action_atom = Atom::from(action);
     let index_atom = Atom::from(AtomValue::Int(trig.index() as isize));

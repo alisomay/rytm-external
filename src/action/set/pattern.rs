@@ -1,6 +1,8 @@
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
-use crate::util::{only_allow_numbers_as_action_parameter, try_get_action_value_from_atom_slice};
+use crate::error::IdentifierError;
+use crate::util::{
+    only_allow_numbers_as_identifier_parameter, try_get_action_value_from_atom_slice,
+};
 use crate::{api::pattern_action_type::*, api::pattern_enum_type::*, error::RytmExternalError};
 use median::atom::Atom;
 use median::symbol::SymbolRef;
@@ -39,7 +41,7 @@ pub fn handle_pattern_set_action(action: PatternSetAction) -> Result<(), RytmExt
         parameter,
     } = action;
 
-    only_allow_numbers_as_action_parameter(parameter)?;
+    only_allow_numbers_as_identifier_parameter(parameter)?;
 
     match action.to_string()?.as_str() {
         MASTER_LENGTH => Ok(pattern.set_master_length(parameter.get_int() as usize)?),
@@ -49,7 +51,7 @@ pub fn handle_pattern_set_action(action: PatternSetAction) -> Result<(), RytmExt
         GLOBAL_QUANTIZE => Ok(pattern.set_global_quantize(parameter.get_int() as usize)?),
         BPM => Ok(pattern.set_bpm(parameter.get_float() as f32)?),
 
-        other => Err(InvalidActionType(other.to_owned()).into()),
+        other => Err(IdentifierError::InvalidType(other.to_owned()).into()),
     }
 }
 

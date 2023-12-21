@@ -33,7 +33,7 @@ pub fn handle_trig_plock_setter_action(
                 }
             }
             PLOCK_GET => {
-                Err("Invalid plock action ({action_or_enum_value_str}): You may use {PLOCK_SET} and {PLOCK_CLEAR} with setters and {PLOCK_GET} with getters.".into())
+                Err(format!("Invalid plock action: ({action_or_enum_value_str}): You may use {PLOCK_SET} and {PLOCK_CLEAR} with setters and {PLOCK_GET} with getters.").into())
             }
             PLOCK_CLEAR => {
                 if let Some((enum_type, _)) = enum_pair {
@@ -46,7 +46,7 @@ pub fn handle_trig_plock_setter_action(
         };
     }
 
-    Err("Invalid format: The list must be followed by either an action or enum value.".into())
+    Err("Invalid plock setter format: The list must be followed by either an identifier or enum value.".into())
 }
 
 pub fn handle_trig_plock_getter_action(
@@ -79,5 +79,5 @@ pub fn handle_trig_plock_getter_action(
         };
     }
 
-    Err("Invalid format: The list must be followed by either an action or enum value.".into())
+    Err("Invalid plock getter format: The list must be followed by either an identifier or enum value.".into())
 }

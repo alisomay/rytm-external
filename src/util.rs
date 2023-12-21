@@ -3,29 +3,13 @@ use std::convert::TryFrom;
 use crate::api::kit_element_type::KIT_ELEMENTS;
 use crate::api::kit_enum_type::KIT_ENUM_TYPES;
 use crate::error::RytmExternalError;
-use crate::{api::kit_action_type::KIT_ACTION_TYPES, error::ActionError::InvalidActionParameter};
+use crate::{api::kit_action_type::KIT_ACTION_TYPES, error::IdentifierError::InvalidParameter};
 use median::{
     atom::{Atom, AtomType, AtomValue},
     symbol::SymbolRef,
 };
 
-/// Gets a bool from 0 or 1 as an atom.
-pub fn get_bool_from_0_or_1(value: &Atom, identifier: &str) -> Result<bool, RytmExternalError> {
-    match value.get_value().ok_or_else(|| {
-        RytmExternalError::from(format!(
-            "Invalid parameter: {identifier} must be followed by a 0 or 1"
-        ))
-    })? {
-        AtomValue::Int(value) => match value {
-            0 => Ok(false),
-            1 => Ok(true),
-            _ => {
-                Err(format!("Invalid parameter: {identifier} must be followed by a 0 or 1").into())
-            }
-        },
-        _ => Err(format!("Invalid parameter: {identifier} must be followed by a 0 or 1").into()),
-    }
-}
+//////////////////////////////
 
 pub fn try_get_index_with_range(
     atoms: &[Atom],
@@ -152,12 +136,50 @@ pub fn try_get_action_value_from_atom_slice(
     )
 }
 
-pub fn only_allow_numbers_as_action_parameter(atom: &Atom) -> Result<(), RytmExternalError> {
+//////////////////////////////
+
+// OK
+/// Gets a bool from 0 or 1 as an atom.
+pub fn get_bool_from_0_or_1(value: &Atom, identifier: &str) -> Result<bool, RytmExternalError> {
+    match value.get_value().ok_or_else(|| {
+        RytmExternalError::from(format!(
+            "Invalid parameter: {identifier} must be followed by a 0 or 1"
+        ))
+    })? {
+        AtomValue::Int(value) => match value {
+            0 => Ok(false),
+            1 => Ok(true),
+            _ => {
+                Err(format!("Invalid parameter: {identifier} must be followed by a 0 or 1").into())
+            }
+        },
+        _ => Err(format!("Invalid parameter: {identifier} must be followed by a 0 or 1").into()),
+    }
+}
+
+// OK
+pub fn only_allow_numbers_as_identifier_parameter(atom: &Atom) -> Result<(), RytmExternalError> {
     match atom.get_type() {
-        Some(AtomType::Object | AtomType::Symbol) | None => Err(InvalidActionParameter(
-            "Action parameters can be only integers or floats.".to_owned(),
+        Some(AtomType::Object | AtomType::Symbol) | None => Err(InvalidParameter(
+            "Allowed parameters are integers or floats.".to_owned(),
+            atom.get_symbol().to_cstring().to_string_lossy().to_string(),
         )
         .into()),
         _ => Ok(()),
     }
+}
+
+// Ok
+pub fn string_from_atom_slice(atoms: &[Atom]) -> String {
+    if atoms.is_empty() {
+        return String::new();
+    }
+
+    let mut string = String::new();
+    for atom in atoms {
+        string.push_str(&atom.get_symbol().to_cstring().to_string_lossy());
+        string.push(' ');
+    }
+
+    string
 }

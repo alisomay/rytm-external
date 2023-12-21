@@ -2,12 +2,12 @@ use crate::api::kit_action_type::*;
 use crate::api::kit_element_type::*;
 use crate::api::kit_enum_type::*;
 use crate::api::sound_kit::handle_sound_kit_set;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use crate::error::RytmExternalError::NotYetImplemented;
 use crate::util::get_bool_from_0_or_1;
-use crate::util::only_allow_numbers_as_action_parameter;
+use crate::util::only_allow_numbers_as_identifier_parameter;
 use median::atom::AtomType;
 use median::atom::{Atom, AtomValue};
 use median::symbol::SymbolRef;
@@ -24,11 +24,11 @@ pub fn handle_kit_set_action(
     if action_str.as_str() == NAME {
         match parameter.get_value().unwrap() {
             AtomValue::Symbol(symbol) => return Ok(kit.set_name(symbol.to_string()?.as_str())?),
-            _ => return Err("Invalid value: Name must be a symbol with maximum 15 characters long and use only ascii characters.".into()),
+            _ => return Err("Invalid parameter: name must be a symbol with maximum 15 characters long and use only ascii characters.".into()),
         }
     }
 
-    only_allow_numbers_as_action_parameter(parameter)?;
+    only_allow_numbers_as_identifier_parameter(parameter)?;
 
     match action_str.as_str() {
         FX_DELAY_TIME => Ok(kit.fx_delay_mut().set_time(parameter.get_int() as usize)?),
@@ -84,7 +84,7 @@ pub fn handle_kit_set_action(
             .set_start_phase(parameter.get_int() as usize)?),
         FX_LFO_DEPTH => Ok(kit.fx_lfo_mut().set_depth(parameter.get_float() as f32)?),
 
-        other => Err(InvalidActionType(other.to_owned()).into()),
+        other => Err(IdentifierError::InvalidType(other.to_owned()).into()),
     }
 }
 
@@ -117,11 +117,9 @@ pub fn handle_kit_set_kit_element(
     element_parameter: &Atom,
 ) -> Result<(), RytmExternalError> {
     match element_parameter.get_type() {
-        Some(AtomType::Object) | None => {
-            return Err(RytmExternalError::from(
-                "Kit element parameters can be only integers, floats or symbols.",
-            ))
-        }
+        Some(AtomType::Object) | None => return Err(RytmExternalError::from(
+            "Invalid parameter: Kit element parameters can be only integers, floats or symbols.",
+        )),
         _ => {
             // Pass..
         }
@@ -134,7 +132,9 @@ pub fn handle_kit_set_kit_element(
         TRACK_RETRIG_RATE => {
             let param_str = element_parameter.get_symbol().to_string()?;
             let (_, enum_value) = param_str.as_str().split_once(':').ok_or_else(|| {
-                RytmExternalError::from("Invalid value: kit element requires an enum value.")
+                RytmExternalError::from(
+                    "Invalid parameter: kit element should be followed by an enum value.",
+                )
             })?;
             kit.track_retrig_settings_mut(element_index)?
                 .set_rate(enum_value.try_into()?);
@@ -143,7 +143,9 @@ pub fn handle_kit_set_kit_element(
         TRACK_RETRIG_LENGTH => {
             let param_str = element_parameter.get_symbol().to_string()?;
             let (_, enum_value) = param_str.as_str().split_once(':').ok_or_else(|| {
-                RytmExternalError::from("Invalid value: kit element requires an enum value.")
+                RytmExternalError::from(
+                    "Invalid parameter: kit element should be followed by an enum value.",
+                )
             })?;
             kit.track_retrig_settings_mut(element_index)?
                 .set_length(enum_value.try_into()?);
@@ -161,7 +163,7 @@ pub fn handle_kit_set_kit_element(
             Ok(())
         }
 
-        other => Err(InvalidActionType(other.to_owned()).into()),
+        other => Err(IdentifierError::InvalidType(other.to_owned()).into()),
     }
 }
 

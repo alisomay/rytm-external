@@ -2,8 +2,8 @@ use std::convert::TryFrom;
 
 use crate::api::track_action_type::*;
 use crate::api::track_enum_type::*;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use median::{
     atom::{Atom, AtomValue},
@@ -56,7 +56,7 @@ pub fn handle_track_get_action(action: TrackGetAction) -> Result<(), RytmExterna
         EUCLIDEAN_RO2 => track.euclidean_ro2(),
         EUCLIDEAN_TRO => track.euclidean_tro(),
 
-        other => return Err(InvalidActionType(other.to_owned()).into()),
+        other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(action);

@@ -2,8 +2,8 @@ use crate::api::kit_action_type::*;
 use crate::api::kit_element_type::*;
 use crate::api::kit_enum_type::*;
 use crate::api::sound_kit::handle_sound_kit_get;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use crate::error::RytmExternalError::NotYetImplemented;
 use median::atom::{Atom, AtomValue};
@@ -53,7 +53,7 @@ pub fn handle_kit_get_action(
         FX_LFO_DEPTH => f64::from(kit.fx_lfo().depth()).into(),
 
         // TODO: Distortion getters when ready
-        other => return Err(InvalidActionType(other.to_owned()).into()),
+        other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(action);
@@ -124,7 +124,7 @@ pub fn handle_kit_get_kit_element(
             isize::from(kit.track_retrig_settings(element_index)?.always_on()).into()
         }
 
-        other => return Err(InvalidActionType(other.to_owned()).into()),
+        other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     };
 
     let element_type_atom = Atom::from(SymbolRef::try_from(element_type).unwrap());

@@ -1,10 +1,10 @@
 use crate::api::settings_action_type::*;
 use crate::api::settings_enum_type::*;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use crate::util::get_bool_from_0_or_1;
-use crate::util::only_allow_numbers_as_action_parameter;
+use crate::util::only_allow_numbers_as_identifier_parameter;
 use median::atom::Atom;
 use median::symbol::SymbolRef;
 use rytm_rs::object::Settings;
@@ -53,7 +53,7 @@ pub fn handle_settings_set_action(
     let action_or_enum_value = SymbolRef::try_from(action_or_enum_value_str)?;
     let action_or_enum_value_str = action_or_enum_value.to_string()?;
 
-    only_allow_numbers_as_action_parameter(parameter_atom)?;
+    only_allow_numbers_as_identifier_parameter(parameter_atom)?;
 
     match action_or_enum_value_str.as_str() {
         BPM_PROJECT => {
@@ -95,6 +95,6 @@ pub fn handle_settings_set_action(
             Ok(())
         }
 
-        other => Err(InvalidActionType(other.to_owned()).into()),
+        other => Err(IdentifierError::InvalidType(other.to_owned()).into()),
     }
 }

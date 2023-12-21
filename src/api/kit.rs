@@ -11,42 +11,20 @@ use crate::{
     },
     error::RytmExternalError,
     rytm::Rytm,
-    traits::Post,
     util::{
         try_get_atom_value_as_kit_element_or_action_or_enum_value, try_get_index_with_range,
         KitElementOrActionOrEnumTypeAndValue,
     },
 };
-use median::{atom::Atom, object::MaxObj};
+use median::atom::Atom;
 
 use crate::util::try_get_action_value_from_atom_slice;
-
-// kit_wb fx... val
-// kit_wb tracklevel 0 0
-// kit wb trackretrigrate 0 0
-// kit wb sound 0 ..
-
-// When parsing
-
-// action_or_enum_value and param
-// kit_element element_index action_or_enum_value and param
-
-// if sound (maybe special handling with slice of new atoms passed in?) // currently omit it.
-
-// Then the strategy is
-// 1 check for a symbol first and it needs to be either a kit element or action/enumvalue, if not error
-// 2 if action/enumvalue look for a param, if not error
-// 2 if kit element, treat the next one as index over the element check range
-// 3 (only after kit elem) treat it as the param for the chosen element
 
 pub fn handle_kit_set(
     rytm: &Rytm,
     atoms: &[Atom],
     kit_index: usize,
 ) -> Result<(), RytmExternalError> {
-    if !(0..=127).contains(&kit_index) {
-        "Kit index must be an integer between 0 and 127".obj_error(rytm.max_obj());
-    }
     let mut guard = rytm.project.lock().unwrap();
 
     match try_get_atom_value_as_kit_element_or_action_or_enum_value(2, atoms)? {
@@ -97,9 +75,6 @@ pub fn handle_kit_get(
     atoms: &[Atom],
     kit_index: usize,
 ) -> Result<(), RytmExternalError> {
-    if !(0..=127).contains(&kit_index) {
-        "Kit index must be an integer between 0 and 127".obj_error(rytm.max_obj());
-    }
     let guard = rytm.project.lock().unwrap();
     let out = &rytm.query_out;
     match try_get_atom_value_as_kit_element_or_action_or_enum_value(2, atoms)? {

@@ -1,7 +1,7 @@
 use crate::api::kit_action_type;
 use crate::api::sound_action_type;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::{error::RytmExternalError, util::get_bool_from_0_or_1};
 use median::{atom::Atom, symbol::SymbolRef};
 use rytm_rs::object::pattern::Trig;
@@ -174,11 +174,11 @@ pub fn handle_trig_plock_set_action(
                 Ok(trig.plock_set_sample_volume(parameter_atom.get_int() as usize)?)
             }
 
-            other => Err(InvalidActionType(other.to_owned()).into()),
+            other => Err(IdentifierError::InvalidType(other.to_owned()).into()),
         };
     }
 
-    Err("Invalid format: A parameter should follow a plockset action.".into())
+    Err("Invalid format: A parameter or enum should follow a plockset action.".into())
 }
 
 pub fn handle_trig_plock_set_enum_value(

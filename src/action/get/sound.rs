@@ -1,7 +1,7 @@
 use crate::api::sound_action_type::*;
 use crate::api::sound_enum_type::*;
-use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
+use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
 use median::atom::Atom;
 use median::atom::AtomValue;
@@ -22,7 +22,7 @@ pub fn handle_sound_get_enum_value(
         LFO_DESTINATION => sound.lfo().destination().into(),
 
         VELOCITY_MOD_TARGET => match enum_value.parse::<usize>().map_err(|_| {
-            RytmExternalError::from("Invalid Format: velmodtarget:<integer> is the correct format. Example: velmodtarget:2")
+            RytmExternalError::from("Invalid getter format: velmodtarget:<integer> is the correct format. Example: velmodtarget:2")
         })? {
             0 => sound.settings().velocity_modulation_target_1().into(),
             1 => sound.settings().velocity_modulation_target_2().into(),
@@ -30,13 +30,13 @@ pub fn handle_sound_get_enum_value(
             3 => sound.settings().velocity_modulation_target_4().into(),
             other => {
                 return Err(format!(
-                    "Invalid Range: The index {other} is out of range for velmodtarget."
+                    "Invalid range: The index {other} is out of range for velmodtarget."
                 )
                 .into())
             }
         },
         AFTER_TOUCH_MOD_TARGET => match enum_value.parse::<usize>().map_err(|_| {
-            RytmExternalError::from("Invalid Format: atmodtarget:<integer> is the correct format. Example: atmodtarget:2")
+            RytmExternalError::from("Invalid getter format: atmodtarget:<integer> is the correct format. Example: atmodtarget:2")
         })? {
             0 => sound.settings().after_touch_modulation_target_1().into(),
             1 => sound.settings().after_touch_modulation_target_2().into(),
@@ -44,7 +44,7 @@ pub fn handle_sound_get_enum_value(
             3 => sound.settings().after_touch_modulation_target_4().into(),
             other => {
                 return Err(format!(
-                    "Invalid Range: The index {other} is out of range for atmodtarget."
+                    "Invalid range: The index {other} is out of range for atmodtarget."
                 )
                 .into())
             }
@@ -78,7 +78,7 @@ pub fn handle_sound_get_action(
     let value_atom: Atom = match action {
         NAME => Atom::from(SymbolRef::from(CString::new(sound.name()).unwrap())),
         ACCENT_LEVEL => (sound.accent_level() as isize).into(),
-        // TODO:
+        // TODO: MACHINE
         // MACHINE => (sound.machine() as isize).into(),
         AMP_ATTACK => (sound.amplitude().attack() as isize).into(),
         AMP_HOLD => (sound.amplitude().hold() as isize).into(),
@@ -123,7 +123,7 @@ pub fn handle_sound_get_action(
                 3 => (sound.settings().velocity_modulation_amt_4()).into(),
                 other => {
                     return Err(format!(
-                        "Invalid Range: The index {other} is out of range for velmodamt."
+                        "Invalid range: The index {other} is out of range for velmodamt."
                     )
                     .into())
                 }
@@ -133,7 +133,7 @@ pub fn handle_sound_get_action(
         AT_MOD_AMT => {
             let index = maybe_index_atom.ok_or_else(|| {
                 RytmExternalError::from(
-                    "Invalid getter format: atmodamt should be followed by an index.",
+                    "Invalid getter format: atmodamt should be followed by an integer index.",
                 )
             })?;
             let index = index.get_int() as usize;
@@ -144,7 +144,7 @@ pub fn handle_sound_get_action(
                 3 => (sound.settings().after_touch_modulation_amt_4()).into(),
                 other => {
                     return Err(format!(
-                        "Invalid Range: The index {other} is out of range for atmodamt."
+                        "Invalid range: The index {other} is out of range for atmodamt."
                     )
                     .into())
                 }
@@ -155,7 +155,7 @@ pub fn handle_sound_get_action(
         VELOCITY_TO_VOLUME => isize::from(sound.settings().velocity_to_volume()).into(),
         LEGACY_FX_SEND => isize::from(sound.settings().legacy_fx_send()).into(),
 
-        other => return Err(InvalidActionType(other.to_owned()).into()),
+        other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(SymbolRef::from(CString::new(action).unwrap()));

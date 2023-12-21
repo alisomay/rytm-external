@@ -116,7 +116,7 @@ impl Rytm {
             Self::SELECTOR_SET => self.set(sel, atoms),
             Self::SELECTOR_GET => self.get(sel, atoms),
             Self::SELECTOR_DEBUG => Self::debug_mode(sel, atoms),
-            _ => Err(format!("rytm does not understand {selector}").into()),
+            _ => Err(format!("Invalid selector: {selector}. Possible selectors are query, send, set, get, debug.").into()),
         }
     }
 
@@ -265,7 +265,6 @@ impl Rytm {
 
     fn get(&self, _sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
         // Indexable objects look for an index as the second atom thus they'd throw an error here.
-        // TODO: Correct the error here, it shouldn't be a query error.
         let indexable = ObjectTypeSelector::try_from((
             atoms.get(0).ok_or_else(|| {
                 GetError::InvalidFormat(

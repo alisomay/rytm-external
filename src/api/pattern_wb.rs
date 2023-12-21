@@ -4,9 +4,9 @@ use crate::{
         plock::{handle_trig_plock_getter_action, handle_trig_plock_setter_action},
         set::{pattern::pattern_set, track::track_set, trig::trig_set},
     },
-    error::RytmExternalError,
+    error::{GetError, RytmExternalError},
     rytm::Rytm,
-    traits::Post,
+    traits::Post, util::string_from_atom_slice,
 };
 use median::{
     atom::{Atom, AtomValue},
@@ -130,12 +130,17 @@ pub fn handle_pattern_wb_get(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExte
 
                             trig_get(action_or_enum_type, trig, out)
                         }
-                        _ => Err(ERR.into()),
+                        _ => Err(
+                            GetError::InvalidPatternWbGetterFormat(string_from_atom_slice(atoms))
+                                .into(),
+                        ),
                     }
                 }
-                _ => Err(ERR.into()),
+                _ => Err(
+                    GetError::InvalidPatternWbGetterFormat(string_from_atom_slice(atoms)).into(),
+                ),
             }
         }
-        _ => Err(ERR.into()),
+        _ => Err(GetError::InvalidPatternWbGetterFormat(string_from_atom_slice(atoms)).into()),
     }
 }
