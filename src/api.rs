@@ -9,29 +9,8 @@ pub mod sound;
 pub mod sound_kit;
 pub mod sound_wb;
 
-use crate::{
-    action::{
-        get::{
-            handle_get_action,
-            pattern::{handle_pattern_enum_get_action, PatternGetAction},
-            track::{handle_track_enum_get_action, TrackGetAction},
-            trig::{handle_trig_enum_get_action, TrigGetAction},
-            GetAction,
-        },
-        set::{
-            handle_set_action,
-            pattern::{handle_pattern_enum_set_action, PatternSetAction},
-            track::{handle_track_enum_set_action, TrackSetAction},
-            trig::{handle_trig_enum_set_action, TrigSetAction},
-            SetAction,
-        },
-    },
-    error::RytmExternalError,
-    util::try_get_action_value_from_atom_slice,
-};
 use lazy_static::lazy_static;
-use median::{atom::Atom, outlet::OutAnything, symbol::SymbolRef};
-use rytm_rs::object::Pattern;
+use median::symbol::SymbolRef;
 use std::convert::TryFrom;
 
 /*** Object Types ***/
@@ -107,38 +86,42 @@ pub mod machine_parameter_type {
 //     sample_recorder_monitor_enable: bool,
 
 // }
-
 pub mod settings_action_type {
-    const VERSION: &str = "version";
-    const BPM_PROJECT: &str = "bpmproject";
-    const SELECTED_TRACK: &str = "selectedtrack";
-    const SELECTED_PAGE: &str = "selectedpage";
-    // Flags set
-    const MUTE: &str = "mute";
-    const FIXED_VELOCITY_ENABLE: &str = "fixedvelocity";
-    const FIXED_VELOCITY_AMOUNT: &str = "fixedvelocityamount";
-    const SAMPLE_RECORDER_THR: &str = "samplerecorderthr";
-    const SAMPLE_RECORDER_MONITOR_ENABLE: &str = "samplerecordermonitor";
+    pub const VERSION: &str = "version";
+    pub const BPM_PROJECT: &str = "projectbpm";
+    pub const SELECTED_TRACK: &str = "selectedtrack";
+    pub const SELECTED_PAGE: &str = "selectedpage";
+    pub const MUTE: &str = "mute";
+    pub const FIXED_VELOCITY_ENABLE: &str = "fixedvelocity";
+    pub const FIXED_VELOCITY_AMOUNT: &str = "fixedvelocityamount";
+    pub const SAMPLE_RECORDER_THR: &str = "samplerecorderthr";
+    pub const SAMPLE_RECORDER_MONITOR_ENABLE: &str = "samplerecordermonitor";
 }
 
 pub mod global_action_type {
     pub const VERSION: &str = "version";
     pub const INDEX: &str = "index";
     pub const IS_WORK_BUFFER: &str = "iswb";
+
     pub const KIT_RELOAD_ON_CHANGE: &str = "kitreloadonchg";
     pub const QUANTIZE_LIVE_REC: &str = "quantizeliverec";
     pub const AUTO_TRACK_SWITCH: &str = "autotrackswitch";
+
     pub const ROUTE_TO_MAIN: &str = "routetomain";
     pub const SEND_TO_FX: &str = "sendtofx";
+
     pub const CLOCK_RECEIVE: &str = "clockreceive";
     pub const CLOCK_SEND: &str = "clocksend";
     pub const TRANSPORT_RECEIVE: &str = "transportreceive";
     pub const TRANSPORT_SEND: &str = "transportsend";
     pub const PROGRAM_CHANGE_RECEIVE: &str = "programchangereceive";
     pub const PROGRAM_CHANGE_SEND: &str = "programchangesend";
+
     pub const RECEIVE_NOTES: &str = "receivenotes";
     pub const RECEIVE_CC_NRPN: &str = "receiveccnrpn";
+    // Only get will be implemented for this one
     pub const TURBO_SPEED: &str = "turbospeed";
+
     pub const METRONOME_ACTIVE: &str = "metronomeactive";
     pub const METRONOME_PRE_ROLL_BARS: &str = "metronomeprerollbars";
     pub const METRONOME_VOLUME: &str = "metronomevolume";
@@ -241,7 +224,7 @@ pub mod trig_action_type {
 
 pub mod track_action_type {
     pub const IS_WORK_BUFFER: &str = "iswb";
-    pub const OWNER_INDEX: &str = "ownerindex";
+    pub const OWNER_INDEX: &str = "parentindex";
     pub const INDEX: &str = "index";
     pub const DEF_TRIG_NOTE: &str = "deftrignote";
     pub const DEF_TRIG_VELOCITY: &str = "deftrigvel";
@@ -262,11 +245,11 @@ pub mod pattern_action_type {
     pub const INDEX: &str = "index";
     pub const VERSION: &str = "version";
     pub const MASTER_LENGTH: &str = "masterlength";
-    pub const MASTER_CHANGE: &str = "masterchange";
+    pub const MASTER_CHANGE: &str = "masterchg";
     pub const KIT_NUMBER: &str = "kitnumber";
     pub const SWING_AMOUNT: &str = "swingamount";
     pub const GLOBAL_QUANTIZE: &str = "globalquantize";
-    pub const BPM: &str = "bpm";
+    pub const BPM: &str = "patternbpm";
 }
 
 pub mod sound_action_type {

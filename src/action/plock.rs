@@ -29,7 +29,7 @@ pub fn handle_trig_plock_setter_action(
                 if let Some((enum_type, enum_value)) = enum_pair {
                     handle_trig_plock_set_enum_value(trig, enum_type, enum_value)
                 } else {
-                    handle_trig_plock_set_action(trig, action_or_enum_value, atom)
+                    handle_trig_plock_set_action(trig, action_or_enum_value, atoms, slice_index + 1)
                 }
             }
             PLOCK_GET => {

@@ -3,6 +3,7 @@ use crate::{
     error::{QueryError, RytmExternalError},
     traits::*,
 };
+use median::atom::AtomValue;
 use median::outlet::OutAnything;
 use median::{atom::Atom, max_sys::t_atom_long, object::MaxObj, outlet::OutInt, symbol::SymbolRef};
 use rytm_rs::prelude::*;
@@ -38,6 +39,35 @@ impl Rytm {
     const SELECTOR_SEND: &'static str = "send";
     const SELECTOR_SET: &'static str = "set";
     const SELECTOR_GET: &'static str = "get";
+    const SELECTOR_DEBUG: &'static str = "debug";
+
+    fn debug_mode(&self, _sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
+        if let Some(atom) = atoms.get(0) {
+            if let Some(AtomValue::Int(value)) = atom.get_value() {
+                // Check lib.rs for safety.
+                // In addition debug post should be never used in this function.
+                unsafe {
+                    if value == 1 {
+                        crate::RYTM_EXTERNAL_DEBUG = true;
+                        return Ok(());
+                    } else if value == 0 {
+                        crate::RYTM_EXTERNAL_DEBUG = false;
+                        return Ok(());
+                    } else {
+                        return Err(RytmExternalError::from(
+                            "Invalid value: Only 0 or 1 are allowed for setting the debug mode.",
+                        ));
+                    }
+                }
+            }
+            return Err(RytmExternalError::from(
+                "Invalid value: Only 0 or 1 are allowed for setting the debug mode.",
+            ));
+        }
+        Err(RytmExternalError::from(
+            "Invalid format: 0 or 1 should follow the debug keyword.",
+        ))
+    }
 
     /// Utility to register your wrapped class with Max
     pub(crate) unsafe fn register() {
@@ -81,6 +111,7 @@ impl Rytm {
             Self::SELECTOR_SEND => self.send(sel, atoms),
             Self::SELECTOR_SET => self.set(sel, atoms),
             Self::SELECTOR_GET => self.get(sel, atoms),
+            Self::SELECTOR_DEBUG => self.debug_mode(sel, atoms),
             _ => Err(format!("rytm does not understand {selector}").into()),
         }
     }
@@ -180,15 +211,10 @@ impl Rytm {
     }
 
     fn set(&self, _sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
-        let first_atom = atoms.get(0).ok_or(InvalidFormat)?;
-        let indexable = matches!(
-            ObjectTypeSelector::try_from((first_atom, None))?,
-            ObjectTypeSelector::Pattern(_)
-                | ObjectTypeSelector::Kit(_)
-                | ObjectTypeSelector::Sound(_)
-                | ObjectTypeSelector::SoundWorkBuffer(_)
-                | ObjectTypeSelector::Global(_)
-        );
+        // Indexable objects look for an index as the second atom thus they'd throw an error here.
+        // TODO: Correct the error here, it shouldn't be a query error.
+        let indexable =
+            ObjectTypeSelector::try_from((atoms.get(0).ok_or(InvalidFormat)?, None)).is_err();
 
         let atom_pair = match (atoms.get(0), atoms.get(1)) {
             (None, Some(_)) | (None, None) => Err(InvalidFormat),
@@ -212,22 +238,21 @@ impl Rytm {
             ObjectTypeSelector::KitWorkBuffer => crate::api::kit_wb::handle_kit_wb_set(self, atoms),
             ObjectTypeSelector::Sound(index) => todo!(),
             ObjectTypeSelector::SoundWorkBuffer(index) => todo!(),
-            ObjectTypeSelector::Global(index) => todo!(),
-            ObjectTypeSelector::GlobalWorkBuffer => todo!(),
-            ObjectTypeSelector::Settings => todo!(),
+            ObjectTypeSelector::Global(index) => {
+                crate::api::global::handle_global_set(self, atoms, index)
+            }
+            ObjectTypeSelector::GlobalWorkBuffer => {
+                crate::api::global_wb::handle_global_wb_set(self, atoms)
+            }
+            ObjectTypeSelector::Settings => crate::api::settings::handle_settings_set(self, atoms),
         }
     }
 
     fn get(&self, _sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
-        let first_atom = atoms.get(0).ok_or(InvalidFormat)?;
-        let indexable = matches!(
-            ObjectTypeSelector::try_from((first_atom, None))?,
-            ObjectTypeSelector::Pattern(_)
-                | ObjectTypeSelector::Kit(_)
-                | ObjectTypeSelector::Sound(_)
-                | ObjectTypeSelector::SoundWorkBuffer(_)
-                | ObjectTypeSelector::Global(_)
-        );
+        // Indexable objects look for an index as the second atom thus they'd throw an error here.
+        // TODO: Correct the error here, it shouldn't be a query error.
+        let indexable =
+            ObjectTypeSelector::try_from((atoms.get(0).ok_or(InvalidFormat)?, None)).is_err();
 
         let atom_pair = match (atoms.get(0), atoms.get(1)) {
             (None, Some(_)) | (None, None) => Err(InvalidFormat),
@@ -251,9 +276,13 @@ impl Rytm {
             ObjectTypeSelector::KitWorkBuffer => crate::api::kit_wb::handle_kit_wb_get(self, atoms),
             ObjectTypeSelector::Sound(index) => todo!(),
             ObjectTypeSelector::SoundWorkBuffer(index) => todo!(),
-            ObjectTypeSelector::Global(index) => todo!(),
-            ObjectTypeSelector::GlobalWorkBuffer => todo!(),
-            ObjectTypeSelector::Settings => todo!(),
+            ObjectTypeSelector::Global(index) => {
+                crate::api::global::handle_global_get(self, atoms, index)
+            }
+            ObjectTypeSelector::GlobalWorkBuffer => {
+                crate::api::global_wb::handle_global_wb_get(self, atoms)
+            }
+            ObjectTypeSelector::Settings => crate::api::settings::handle_settings_get(self, atoms),
         }
     }
 }

@@ -1,4 +1,162 @@
-use median::{max_sys, outlet::SendValue, symbol::SymbolRef};
+use median::{
+    atom::{Atom, AtomValue},
+    max_sys,
+    outlet::SendValue,
+    symbol::SymbolRef,
+};
+
+use crate::RYTM_EXTERNAL_DEBUG;
+
+// TODO: Revise debugging with right files maybe in a macro.
+// This is a WIP for now.
+pub trait DebugPost {
+    fn dbg_post(&self);
+}
+
+impl DebugPost for &str {
+    fn dbg_post(&self) {
+        unsafe {
+            if RYTM_EXTERNAL_DEBUG {
+                median::post!("Debug Symbol [{}:{}]: {self}", std::file!(), std::line!());
+            }
+        }
+    }
+}
+
+impl DebugPost for String {
+    fn dbg_post(&self) {
+        unsafe {
+            if RYTM_EXTERNAL_DEBUG {
+                median::post!("Debug Symbol [{}:{}]: {self}", std::file!(), std::line!());
+            }
+        }
+    }
+}
+
+impl DebugPost for &String {
+    fn dbg_post(&self) {
+        unsafe {
+            if RYTM_EXTERNAL_DEBUG {
+                median::post!("Debug Symbol [{}:{}]: {self}", std::file!(), std::line!());
+            }
+        }
+    }
+}
+
+impl DebugPost for SymbolRef {
+    fn dbg_post(&self) {
+        unsafe {
+            if RYTM_EXTERNAL_DEBUG {
+                median::post!("Debug Symbol [{}:{}]: {self}", std::file!(), std::line!());
+            }
+        }
+    }
+}
+
+impl DebugPost for &SymbolRef {
+    fn dbg_post(&self) {
+        unsafe {
+            if RYTM_EXTERNAL_DEBUG {
+                median::post!("Debug Symbol [{}:{}]: {self}", std::file!(), std::line!());
+            }
+        }
+    }
+}
+
+impl DebugPost for AtomValue {
+    fn dbg_post(&self) {
+        unsafe {
+            if RYTM_EXTERNAL_DEBUG {
+                match self {
+                    AtomValue::Float(value) => {
+                        median::post!(
+                            "Debug Atom [{}:{}]: Float: {:?}",
+                            std::file!(),
+                            std::line!(),
+                            value
+                        );
+                    }
+                    AtomValue::Int(value) => {
+                        median::post!(
+                            "Debug Atom [{}:{}]: Int: {:?}",
+                            std::file!(),
+                            std::line!(),
+                            value
+                        );
+                    }
+                    AtomValue::Symbol(value) => {
+                        median::post!(
+                            "Debug Atom [{}:{}]: Symbol: {}",
+                            std::file!(),
+                            std::line!(),
+                            value
+                        );
+                    }
+                    AtomValue::Object(value) => {
+                        median::post!(
+                            "Debug Atom [{}:{}]: Object Pointer: {:?}",
+                            std::file!(),
+                            std::line!(),
+                            value
+                        );
+                    }
+                }
+            }
+        }
+    }
+}
+
+impl DebugPost for Atom {
+    fn dbg_post(&self) {
+        unsafe {
+            if RYTM_EXTERNAL_DEBUG {
+                match self.get_value() {
+                    Some(value) => value.dbg_post(),
+                    None => {
+                        median::post!("Debug Atom [{}:{}]: None", std::file!(), std::line!());
+                    }
+                }
+            }
+        }
+    }
+}
+
+impl DebugPost for &Atom {
+    fn dbg_post(&self) {
+        unsafe {
+            if RYTM_EXTERNAL_DEBUG {
+                match self.get_value() {
+                    Some(value) => value.dbg_post(),
+                    None => {
+                        median::post!("Debug Atom [{}:{}]: None", std::file!(), std::line!());
+                    }
+                }
+            }
+        }
+    }
+}
+
+impl DebugPost for &[Atom] {
+    fn dbg_post(&self) {
+        unsafe {
+            if RYTM_EXTERNAL_DEBUG {
+                if self.is_empty() {
+                    median::post!("Debug Atoms [{}:{}]: []", std::file!(), std::line!());
+                } else {
+                    median::post!(
+                        "Debug List of Atoms Start [{}:{}]",
+                        std::file!(),
+                        std::line!()
+                    );
+                    for atom in self.iter() {
+                        atom.dbg_post();
+                    }
+                    median::post!("Debug List of Atoms End");
+                }
+            }
+        }
+    }
+}
 
 pub trait Post {
     fn obj_post(&self, obj: *mut max_sys::t_object);
@@ -103,3 +261,22 @@ impl SerialSend for Vec<u8> {
         }
     }
 }
+
+// use std::fmt::Debug;
+
+// use median::atom::{Atom, AtomValue};
+
+// // Define a trait for our custom debug behavior
+// trait ExternalDebug {
+//     fn external_dbg(&self);
+// }
+
+// // Specific implementations for certain types
+// impl ExternalDebug for Atom {
+//     fn external_dbg(&self) {
+//         match self.get_value() {
+//             AtomValue::Float(value) => println!("Float: {}", value),
+//             //..
+//         }
+//     }
+// }
