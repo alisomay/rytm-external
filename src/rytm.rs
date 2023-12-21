@@ -236,8 +236,12 @@ impl Rytm {
             }
             ObjectTypeSelector::Kit(index) => crate::api::kit::handle_kit_set(self, atoms, index),
             ObjectTypeSelector::KitWorkBuffer => crate::api::kit_wb::handle_kit_wb_set(self, atoms),
-            ObjectTypeSelector::Sound(index) => todo!(),
-            ObjectTypeSelector::SoundWorkBuffer(index) => todo!(),
+            ObjectTypeSelector::Sound(index) => {
+                crate::api::sound::handle_sound_set(self, atoms, index)
+            }
+            ObjectTypeSelector::SoundWorkBuffer(index) => {
+                crate::api::sound_wb::handle_sound_wb_set(self, atoms, index)
+            }
             ObjectTypeSelector::Global(index) => {
                 crate::api::global::handle_global_set(self, atoms, index)
             }
@@ -274,8 +278,12 @@ impl Rytm {
             }
             ObjectTypeSelector::Kit(index) => crate::api::kit::handle_kit_set(self, atoms, index),
             ObjectTypeSelector::KitWorkBuffer => crate::api::kit_wb::handle_kit_wb_get(self, atoms),
-            ObjectTypeSelector::Sound(index) => todo!(),
-            ObjectTypeSelector::SoundWorkBuffer(index) => todo!(),
+            ObjectTypeSelector::Sound(index) => {
+                crate::api::sound::handle_sound_get(self, atoms, index)
+            }
+            ObjectTypeSelector::SoundWorkBuffer(index) => {
+                crate::api::sound_wb::handle_sound_wb_get(self, atoms, index)
+            }
             ObjectTypeSelector::Global(index) => {
                 crate::api::global::handle_global_get(self, atoms, index)
             }

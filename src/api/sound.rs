@@ -1,28 +1,25 @@
 use crate::{
     action::{
-        get::kit::{
-            handle_kit_get_action, handle_kit_get_enum_value, handle_kit_get_kit_element,
-            handle_kit_get_kit_sound,
-        },
-        set::kit::{
-            handle_kit_set_action, handle_kit_set_enum_value, handle_kit_set_kit_element,
-            handle_kit_set_kit_sound,
-        },
+        get::sound::{handle_sound_get_action, handle_sound_get_enum_value},
+        set::sound::{handle_sound_set_action, handle_sound_set_enum_value},
     },
     error::RytmExternalError,
     rytm::Rytm,
     traits::Post,
-    util::{
-        try_get_atom_value_as_kit_element_or_action_or_enum_value, try_get_index_with_range,
-        KitElementOrActionOrEnumTypeAndValue,
-    },
+    util::try_get_atom_value_assuming_action_or_index_or_enum_value,
 };
-use median::{atom::Atom, object::MaxObj};
+use median::{
+    atom::{Atom, AtomValue},
+    object::MaxObj,
+};
 
 use crate::util::try_get_action_value_from_atom_slice;
 
 // sound <index> <action> <value>
 // sound <index> <enum>
+
+const ERR: &str =
+    "Invalid value: Only symbols or integers are allowed in pattern setters or getters.";
 
 pub fn handle_sound_set(
     rytm: &Rytm,
@@ -34,91 +31,55 @@ pub fn handle_sound_set(
     }
     let mut guard = rytm.project.lock().unwrap();
 
-    todo!()
+    match try_get_atom_value_assuming_action_or_index_or_enum_value(2, atoms)? {
+        AtomValue::Symbol(action_or_enum_value) => {
+            let action_or_enum_value_str = action_or_enum_value.to_string()?;
+            let enum_pair = action_or_enum_value_str.split_once(':');
 
-    // if let Some(action_or_enum_atom) = atoms.get(2) {
-    //     action_or_enum_atom.get_symbol()
+            let sound_mut = &mut guard.pool_sounds_mut()[sound_index];
 
-    // }
-
-    // match try_get_atom_value_as_kit_element_or_action_or_enum_value(2, atoms)? {
-    //     KitElementOrActionOrEnumTypeAndValue::Action(action) => {
-    //         // Send for handling..  // Next value should be a param
-    //         handle_kit_set_action(
-    //             &mut guard.kits_mut()[kit_index],
-    //             action,
-    //             try_get_action_value_from_atom_slice(3, atoms)?,
-    //         )
-    //     }
-    //     KitElementOrActionOrEnumTypeAndValue::EnumTypeAndValue(t, v) => {
-    //         // Send for handling..
-    //         handle_kit_set_enum_value(&mut guard.kits_mut()[kit_index], &t, &v)
-    //     }
-    //     KitElementOrActionOrEnumTypeAndValue::KitElement(element_type) => {
-    //         let element_index = try_get_index_with_range(
-    //             atoms,
-    //             3,
-    //             0,
-    //             12,
-    //             &format!("kit element ({element_type})"),
-    //         )?;
-    //         let element_parameter = try_get_action_value_from_atom_slice(3, atoms)?;
-
-    //         handle_kit_set_kit_element(
-    //             &mut guard.kits_mut()[kit_index],
-    //             &element_type,
-    //             element_index,
-    //             element_parameter,
-    //         )
-    //     }
-    //     KitElementOrActionOrEnumTypeAndValue::KitSound => {
-    //         let sound_index = try_get_index_with_range(atoms, 3, 0, 11, "kit element (sound)")?;
-    //         // Send to sound handling with a slice of atoms
-    //         // For the sound we'll again try getting the index but then slice the atoms here and send it to the sound handler.
-    //         handle_kit_set_kit_sound(
-    //             &mut guard.kits_mut()[kit_index].sounds_mut()[sound_index],
-    //             atoms,
-    //             4,
-    //         )
-    //     }
-    // }
+            if let Some((enum_type, enum_value)) = enum_pair {
+                let maybe_next_atom = atoms.get(3);
+                handle_sound_set_enum_value(sound_mut, enum_type, enum_value, maybe_next_atom)
+            } else {
+                let parameter_atom = try_get_action_value_from_atom_slice(3, atoms)?;
+                let maybe_next_atom = atoms.get(4);
+                handle_sound_set_action(
+                    sound_mut,
+                    &action_or_enum_value_str,
+                    parameter_atom,
+                    maybe_next_atom,
+                )
+            }
+        }
+        _ => Err(ERR.into()),
+    }
 }
 
-pub fn handle_kit_get(
+pub fn handle_sound_get(
     rytm: &Rytm,
     atoms: &[Atom],
-    kit_index: usize,
+    sound_index: usize,
 ) -> Result<(), RytmExternalError> {
-    if !(0..=127).contains(&kit_index) {
-        "Kit index must be an integer between 0 and 127".obj_error(rytm.max_obj());
+    if !(0..=127).contains(&sound_index) {
+        "Sound index must be an integer between 0 and 127".obj_error(rytm.max_obj());
     }
     let guard = rytm.project.lock().unwrap();
     let out = &rytm.query_out;
-    match try_get_atom_value_as_kit_element_or_action_or_enum_value(2, atoms)? {
-        KitElementOrActionOrEnumTypeAndValue::Action(action) => {
-            // Send for handling..  // Next value should be a param
-            handle_kit_get_action(&guard.kits()[kit_index], action, out)
-        }
-        KitElementOrActionOrEnumTypeAndValue::EnumTypeAndValue(t, _) => {
-            // Send for handling..
-            handle_kit_get_enum_value(&guard.kits()[kit_index], &t, out)
-        }
-        KitElementOrActionOrEnumTypeAndValue::KitElement(element_type) => {
-            let element_index = try_get_index_with_range(
-                atoms,
-                3,
-                0,
-                12,
-                &format!("kit element ({element_type})"),
-            )?;
+    match try_get_atom_value_assuming_action_or_index_or_enum_value(2, atoms)? {
+        AtomValue::Symbol(action_or_enum_value) => {
+            let action_or_enum_value_str = action_or_enum_value.to_string()?;
+            let enum_pair = action_or_enum_value_str.split_once(':');
 
-            handle_kit_get_kit_element(&guard.kits()[kit_index], &element_type, element_index, out)
+            let sound = &guard.pool_sounds()[sound_index];
+
+            if let Some((enum_type, enum_value)) = enum_pair {
+                handle_sound_get_enum_value(sound, enum_type, enum_value, out)
+            } else {
+                let maybe_next_atom = atoms.get(3);
+                handle_sound_get_action(sound, &action_or_enum_value_str, maybe_next_atom, out)
+            }
         }
-        KitElementOrActionOrEnumTypeAndValue::KitSound => {
-            let sound_index = try_get_index_with_range(atoms, 3, 0, 11, "kit element (sound)")?;
-            // Send to sound handling with a slice of atoms
-            // For the sound we'll again try getting the index but then slice the atoms here and send it to the sound handler.
-            handle_kit_get_kit_sound(&guard.kits()[kit_index].sounds()[sound_index], atoms, 4)
-        }
+        _ => Err(ERR.into()),
     }
 }

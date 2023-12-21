@@ -300,6 +300,13 @@ pub mod sound_action_type {
     pub const SAMP_LOOP_FLAG: &str = "samploopflag";
     pub const SAMP_VOLUME: &str = "sampvolume";
 
+    pub const VEL_MOD_AMT: &str = "velmodamt";
+    pub const AT_MOD_AMT: &str = "atmodamt";
+
+    pub const ENV_RESET_FILTER: &str = "envresetfilter";
+    pub const VELOCITY_TO_VOLUME: &str = "veltovol";
+    pub const LEGACY_FX_SEND: &str = "legacyfxsend";
+
     pub const SOUND_ACTION_TYPES: &[&str] = &[
         VERSION,
         INDEX,
@@ -338,6 +345,11 @@ pub mod sound_action_type {
         SAMP_END,
         SAMP_LOOP_FLAG,
         SAMP_VOLUME,
+        VEL_MOD_AMT,
+        AT_MOD_AMT,
+        ENV_RESET_FILTER,
+        VELOCITY_TO_VOLUME,
+        LEGACY_FX_SEND,
     ];
 }
 
@@ -395,7 +407,8 @@ pub mod sound_enum_type {
     pub const MACHINE_PARAMETERS: &str = "machineparameters";
     pub const MACHINE_TYPE: &str = "machinetype";
     pub const LFO_DESTINATION: &str = "lfodestination";
-    pub const SOUND_MOD_TARGET: &str = "soundmodtarget";
+    pub const VELOCITY_MOD_TARGET: &str = "velmodtarget";
+    pub const AFTER_TOUCH_MOD_TARGET: &str = "atmodtarget";
     pub const FILTER_TYPE: &str = "filtertype";
     pub const LFO_MULTIPLIER: &str = "lfomultiplier";
     pub const LFO_WAVEFORM: &str = "lfowaveform";
@@ -406,7 +419,8 @@ pub mod sound_enum_type {
         MACHINE_PARAMETERS,
         MACHINE_TYPE,
         LFO_DESTINATION,
-        SOUND_MOD_TARGET,
+        VELOCITY_MOD_TARGET,
+        AFTER_TOUCH_MOD_TARGET,
         FILTER_TYPE,
         LFO_MULTIPLIER,
         LFO_WAVEFORM,
