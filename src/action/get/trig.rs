@@ -53,7 +53,7 @@ pub fn handle_trig_get_action(action: TrigGetAction) -> Result<(), RytmExternalE
         RETRIG_VELOCITY_OFFSET => trig.retrig_velocity_offset(),
         SOUND_LOCK => trig.sound_lock() as isize,
 
-        other => return Err(InvalidActionType(other.to_string()).into()),
+        other => return Err(InvalidActionType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(action);
@@ -82,7 +82,7 @@ pub fn handle_trig_enum_get_action(
         RETRIG_RATE => trig.retrig_rate().into(),
         TRIG_CONDITION => trig.trig_condition().into(),
 
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     };
 
     let enum_type_atom = Atom::from(SymbolRef::try_from(enum_type).unwrap());

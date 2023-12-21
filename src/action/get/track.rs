@@ -56,7 +56,7 @@ pub fn handle_track_get_action(action: TrackGetAction) -> Result<(), RytmExterna
         EUCLIDEAN_RO2 => track.euclidean_ro2(),
         EUCLIDEAN_TRO => track.euclidean_tro(),
 
-        other => return Err(InvalidActionType(other.to_string()).into()),
+        other => return Err(InvalidActionType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(action);
@@ -84,7 +84,7 @@ pub fn handle_track_enum_get_action(
         PAD_SCALE => track.pad_scale().into(),
         DEFAULT_NOTE_LENGTH => track.default_trig_note_length().into(),
 
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     };
 
     let enum_type_atom = Atom::from(SymbolRef::try_from(enum_type).unwrap());

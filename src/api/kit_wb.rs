@@ -46,7 +46,7 @@ pub fn handle_kit_wb_set(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExternal
             // Send for handling..  // Next value should be a param
             handle_kit_set_action(
                 guard.work_buffer_mut().kit_mut(),
-                action,
+                &action,
                 try_get_action_value_from_atom_slice(2, atoms)?,
             )
         }
@@ -111,7 +111,12 @@ pub fn handle_kit_wb_get(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExternal
             let sound_index = try_get_index_with_range(atoms, 2, 0, 11, "kit element (sound)")?;
             // Send to sound handling with a slice of atoms
             // For the sound we'll again try getting the index but then slice the atoms here and send it to the sound handler.
-            handle_kit_get_kit_sound(&guard.work_buffer().kit().sounds()[sound_index], atoms, 3)
+            handle_kit_get_kit_sound(
+                &guard.work_buffer().kit().sounds()[sound_index],
+                atoms,
+                3,
+                out,
+            )
         }
     }
 }

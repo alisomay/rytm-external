@@ -6,10 +6,31 @@ use rytm_rs::error::RytmError;
 pub enum QueryError {
     #[error("Invalid query selector: Query selector must be one of pattern, pattern_wb, kit, kit_wb, global, global_wb, sound, sound_wb or settings.")]
     InvalidSelector,
-    #[error("Invalid query format: Query format is <selector> <index> for pattern, kit, global, sound, sound_wb and <selector> for pattern_wb, kit_wb, global_wb, settings types.")]
+    #[error("Invalid query format: Query format is <selector> [<index>]. Example: query pattern_wb or query pattern 0")]
     InvalidFormat,
     #[error("Invalid index type: Index must be an integer.")]
     InvalidIndexType,
+}
+
+#[derive(thiserror::Error, Debug)]
+#[non_exhaustive]
+pub enum SendError {
+    #[error("Invalid send format: Send format is send <selector> [<index>]. Example: send pattern_wb or send pattern 0.")]
+    InvalidFormat,
+}
+
+#[derive(thiserror::Error, Debug)]
+#[non_exhaustive]
+pub enum GetError {
+    #[error("Invalid getter format: {0}")]
+    InvalidFormat(String),
+}
+
+#[derive(thiserror::Error, Debug)]
+#[non_exhaustive]
+pub enum SetError {
+    #[error("Invalid setter format: {0}")]
+    InvalidFormat(String),
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -36,6 +57,12 @@ pub enum RytmExternalError {
     Custom(String),
     #[error("{0}")]
     Query(#[from] QueryError),
+    #[error("{0}")]
+    Send(#[from] SendError),
+    #[error("{0}")]
+    Get(#[from] GetError),
+    #[error("{0}")]
+    Set(#[from] SetError),
     #[error("{0}")]
     Enum(#[from] EnumError),
     #[error("{0}")]
@@ -72,12 +99,15 @@ impl RytmExternalError {
         match self {
             Self::Custom(err) => median::object::error(obj, err.to_string()),
             Self::Query(err) => median::object::error(obj, err.to_string()),
+            Self::Send(err) => median::object::error(obj, err.to_string()),
+            Self::Get(err) => median::object::error(obj, err.to_string()),
+            Self::Set(err) => median::object::error(obj, err.to_string()),
             Self::Enum(err) => median::object::error(obj, err.to_string()),
             Self::Action(err) => median::object::error(obj, err.to_string()),
             Self::RytmSdk(err) => median::object::error(obj, err.to_string()),
             Self::StringConversionError(err) => median::object::error(obj, err.to_string()),
             Self::NotYetImplemented => {
-                median::object::error(obj, "Not yet implemented.".to_string())
+                median::object::error(obj, "Not yet implemented.".to_string());
             }
         }
     }
@@ -86,6 +116,9 @@ impl RytmExternalError {
         match self {
             Self::Custom(err) => median::error(err.to_string()),
             Self::Query(err) => median::error(err.to_string()),
+            Self::Send(err) => median::error(err.to_string()),
+            Self::Get(err) => median::error(err.to_string()),
+            Self::Set(err) => median::error(err.to_string()),
             Self::Enum(err) => median::error(err.to_string()),
             Self::Action(err) => median::error(err.to_string()),
             Self::RytmSdk(err) => median::error(err.to_string()),

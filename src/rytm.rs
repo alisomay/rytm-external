@@ -1,4 +1,4 @@
-use crate::rytm::QueryError::InvalidFormat;
+use crate::error::{GetError, SendError, SetError};
 use crate::{
     error::{QueryError, RytmExternalError},
     traits::*,
@@ -25,7 +25,7 @@ pub struct Rytm {
 }
 
 // The main trait for your object
-impl median::wrapper::ObjWrapped<Rytm> for Rytm {
+impl median::wrapper::ObjWrapped<Self> for Rytm {
     fn class_name() -> &'static str {
         "rytm"
     }
@@ -41,7 +41,7 @@ impl Rytm {
     const SELECTOR_GET: &'static str = "get";
     const SELECTOR_DEBUG: &'static str = "debug";
 
-    fn debug_mode(&self, _sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
+    fn debug_mode(_sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
         if let Some(atom) = atoms.get(0) {
             if let Some(AtomValue::Int(value)) = atom.get_value() {
                 // Check lib.rs for safety.
@@ -53,11 +53,10 @@ impl Rytm {
                     } else if value == 0 {
                         crate::RYTM_EXTERNAL_DEBUG = false;
                         return Ok(());
-                    } else {
-                        return Err(RytmExternalError::from(
-                            "Invalid value: Only 0 or 1 are allowed for setting the debug mode.",
-                        ));
                     }
+                    return Err(RytmExternalError::from(
+                        "Invalid value: Only 0 or 1 are allowed for setting the debug mode.",
+                    ));
                 }
             }
             return Err(RytmExternalError::from(
@@ -71,7 +70,7 @@ impl Rytm {
 
     /// Utility to register your wrapped class with Max
     pub(crate) unsafe fn register() {
-        median::wrapper::MaxObjWrapper::<Rytm>::register(false)
+        median::wrapper::MaxObjWrapper::<Self>::register(false);
     }
 
     pub fn int(&self, value: t_atom_long) -> Result<(), RytmExternalError> {
@@ -79,22 +78,27 @@ impl Rytm {
         // We need to buffer it until we get the end of the sysex message.
         let _inlet_index = median::inlet::Proxy::get_inlet(self.max_obj());
 
-        // TODO: Throw error if not a sysex message..
-
         if value == 0xF0 || self.buffering_sysex.load(Relaxed) {
             self.buffering_sysex.store(true, Relaxed);
             let mut sysex_in_buffer = self.sysex_in_buffer.lock().unwrap();
             sysex_in_buffer.push(value as u8);
             if value == 0xF7 {
                 self.buffering_sysex.store(false, Relaxed);
-                let mut project = self.project.lock().unwrap();
-                project
+
+                self.project
+                    .lock()
+                    .unwrap()
                     .update_from_sysex_response(&sysex_in_buffer)
                     .map_err(RytmExternalError::from)?;
+
                 sysex_in_buffer.clear();
             }
+            return Ok(());
         }
-        Ok(())
+
+        Err(RytmExternalError::from(
+            "Invalid input: rytm only understands sysex messages. Please connect sysexin object to the rytm inlet to make sure you pass in only sysex messages.",
+        ))
     }
 
     pub fn anything_with_selector(
@@ -111,14 +115,14 @@ impl Rytm {
             Self::SELECTOR_SEND => self.send(sel, atoms),
             Self::SELECTOR_SET => self.set(sel, atoms),
             Self::SELECTOR_GET => self.get(sel, atoms),
-            Self::SELECTOR_DEBUG => self.debug_mode(sel, atoms),
+            Self::SELECTOR_DEBUG => Self::debug_mode(sel, atoms),
             _ => Err(format!("rytm does not understand {selector}").into()),
         }
     }
 
     fn query(&self, _sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
         let atom_pair = match (atoms.get(0), atoms.get(1)) {
-            (None, Some(_)) | (None, None) => Err(InvalidFormat),
+            (None, Some(_) | None) => Err(QueryError::InvalidFormat),
             _ => Ok((atoms.get(0).unwrap(), atoms.get(1))),
         }?;
 
@@ -155,7 +159,7 @@ impl Rytm {
 
     fn send(&self, _sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
         let atom_pair = match (atoms.get(0), atoms.get(1)) {
-            (None, Some(_)) | (None, None) => Err(InvalidFormat),
+            (None, Some(_) | None) => Err(SendError::InvalidFormat),
             _ => Ok((atoms.get(0).unwrap(), atoms.get(1))),
         }?;
 
@@ -211,13 +215,20 @@ impl Rytm {
     }
 
     fn set(&self, _sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
-        // Indexable objects look for an index as the second atom thus they'd throw an error here.
-        // TODO: Correct the error here, it shouldn't be a query error.
-        let indexable =
-            ObjectTypeSelector::try_from((atoms.get(0).ok_or(InvalidFormat)?, None)).is_err();
+        let indexable = ObjectTypeSelector::try_from((
+            atoms.get(0).ok_or_else(|| {
+                SetError::InvalidFormat(
+                    "Setter is incomplete. No other elements follow the get call.".to_owned(),
+                )
+            })?,
+            None,
+        ))
+        .is_err();
 
         let atom_pair = match (atoms.get(0), atoms.get(1)) {
-            (None, Some(_)) | (None, None) => Err(InvalidFormat),
+            (None, Some(_) | None) => Err(SetError::InvalidFormat(
+                "Setter is incomplete. No other elements follow the get call.".to_owned(),
+            )),
             _ => {
                 if indexable {
                     Ok((atoms.get(0).unwrap(), atoms.get(1)))
@@ -255,11 +266,20 @@ impl Rytm {
     fn get(&self, _sel: &SymbolRef, atoms: &[Atom]) -> Result<(), RytmExternalError> {
         // Indexable objects look for an index as the second atom thus they'd throw an error here.
         // TODO: Correct the error here, it shouldn't be a query error.
-        let indexable =
-            ObjectTypeSelector::try_from((atoms.get(0).ok_or(InvalidFormat)?, None)).is_err();
+        let indexable = ObjectTypeSelector::try_from((
+            atoms.get(0).ok_or_else(|| {
+                GetError::InvalidFormat(
+                    "Getter is incomplete. No other elements follow the get call.".to_owned(),
+                )
+            })?,
+            None,
+        ))
+        .is_err();
 
         let atom_pair = match (atoms.get(0), atoms.get(1)) {
-            (None, Some(_)) | (None, None) => Err(InvalidFormat),
+            (None, Some(_) | None) => Err(GetError::InvalidFormat(
+                "Getter is incomplete. No other elements follow the get call.".to_owned(),
+            )),
             _ => {
                 if indexable {
                     Ok((atoms.get(0).unwrap(), atoms.get(1)))

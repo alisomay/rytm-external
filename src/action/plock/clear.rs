@@ -1,3 +1,5 @@
+use crate::api::kit_action_type;
+use crate::api::sound_action_type;
 use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
 use crate::error::RytmExternalError;
@@ -5,13 +7,11 @@ use median::symbol::SymbolRef;
 use rytm_rs::object::pattern::Trig;
 
 pub fn handle_trig_plock_clear_action(
-    trig: &mut Trig,
-    action: SymbolRef,
+    trig: &Trig,
+    action: &SymbolRef,
 ) -> Result<(), RytmExternalError> {
     let action_str = action.to_string()?;
 
-    use crate::api::kit_action_type;
-    use crate::api::sound_action_type;
     match action_str.as_str() {
         kit_action_type::FX_DELAY_TIME => Ok(trig.plock_clear_fx_delay_time()?),
         kit_action_type::FX_DELAY_PING_PONG => Ok(trig.plock_clear_fx_delay_ping_pong()?),
@@ -74,12 +74,12 @@ pub fn handle_trig_plock_clear_action(
         sound_action_type::SAMP_LOOP_FLAG => Ok(trig.plock_clear_sample_loop_flag()?),
         sound_action_type::SAMP_VOLUME => Ok(trig.plock_clear_sample_volume()?),
 
-        other => Err(InvalidActionType(other.to_string()).into()),
+        other => Err(InvalidActionType(other.to_owned()).into()),
     }
 }
 
 pub fn handle_trig_plock_clear_enum_value(
-    trig: &mut Trig,
+    trig: &Trig,
     enum_type: &str,
 ) -> Result<(), RytmExternalError> {
     use crate::api::kit_enum_type;
@@ -102,6 +102,6 @@ pub fn handle_trig_plock_clear_enum_value(
         sound_enum_type::LFO_WAVEFORM => Ok(trig.plock_clear_lfo_waveform()?),
         sound_enum_type::LFO_MODE => Ok(trig.plock_clear_lfo_mode()?),
 
-        other => Err(InvalidEnumType(other.to_string()).into()),
+        other => Err(InvalidEnumType(other.to_owned()).into()),
     }
 }

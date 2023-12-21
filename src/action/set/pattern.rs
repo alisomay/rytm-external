@@ -49,7 +49,7 @@ pub fn handle_pattern_set_action(action: PatternSetAction) -> Result<(), RytmExt
         GLOBAL_QUANTIZE => Ok(pattern.set_global_quantize(parameter.get_int() as usize)?),
         BPM => Ok(pattern.set_bpm(parameter.get_float() as f32)?),
 
-        other => Err(InvalidActionType(other.to_string()).into()),
+        other => Err(InvalidActionType(other.to_owned()).into()),
     }
 }
 
@@ -61,7 +61,7 @@ pub fn handle_pattern_enum_set_action(
     match enum_type {
         SPEED => pattern.set_speed(enum_value.try_into()?),
         TIME_MODE => pattern.set_time_mode(enum_value.try_into()?),
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     }
 
     Ok(())

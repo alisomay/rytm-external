@@ -1,3 +1,22 @@
+// Currently for the initial version we're working in a relatively relaxed way, later on we may want to be more strict.
+// When the stabilization increases.
+#![warn(clippy::all, clippy::pedantic, clippy::nursery)]
+#![allow(
+    clippy::module_name_repetitions,
+    clippy::wildcard_imports,
+    clippy::similar_names,
+    clippy::missing_errors_doc,
+    clippy::missing_panics_doc,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::enum_glob_use,
+    clippy::missing_safety_doc,
+    clippy::significant_drop_tightening,
+    clippy::too_many_lines
+)]
+#![allow(clippy::must_use_candidate)]
+
 pub mod action;
 pub mod api;
 pub mod class;
@@ -7,8 +26,6 @@ pub mod traits;
 pub mod trampoline;
 pub mod types;
 pub mod util;
-
-use std::ffi::CString;
 
 use rytm::Rytm;
 

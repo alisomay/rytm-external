@@ -2,7 +2,7 @@ use crate::error::QueryError::InvalidFormat;
 use crate::error::QueryError::InvalidIndexType;
 use crate::error::QueryError::InvalidSelector;
 use crate::{api::object_type::*, error::RytmExternalError};
-use median::atom::{Atom, AtomType, AtomValue};
+use median::atom::{Atom, AtomValue};
 use std::convert::TryFrom;
 
 #[derive(Debug, Copy, Clone)]
@@ -19,7 +19,7 @@ pub enum ObjectTypeSelector {
 }
 
 impl ObjectTypeSelector {
-    pub fn indexable(&self) -> bool {
+    pub const fn indexable(&self) -> bool {
         matches!(
             self,
             Self::Pattern(_)
@@ -38,9 +38,9 @@ impl TryFrom<(&Atom, Option<&Atom>)> for ObjectTypeSelector {
         match sel.get_value() {
             Some(AtomValue::Symbol(selector_sym)) => {
                 if selector_sym == *PATTERN {
-                    dbg!(index.map(|a| a.get_int()));
-                    match index {
-                        Some(atom) => match atom.get_value() {
+                    index.map_or_else(
+                        || Err(InvalidFormat.into()),
+                        |atom| match atom.get_value() {
                             Some(AtomValue::Int(index)) => match index {
                                 0..=127 => Ok(Self::Pattern(index as usize)),
                                 _ => {
@@ -49,26 +49,26 @@ impl TryFrom<(&Atom, Option<&Atom>)> for ObjectTypeSelector {
                             },
                             _ => Err(InvalidIndexType.into()),
                         },
-                        None => Err(InvalidFormat.into()),
-                    }
+                    )
                 } else if selector_sym == *PATTERN_WORK_BUFFER {
                     Ok(Self::PatternWorkBuffer)
                 } else if selector_sym == *KIT {
-                    match index {
-                        Some(atom) => match atom.get_value() {
+                    index.map_or_else(
+                        || Err(InvalidFormat.into()),
+                        |atom| match atom.get_value() {
                             Some(AtomValue::Int(index)) => match index {
                                 0..=127 => Ok(Self::Kit(index as usize)),
                                 _ => Err("Kit index must be an integer between 0 and 127".into()),
                             },
                             _ => Err(InvalidIndexType.into()),
                         },
-                        None => Err(InvalidFormat.into()),
-                    }
+                    )
                 } else if selector_sym == *KIT_WORK_BUFFER {
                     Ok(Self::KitWorkBuffer)
                 } else if selector_sym == *SOUND {
-                    match index {
-                        Some(atom) => match atom.get_value() {
+                    index.map_or_else(
+                        || Err(InvalidFormat.into()),
+                        |atom| match atom.get_value() {
                             Some(AtomValue::Int(index)) => match index {
                                 0..=11 => Ok(Self::Sound(index as usize)),
                                 _ => {
@@ -78,11 +78,11 @@ impl TryFrom<(&Atom, Option<&Atom>)> for ObjectTypeSelector {
                             },
                             _ => Err(InvalidIndexType.into()),
                         },
-                        None => Err(InvalidFormat.into()),
-                    }
+                    )
                 } else if selector_sym == *SOUND_WORK_BUFFER {
-                    match index {
-                        Some(atom) => match atom.get_value() {
+                    index.map_or_else(
+                        || Err(InvalidFormat.into()),
+                        |atom| match atom.get_value() {
                             Some(AtomValue::Int(index)) => match index {
                                 0..=11 => Ok(Self::SoundWorkBuffer(index as usize)),
                                 _ => Err(
@@ -92,11 +92,11 @@ impl TryFrom<(&Atom, Option<&Atom>)> for ObjectTypeSelector {
                             },
                             _ => Err(InvalidIndexType.into()),
                         },
-                        None => Err(InvalidFormat.into()),
-                    }
+                    )
                 } else if selector_sym == *GLOBAL {
-                    match index {
-                        Some(atom) => match atom.get_value() {
+                    index.map_or_else(
+                        || Err(InvalidFormat.into()),
+                        |atom| match atom.get_value() {
                             Some(AtomValue::Int(index)) => match index {
                                 0..=3 => Ok(Self::Global(index as usize)),
                                 _ => {
@@ -106,8 +106,7 @@ impl TryFrom<(&Atom, Option<&Atom>)> for ObjectTypeSelector {
                             },
                             _ => Err(InvalidIndexType.into()),
                         },
-                        None => Err(InvalidFormat.into()),
-                    }
+                    )
                 } else if selector_sym == *GLOBAL_WORK_BUFFER {
                     Ok(Self::GlobalWorkBuffer)
                 } else if selector_sym == *SETTINGS {

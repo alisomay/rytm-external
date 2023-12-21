@@ -52,11 +52,11 @@ pub fn handle_track_set_action(action: TrackSetAction) -> Result<(), RytmExterna
         NUMBER_OF_STEPS => Ok(track.set_number_of_steps(parameter.get_int() as usize)?),
         QUANTIZE_AMOUNT => Ok(track.set_quantize_amount(parameter.get_int() as usize)?),
         SENDS_MIDI => {
-            track.set_sends_midi(get_bool_from_0_or_1(parameter)?);
+            track.set_sends_midi(get_bool_from_0_or_1(parameter, SENDS_MIDI)?);
             Ok(())
         }
         EUCLIDEAN_MODE => {
-            track.set_euclidean_mode(get_bool_from_0_or_1(parameter)?);
+            track.set_euclidean_mode(get_bool_from_0_or_1(parameter, EUCLIDEAN_MODE)?);
             Ok(())
         }
         EUCLIDEAN_PL1 => Ok(track.set_euclidean_pl1(parameter.get_int() as usize)?),
@@ -65,7 +65,7 @@ pub fn handle_track_set_action(action: TrackSetAction) -> Result<(), RytmExterna
         EUCLIDEAN_RO2 => Ok(track.set_euclidean_ro2(parameter.get_int() as usize)?),
         EUCLIDEAN_TRO => Ok(track.set_euclidean_tro(parameter.get_int() as usize)?),
 
-        other => Err(InvalidActionType(other.to_string()).into()),
+        other => Err(InvalidActionType(other.to_owned()).into()),
     }
 }
 
@@ -79,7 +79,7 @@ pub fn handle_track_enum_set_action(
         PAD_SCALE => track.set_pad_scale(enum_value.try_into()?),
         DEFAULT_NOTE_LENGTH => track.set_default_trig_note_length(enum_value.try_into()?),
 
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     }
 
     Ok(())

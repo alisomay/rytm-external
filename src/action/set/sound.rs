@@ -25,7 +25,7 @@ pub fn handle_sound_set_enum_value(
         //     Ok(())
         // }
         MACHINE_TYPE => {
-            sound.set_machine_type(enum_value.try_into()?);
+            sound.set_machine_type(enum_value.try_into()?)?;
             Ok(())
         }
         LFO_DESTINATION => {
@@ -56,11 +56,10 @@ pub fn handle_sound_set_enum_value(
                         }
                     }
                     return Ok(());
-                } else {
-                    return Err("Invalid setter format: velmodtarget should be followed by an integer velmod index. Format: velmodtarget:<target> <velmod index>. Example: velmodtarget:lfophase 2".into());
                 }
+                return Err("Invalid setter format: velmodtarget should be followed by an integer velmod index. Format: velmodtarget:<target> <velmod index>. Example: velmodtarget:lfophase 2".into());
             }
-            return Err("Invalid setter format: velmodtarget should be followed by an integer velmod index. Format: velmodtarget:<target> <velmod index>. Example: velmodtarget:lfophase 2".into());
+            Err("Invalid setter format: velmodtarget should be followed by an integer velmod index. Format: velmodtarget:<target> <velmod index>. Example: velmodtarget:lfophase 2".into())
         }
         AFTER_TOUCH_MOD_TARGET => {
             if let Some(atom) = maybe_parameter_atom {
@@ -85,11 +84,10 @@ pub fn handle_sound_set_enum_value(
                         }
                     }
                     return Ok(());
-                } else {
-                    return Err("Invalid setter format: atmodtarget should be followed by an integer atmod index. Format: atmodtarget:<target> <atmod index>. Example: atmodtarget:lfophase 2".into());
                 }
+                return Err("Invalid setter format: atmodtarget should be followed by an integer atmod index. Format: atmodtarget:<target> <atmod index>. Example: atmodtarget:lfophase 2".into());
             }
-            return Err("Invalid setter format: atmodtarget should be followed by an integer atmod index. Format: atmodtarget:<target> <atmod index>. Example: atmodtarget:lfophase 2".into());
+            Err("Invalid setter format: atmodtarget should be followed by an integer atmod index. Format: atmodtarget:<target> <atmod index>. Example: atmodtarget:lfophase 2".into())
         }
         FILTER_TYPE => {
             sound.filter_mut().set_filter_type(enum_value.try_into()?);
@@ -113,7 +111,7 @@ pub fn handle_sound_set_enum_value(
                 .set_chromatic_mode(enum_value.try_into()?);
             Ok(())
         }
-        other => Err(InvalidEnumType(other.to_string()).into()),
+        other => Err(InvalidEnumType(other.to_owned()).into()),
     }
 }
 
@@ -207,7 +205,7 @@ pub fn handle_sound_set_action(
         SAMP_LOOP_FLAG => {
             sound
                 .sample_mut()
-                .set_loop_flag(get_bool_from_0_or_1(parameter_atom)?);
+                .set_loop_flag(get_bool_from_0_or_1(parameter_atom, SAMP_LOOP_FLAG)?);
             Ok(())
         }
         SAMP_VOLUME => Ok(sound
@@ -230,9 +228,8 @@ pub fn handle_sound_set_action(
                         }
                     }
                     return Ok(());
-                } else {
-                    return Err("Invalid setter format: velmodamt should be followed by an integer velmod index. Format: velmodamt <velmod index> <amount>. Example: velmodamt 2 100".into());
                 }
+                return Err("Invalid setter format: velmodamt should be followed by an integer velmod index. Format: velmodamt <velmod index> <amount>. Example: velmodamt 2 100".into());
             }
             Err("Invalid setter format: velmodamt should be followed by an integer velmod index. Format: velmodamt <velmod index> <amount>. Example: velmodamt 2 100".into())
         }
@@ -261,13 +258,12 @@ pub fn handle_sound_set_action(
                         }
                     }
                     return Ok(());
-                } else {
-                    return Err("Invalid setter format: atmodamt should be followed by an integer atmod index. Format: atmodamt <atmod index> <amount>. Example: atmodamt 2 100".into());
                 }
+                return Err("Invalid setter format: atmodamt should be followed by an integer atmod index. Format: atmodamt <atmod index> <amount>. Example: atmodamt 2 100".into());
             }
             Err("Invalid setter format: atmodamt should be followed by an integer atmod index. Format: atmodamt <atmod index> <amount>. Example: atmodamt 2 100".into())
         }
 
-        other => Err(InvalidActionType(other.to_string()).into()),
+        other => Err(InvalidActionType(other.to_owned()).into()),
     }
 }

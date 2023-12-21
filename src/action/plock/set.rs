@@ -1,36 +1,28 @@
-use std::convert::TryInto;
-
+use crate::api::kit_action_type;
+use crate::api::sound_action_type;
 use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
 use crate::{error::RytmExternalError, util::get_bool_from_0_or_1};
 use median::{atom::Atom, symbol::SymbolRef};
 use rytm_rs::object::pattern::Trig;
+use std::convert::TryInto;
 
 pub fn handle_trig_plock_set_action(
-    trig: &mut Trig,
-    action: SymbolRef,
+    trig: &Trig,
+    action: &SymbolRef,
     atoms: &[Atom],
     slice_index: usize,
 ) -> Result<(), RytmExternalError> {
     if let Some(parameter_atom) = atoms.get(slice_index) {
         let action_str = action.to_string()?;
 
-        // dbg!(parameter.get_value().unwrap());
-        dbg!(parameter_atom.get_int());
-        dbg!(parameter_atom.get_float());
-        dbg!(parameter_atom.get_obj());
-        // dbg!(parameter_atom.get_symbol());
-        dbg!(parameter_atom.get_type());
-
-        use crate::api::kit_action_type;
-        use crate::api::sound_action_type;
         return match action_str.as_str() {
             kit_action_type::FX_DELAY_TIME => {
                 Ok(trig.plock_set_fx_delay_time(parameter_atom.get_int() as usize)?)
             }
-            kit_action_type::FX_DELAY_PING_PONG => {
-                Ok(trig.plock_set_fx_delay_ping_pong(get_bool_from_0_or_1(parameter_atom)?)?)
-            }
+            kit_action_type::FX_DELAY_PING_PONG => Ok(trig.plock_set_fx_delay_ping_pong(
+                get_bool_from_0_or_1(parameter_atom, kit_action_type::FX_DELAY_PING_PONG)?,
+            )?),
             kit_action_type::FX_DELAY_STEREO_WIDTH => {
                 Ok(trig.plock_set_fx_delay_stereo_width(parameter_atom.get_int())?)
             }
@@ -175,14 +167,14 @@ pub fn handle_trig_plock_set_action(
             sound_action_type::SAMP_END => {
                 Ok(trig.plock_set_sample_end(parameter_atom.get_float() as f32)?)
             }
-            sound_action_type::SAMP_LOOP_FLAG => {
-                Ok(trig.plock_set_sample_loop_flag(get_bool_from_0_or_1(parameter_atom)?)?)
-            }
+            sound_action_type::SAMP_LOOP_FLAG => Ok(trig.plock_set_sample_loop_flag(
+                get_bool_from_0_or_1(parameter_atom, sound_action_type::SAMP_LOOP_FLAG)?,
+            )?),
             sound_action_type::SAMP_VOLUME => {
                 Ok(trig.plock_set_sample_volume(parameter_atom.get_int() as usize)?)
             }
 
-            other => Err(InvalidActionType(other.to_string()).into()),
+            other => Err(InvalidActionType(other.to_owned()).into()),
         };
     }
 
@@ -190,7 +182,7 @@ pub fn handle_trig_plock_set_action(
 }
 
 pub fn handle_trig_plock_set_enum_value(
-    trig: &mut Trig,
+    trig: &Trig,
     enum_type: &str,
     enum_value: &str,
 ) -> Result<(), RytmExternalError> {
@@ -228,6 +220,6 @@ pub fn handle_trig_plock_set_enum_value(
         sound_enum_type::LFO_WAVEFORM => Ok(trig.plock_set_lfo_waveform(enum_value.try_into()?)?),
         sound_enum_type::LFO_MODE => Ok(trig.plock_set_lfo_mode(enum_value.try_into()?)?),
 
-        other => Err(InvalidEnumType(other.to_string()).into()),
+        other => Err(InvalidEnumType(other.to_owned()).into()),
     }
 }

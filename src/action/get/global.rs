@@ -89,7 +89,7 @@ pub fn handle_global_get_enum_value(
             .into(),
         PERFORMANCE_CHANNEL => global.midi_config().channels().performance_channel().into(),
 
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     };
 
     let enum_type_atom = Atom::from(SymbolRef::try_from(enum_type).unwrap());
@@ -112,7 +112,7 @@ pub fn handle_global_get_action(
     let value: isize = match action {
         VERSION => global.structure_version() as isize,
         INDEX => global.index() as isize,
-        IS_WORK_BUFFER => global.is_work_buffer() as isize,
+        IS_WORK_BUFFER => isize::from(global.is_work_buffer()),
 
         KIT_RELOAD_ON_CHANGE => global.sequencer_config().kit_reload_on_chg().into(),
         QUANTIZE_LIVE_REC => global.sequencer_config().quantize_live_rec().into(),
@@ -171,7 +171,7 @@ pub fn handle_global_get_action(
         METRONOME_PRE_ROLL_BARS => global.metronome_settings().pre_roll_bars() as isize,
         METRONOME_VOLUME => global.metronome_settings().volume() as isize,
 
-        other => return Err(InvalidActionType(other.to_string()).into()),
+        other => return Err(InvalidActionType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(SymbolRef::from(CString::new(action).unwrap()));

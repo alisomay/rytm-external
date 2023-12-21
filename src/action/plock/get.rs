@@ -1,6 +1,7 @@
-use std::convert::TryFrom;
-use std::ffi::CString;
-
+use crate::api::kit_action_type;
+use crate::api::kit_enum_type;
+use crate::api::sound_action_type;
+use crate::api::sound_enum_type;
 use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
 use crate::error::RytmExternalError;
@@ -8,6 +9,8 @@ use median::atom::{Atom, AtomValue};
 use median::outlet::OutAnything;
 use median::symbol::SymbolRef;
 use rytm_rs::object::pattern::Trig;
+use std::convert::TryFrom;
+use std::ffi::CString;
 
 pub fn handle_trig_plock_get_action(
     trig: &Trig,
@@ -16,15 +19,13 @@ pub fn handle_trig_plock_get_action(
 ) -> Result<(), RytmExternalError> {
     let action_str = action.to_string()?;
 
-    use crate::api::kit_action_type;
-    use crate::api::sound_action_type;
     let value_atom: Option<Atom> = match action_str.as_str() {
         kit_action_type::FX_DELAY_TIME => trig
             .plock_get_fx_delay_time()?
             .map(|val| Atom::from(val as isize)),
         kit_action_type::FX_DELAY_PING_PONG => trig
             .plock_get_fx_delay_ping_pong()?
-            .map(|val| Atom::from(val as isize)),
+            .map(|val| Atom::from(isize::from(val))),
         kit_action_type::FX_DELAY_STEREO_WIDTH => {
             trig.plock_get_fx_delay_stereo_width()?.map(Atom::from)
         }
@@ -86,7 +87,7 @@ pub fn handle_trig_plock_get_action(
             .map(|val| Atom::from(val as isize)),
         kit_action_type::FX_LFO_DEPTH => trig
             .plock_get_fx_lfo_depth()?
-            .map(|val| Atom::from(val as f64)),
+            .map(|val| Atom::from(f64::from(val))),
         //
         // TODO: Do the dist setters after fixing the dist in the SDK
         // TODO: Do Machine plocks
@@ -143,7 +144,7 @@ pub fn handle_trig_plock_get_action(
             .map(|val| Atom::from(val as isize)),
         sound_action_type::LFO_DEPTH => trig
             .plock_get_lfo_depth()?
-            .map(|val| Atom::from(val as f64)),
+            .map(|val| Atom::from(f64::from(val))),
 
         sound_action_type::SAMP_TUNE => trig.plock_get_sample_tune()?.map(Atom::from),
         sound_action_type::SAMP_FINE_TUNE => trig.plock_get_sample_fine_tune()?.map(Atom::from),
@@ -155,33 +156,28 @@ pub fn handle_trig_plock_get_action(
             .map(|val| Atom::from(val as isize)),
         sound_action_type::SAMP_START => trig
             .plock_get_sample_start()?
-            .map(|val| Atom::from(val as f64)),
+            .map(|val| Atom::from(f64::from(val))),
         sound_action_type::SAMP_END => trig
             .plock_get_sample_end()?
-            .map(|val| Atom::from(val as f64)),
+            .map(|val| Atom::from(f64::from(val))),
         sound_action_type::SAMP_LOOP_FLAG => trig
             .plock_get_sample_loop_flag()?
-            .map(|val| Atom::from(val as isize)),
+            .map(|val| Atom::from(isize::from(val))),
         sound_action_type::SAMP_VOLUME => trig
             .plock_get_sample_volume()?
             .map(|val| Atom::from(val as isize)),
 
-        other => return Err(InvalidActionType(other.to_string()).into()),
+        other => return Err(InvalidActionType(other.to_owned()).into()),
     };
+    let action_atom = Atom::from(action);
+    let index_atom = Atom::from(AtomValue::Int(trig.index() as isize));
 
     if let Some(value_atom) = value_atom {
-        let action_atom = Atom::from(action);
-        let index_atom = Atom::from(AtomValue::Int(trig.index() as isize));
-
         if let Err(_stack_overflow_err) = out.send(&[action_atom, index_atom, value_atom][..]) {
             // Stack overflow ignore
         }
     } else {
         // Send the value as "unset" for a plock which is not set.
-
-        let action_atom = Atom::from(action);
-        let index_atom = Atom::from(AtomValue::Int(trig.index() as isize));
-
         if let Err(_stack_overflow_err) = out.send(
             &[
                 action_atom,
@@ -201,42 +197,32 @@ pub fn handle_trig_plock_get_enum_value(
     enum_type: &str,
     out: &OutAnything,
 ) -> Result<(), RytmExternalError> {
-    use crate::api::kit_enum_type;
-    use crate::api::sound_enum_type;
-
     let enum_value: Option<&str> = match enum_type {
         kit_enum_type::CONTROL_IN_MOD_TARGET => todo!(),
-        kit_enum_type::FX_COMP_ATTACK => {
-            trig.plock_get_fx_compressor_attack()?.map(|val| val.into())
-        }
-        kit_enum_type::FX_COMP_RELEASE => trig
-            .plock_get_fx_compressor_release()?
-            .map(|val| val.into()),
+        kit_enum_type::FX_COMP_ATTACK => trig.plock_get_fx_compressor_attack()?.map(Into::into),
+        kit_enum_type::FX_COMP_RELEASE => trig.plock_get_fx_compressor_release()?.map(Into::into),
         kit_enum_type::FX_DELAY_TIME_ON_THE_GRID => todo!(),
-        kit_enum_type::FX_COMP_RATIO => trig.plock_get_fx_compressor_ratio()?.map(|val| val.into()),
+        kit_enum_type::FX_COMP_RATIO => trig.plock_get_fx_compressor_ratio()?.map(Into::into),
         kit_enum_type::FX_COMP_SIDE_CHAIN_EQ => trig
             .plock_get_fx_compressor_side_chain_eq()?
-            .map(|val| val.into()),
-        kit_enum_type::FX_LFO_DESTINATION => {
-            trig.plock_get_fx_lfo_destination()?.map(|val| val.into())
-        }
+            .map(Into::into),
+        kit_enum_type::FX_LFO_DESTINATION => trig.plock_get_fx_lfo_destination()?.map(Into::into),
 
         // TODO:
         // sound_enum_type::MACHINE_PARAMETERS => todo!(.map(|val|val.into()),
-        sound_enum_type::LFO_DESTINATION => trig.plock_get_lfo_destination()?.map(|val| val.into()),
-        sound_enum_type::FILTER_TYPE => trig.plock_get_filter_type()?.map(|val| val.into()),
-        sound_enum_type::LFO_MULTIPLIER => trig.plock_get_lfo_multiplier()?.map(|val| val.into()),
-        sound_enum_type::LFO_WAVEFORM => trig.plock_get_lfo_waveform()?.map(|val| val.into()),
-        sound_enum_type::LFO_MODE => trig.plock_get_lfo_mode()?.map(|val| val.into()),
+        sound_enum_type::LFO_DESTINATION => trig.plock_get_lfo_destination()?.map(Into::into),
+        sound_enum_type::FILTER_TYPE => trig.plock_get_filter_type()?.map(Into::into),
+        sound_enum_type::LFO_MULTIPLIER => trig.plock_get_lfo_multiplier()?.map(Into::into),
+        sound_enum_type::LFO_WAVEFORM => trig.plock_get_lfo_waveform()?.map(Into::into),
+        sound_enum_type::LFO_MODE => trig.plock_get_lfo_mode()?.map(Into::into),
 
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     };
+    let enum_type_atom = Atom::from(SymbolRef::try_from(enum_type).unwrap());
+    let index_atom = Atom::from(AtomValue::Int(trig.index() as isize));
 
     if let Some(enum_value) = enum_value {
-        let enum_type_atom = Atom::from(SymbolRef::try_from(enum_type).unwrap());
-        let index_atom = Atom::from(AtomValue::Int(trig.index() as isize));
         let enum_value_atom = Atom::from(SymbolRef::try_from(enum_value).unwrap());
-
         if let Err(_stack_overflow_err) =
             out.send(&[enum_type_atom, index_atom, enum_value_atom][..])
         {
@@ -245,9 +231,6 @@ pub fn handle_trig_plock_get_enum_value(
         //..
     } else {
         // Send the value as "unset" for a plock which is not set.
-
-        let enum_type_atom = Atom::from(SymbolRef::try_from(enum_type).unwrap());
-        let index_atom = Atom::from(AtomValue::Int(trig.index() as isize));
 
         if let Err(_stack_overflow_err) = out.send(
             &[

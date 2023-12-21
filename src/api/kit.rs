@@ -54,7 +54,7 @@ pub fn handle_kit_set(
             // Send for handling..  // Next value should be a param
             handle_kit_set_action(
                 &mut guard.kits_mut()[kit_index],
-                action,
+                &action,
                 try_get_action_value_from_atom_slice(3, atoms)?,
             )
         }
@@ -126,7 +126,12 @@ pub fn handle_kit_get(
             let sound_index = try_get_index_with_range(atoms, 3, 0, 11, "kit element (sound)")?;
             // Send to sound handling with a slice of atoms
             // For the sound we'll again try getting the index but then slice the atoms here and send it to the sound handler.
-            handle_kit_get_kit_sound(&guard.kits()[kit_index].sounds()[sound_index], atoms, 4)
+            handle_kit_get_kit_sound(
+                &guard.kits()[kit_index].sounds()[sound_index],
+                atoms,
+                4,
+                out,
+            )
         }
     }
 }

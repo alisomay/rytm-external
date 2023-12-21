@@ -55,7 +55,7 @@ pub fn handle_sound_get_enum_value(
         LFO_MODE => sound.lfo().mode().into(),
         SOUND_SETTINGS_CHROMATIC_MODE => sound.settings().chromatic_mode().into(),
 
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     };
 
     let enum_type_atom = Atom::from(SymbolRef::try_from(enum_type).unwrap());
@@ -99,14 +99,14 @@ pub fn handle_sound_get_action(
         LFO_SPEED => (sound.lfo().speed()).into(),
         LFO_FADE => (sound.lfo().fade()).into(),
         LFO_START_PHASE_OR_SLEW => (sound.lfo().start_phase_or_slew() as isize).into(),
-        LFO_DEPTH => (sound.lfo().depth() as f64).into(),
+        LFO_DEPTH => f64::from(sound.lfo().depth()).into(),
         SAMP_TUNE => (sound.sample().tune()).into(),
         SAMP_FINE_TUNE => (sound.sample().fine_tune()).into(),
         SAMP_NUMBER => (sound.sample().slice_number() as isize).into(),
         SAMP_BIT_REDUCTION => (sound.sample().bit_reduction() as isize).into(),
-        SAMP_START => (sound.sample().start() as f64).into(),
-        SAMP_END => (sound.sample().end() as f64).into(),
-        SAMP_LOOP_FLAG => (sound.sample().loop_flag() as isize).into(),
+        SAMP_START => f64::from(sound.sample().start()).into(),
+        SAMP_END => f64::from(sound.sample().end()).into(),
+        SAMP_LOOP_FLAG => isize::from(sound.sample().loop_flag()).into(),
         SAMP_VOLUME => (sound.sample().volume() as isize).into(),
 
         VEL_MOD_AMT => {
@@ -151,11 +151,11 @@ pub fn handle_sound_get_action(
             }
         }
 
-        ENV_RESET_FILTER => (sound.settings().env_reset_filter() as isize).into(),
-        VELOCITY_TO_VOLUME => (sound.settings().velocity_to_volume() as isize).into(),
-        LEGACY_FX_SEND => (sound.settings().legacy_fx_send() as isize).into(),
+        ENV_RESET_FILTER => isize::from(sound.settings().env_reset_filter()).into(),
+        VELOCITY_TO_VOLUME => isize::from(sound.settings().velocity_to_volume()).into(),
+        LEGACY_FX_SEND => isize::from(sound.settings().legacy_fx_send()).into(),
 
-        other => return Err(InvalidActionType(other.to_string()).into()),
+        other => return Err(InvalidActionType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(SymbolRef::from(CString::new(action).unwrap()));

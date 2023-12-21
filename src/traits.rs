@@ -68,7 +68,7 @@ impl DebugPost for AtomValue {
         unsafe {
             if RYTM_EXTERNAL_DEBUG {
                 match self {
-                    AtomValue::Float(value) => {
+                    Self::Float(value) => {
                         median::post!(
                             "Debug Atom [{}:{}]: Float: {:?}",
                             std::file!(),
@@ -76,7 +76,7 @@ impl DebugPost for AtomValue {
                             value
                         );
                     }
-                    AtomValue::Int(value) => {
+                    Self::Int(value) => {
                         median::post!(
                             "Debug Atom [{}:{}]: Int: {:?}",
                             std::file!(),
@@ -84,7 +84,7 @@ impl DebugPost for AtomValue {
                             value
                         );
                     }
-                    AtomValue::Symbol(value) => {
+                    Self::Symbol(value) => {
                         median::post!(
                             "Debug Atom [{}:{}]: Symbol: {}",
                             std::file!(),
@@ -92,7 +92,7 @@ impl DebugPost for AtomValue {
                             value
                         );
                     }
-                    AtomValue::Object(value) => {
+                    Self::Object(value) => {
                         median::post!(
                             "Debug Atom [{}:{}]: Object Pointer: {:?}",
                             std::file!(),
@@ -110,12 +110,12 @@ impl DebugPost for Atom {
     fn dbg_post(&self) {
         unsafe {
             if RYTM_EXTERNAL_DEBUG {
-                match self.get_value() {
-                    Some(value) => value.dbg_post(),
-                    None => {
+                self.get_value().map_or_else(
+                    || {
                         median::post!("Debug Atom [{}:{}]: None", std::file!(), std::line!());
-                    }
-                }
+                    },
+                    |value| value.dbg_post(),
+                );
             }
         }
     }
@@ -125,12 +125,12 @@ impl DebugPost for &Atom {
     fn dbg_post(&self) {
         unsafe {
             if RYTM_EXTERNAL_DEBUG {
-                match self.get_value() {
-                    Some(value) => value.dbg_post(),
-                    None => {
+                self.get_value().map_or_else(
+                    || {
                         median::post!("Debug Atom [{}:{}]: None", std::file!(), std::line!());
-                    }
-                }
+                    },
+                    |value| value.dbg_post(),
+                );
             }
         }
     }
@@ -148,7 +148,7 @@ impl DebugPost for &[Atom] {
                         std::file!(),
                         std::line!()
                     );
-                    for atom in self.iter() {
+                    for atom in *self {
                         atom.dbg_post();
                     }
                     median::post!("Debug List of Atoms End");
@@ -158,6 +158,7 @@ impl DebugPost for &[Atom] {
     }
 }
 
+// Post trait for posting to the max console.
 pub trait Post {
     fn obj_post(&self, obj: *mut max_sys::t_object);
     fn obj_error(&self, obj: *mut max_sys::t_object);
@@ -243,7 +244,9 @@ impl Post for SymbolRef {
     }
 }
 
+/// For flushing data from an outlet serially.
 pub trait SerialSend {
+    #[allow(clippy::borrowed_box)]
     fn serial_send_int(&self, out: &Box<dyn SendValue<isize> + Sync>);
 }
 
@@ -251,32 +254,10 @@ impl SerialSend for Vec<u8> {
     fn serial_send_int(&self, outlet: &Box<dyn SendValue<isize> + Sync>) {
         for byte in self {
             // This is what I could think of :) Since it needs a long :).
-            match outlet.send(max_sys::t_atom_long::from(*byte)) {
-                Ok(_) => {}
-                Err(_stack_overflow_err) => {
-                    // Let's just ignore this for now.
-                    // Since when there is a stack overflow max crashes anyway.
-                }
+            if let Err(_stack_overflow_err) = outlet.send(max_sys::t_atom_long::from(*byte)) {
+                // Let's just ignore this for now.
+                // Since when there is a stack overflow max crashes anyway.
             }
         }
     }
 }
-
-// use std::fmt::Debug;
-
-// use median::atom::{Atom, AtomValue};
-
-// // Define a trait for our custom debug behavior
-// trait ExternalDebug {
-//     fn external_dbg(&self);
-// }
-
-// // Specific implementations for certain types
-// impl ExternalDebug for Atom {
-//     fn external_dbg(&self) {
-//         match self.get_value() {
-//             AtomValue::Float(value) => println!("Float: {}", value),
-//             //..
-//         }
-//     }
-// }

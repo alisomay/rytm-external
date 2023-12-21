@@ -22,7 +22,7 @@ pub fn handle_settings_get_enum_value(
         PATTERN_MODE => settings.selected_pattern_mode().into(),
         SAMPLE_RECORDER_SOURCE => settings.sample_recorder_source().into(),
         SAMPLE_RECORDER_RECORDING_LENGTH => settings.sample_recorder_recording_length().into(),
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     };
 
     let enum_type_atom = Atom::from(SymbolRef::try_from(enum_type).unwrap());
@@ -81,7 +81,7 @@ pub fn handle_settings_get_enum_value(
 //             Ok(())
 //         }
 
-//         other => Err(InvalidActionType(other.to_string()).into()),
+//         other => Err(InvalidActionType(other.to_owned()).into()),
 //     }
 // }
 
@@ -92,23 +92,23 @@ pub fn handle_settings_get_action(
     out: &OutAnything,
 ) -> Result<(), RytmExternalError> {
     let value_atom: Atom = match action {
-        BPM_PROJECT => Atom::from(settings.bpm() as f64),
+        BPM_PROJECT => Atom::from(f64::from(settings.bpm())),
         SELECTED_TRACK => Atom::from(settings.selected_track() as isize),
         SELECTED_PAGE => Atom::from(settings.selected_page() as isize),
         MUTE => {
             let index = maybe_next_atom
                 .ok_or("Invalid format: mute should be followed by an integer sound index.")?
                 .get_int();
-            Atom::from(settings.is_sound_muted(index as usize)? as isize)
+            Atom::from(isize::from(settings.is_sound_muted(index as usize)?))
         }
-        FIXED_VELOCITY_ENABLE => Atom::from(settings.fixed_velocity_enabled() as isize),
+        FIXED_VELOCITY_ENABLE => Atom::from(isize::from(settings.fixed_velocity_enabled())),
         FIXED_VELOCITY_AMOUNT => Atom::from(settings.fixed_velocity_amount() as isize),
         SAMPLE_RECORDER_THR => Atom::from(settings.sample_recorder_threshold() as isize),
         SAMPLE_RECORDER_MONITOR_ENABLE => {
-            Atom::from(settings.sample_recorder_monitor_enabled() as isize)
+            Atom::from(isize::from(settings.sample_recorder_monitor_enabled()))
         }
 
-        other => return Err(InvalidActionType(other.to_string()).into()),
+        other => return Err(InvalidActionType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(SymbolRef::from(CString::new(action).unwrap()));

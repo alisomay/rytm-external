@@ -9,14 +9,14 @@ use median::wrapper::WrapperWrapped;
 use crate::rytm::Rytm;
 
 impl Rytm {
-    pub extern "C" fn int_tramp(wrapper: &::median::wrapper::MaxObjWrapper<Rytm>, v: t_atom_long) {
+    pub extern "C" fn int_tramp(wrapper: &::median::wrapper::MaxObjWrapper<Self>, v: t_atom_long) {
         if let Err(err) = WrapperWrapped::wrapped(wrapper).int(v) {
             err.obj_post(wrapper.wrapped().max_obj());
         }
     }
 
     pub extern "C" fn anything_with_selector_tramp(
-        wrapper: &MaxObjWrapper<Rytm>,
+        wrapper: &MaxObjWrapper<Self>,
         sel: *mut t_symbol,
         ac: c_long,
         av: *const t_atom,

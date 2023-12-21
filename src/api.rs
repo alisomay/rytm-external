@@ -56,7 +56,6 @@ pub mod plock_type {
     pub const PLOCK_SET: &str = "plockset";
     pub const PLOCK_CLEAR: &str = "plockclear";
 
-    pub const PLOCK_TYPES: &[&str] = &[PLOCK_GET, PLOCK_SET, PLOCK_CLEAR];
     pub const ALL_PLOCK_TYPES: &[&str] = &[PLOCK_GET, PLOCK_SET, PLOCK_CLEAR];
 }
 
@@ -67,25 +66,6 @@ pub mod machine_parameter_type {
 
 /*** Action Types ***/
 
-// pub struct Settings {
-//     /// Version of the settings structure.
-//     version: u32,
-
-//     bpm_project: f32,
-
-//     selected_track: u8,
-
-//     selected_page: u8,
-
-//     mute_flags: u16,
-
-//     fixed_velocity_enable: bool,
-//     fixed_velocity_amount: u8,
-
-//     sample_recorder_thr: u8,
-//     sample_recorder_monitor_enable: bool,
-
-// }
 pub mod settings_action_type {
     pub const VERSION: &str = "version";
     pub const BPM_PROJECT: &str = "projectbpm";
@@ -93,7 +73,7 @@ pub mod settings_action_type {
     pub const SELECTED_PAGE: &str = "selectedpage";
     pub const MUTE: &str = "mute";
     pub const FIXED_VELOCITY_ENABLE: &str = "fixedvelocity";
-    pub const FIXED_VELOCITY_AMOUNT: &str = "fixedvelocityamount";
+    pub const FIXED_VELOCITY_AMOUNT: &str = "fixedvelocityamt";
     pub const SAMPLE_RECORDER_THR: &str = "samplerecorderthr";
     pub const SAMPLE_RECORDER_MONITOR_ENABLE: &str = "samplerecordermonitor";
 }
@@ -438,34 +418,6 @@ pub mod sound_machine_enum_type {
     pub const SY_RAW_WAVEFORM_2: &str = "syrawwaveform2";
 }
 
-// pub struct MetronomeSettings {
-//     time_signature: TimeSignature,
-// }
-// pub struct Routing {
-//     usb_in: RoutingUsbInOptions,
-//     usb_out: RoutingUsbOutOptions,
-//     usb_to_main_db: RoutingUsbToMainDb,
-// }
-// pub struct PortConfig {
-//     out_port_func: MidiPortFunction,
-//     thru_port_func: MidiPortFunction,
-//     input_from: MidiTransportLayer,
-//     output_to: MidiTransportLayer,
-//     param_output: MidiParameterOutput,
-//     pad_dest: ParameterDestination,
-//     pressure_dest: ParameterDestination,
-//     encoder_dest: ParameterDestination,
-//     mute_dest: ParameterDestination,
-//     ports_output_channel: MidiPortsOutputChannel,
-// }
-// pub struct Channels {
-//     auto_channel: MidiChannel,
-//     track_channels: [MidiChannel; 12],
-//     track_fx_channel: MidiChannel,
-//     program_change_in_channel: MidiChannel,
-//     program_change_out_channel: MidiChannel,
-//     performance_channel: MidiChannel,
-// }
 pub mod global_enum_type {
     pub const METRONOME_TIME_SIGNATURE: &str = "metronometimesignature";
 

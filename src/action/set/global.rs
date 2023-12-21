@@ -80,7 +80,7 @@ pub fn handle_global_set_enum_value(
                     global
                         .midi_config_mut()
                         .channels_mut()
-                        .set_track_channel(track_index as usize, enum_value.try_into()?)?
+                        .set_track_channel(track_index as usize, enum_value.try_into()?)?;
                 } else {
                     return Err("Invalid setter format: trackchannels should be followed by an integer track index. Format: trackchannels:<channel> <track index>. Example: trackchannels:1 2".into());
                 }
@@ -104,7 +104,7 @@ pub fn handle_global_set_enum_value(
             .channels_mut()
             .set_performance_channel(enum_value.try_into()?)?,
 
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     }
 
     Ok(())
@@ -124,19 +124,19 @@ pub fn handle_global_set_action(
         KIT_RELOAD_ON_CHANGE => {
             global
                 .sequencer_config_mut()
-                .set_kit_reload_on_chg(get_bool_from_0_or_1(parameter_atom)?);
+                .set_kit_reload_on_chg(get_bool_from_0_or_1(parameter_atom, KIT_RELOAD_ON_CHANGE)?);
             Ok(())
         }
         QUANTIZE_LIVE_REC => {
             global
                 .sequencer_config_mut()
-                .set_quantize_live_rec(get_bool_from_0_or_1(parameter_atom)?);
+                .set_quantize_live_rec(get_bool_from_0_or_1(parameter_atom, QUANTIZE_LIVE_REC)?);
             Ok(())
         }
         AUTO_TRACK_SWITCH => {
             global
                 .sequencer_config_mut()
-                .set_auto_trk_switch(get_bool_from_0_or_1(parameter_atom)?);
+                .set_auto_trk_switch(get_bool_from_0_or_1(parameter_atom, AUTO_TRACK_SWITCH)?);
             Ok(())
         }
 
@@ -157,42 +157,48 @@ pub fn handle_global_set_action(
             global
                 .midi_config_mut()
                 .sync_mut()
-                .set_clock_receive(get_bool_from_0_or_1(parameter_atom)?);
+                .set_clock_receive(get_bool_from_0_or_1(parameter_atom, CLOCK_RECEIVE)?);
             Ok(())
         }
         CLOCK_SEND => {
             global
                 .midi_config_mut()
                 .sync_mut()
-                .set_clock_send(get_bool_from_0_or_1(parameter_atom)?);
+                .set_clock_send(get_bool_from_0_or_1(parameter_atom, CLOCK_SEND)?);
             Ok(())
         }
         TRANSPORT_RECEIVE => {
             global
                 .midi_config_mut()
                 .sync_mut()
-                .set_transport_receive(get_bool_from_0_or_1(parameter_atom)?);
+                .set_transport_receive(get_bool_from_0_or_1(parameter_atom, TRANSPORT_RECEIVE)?);
             Ok(())
         }
         TRANSPORT_SEND => {
             global
                 .midi_config_mut()
                 .sync_mut()
-                .set_transport_send(get_bool_from_0_or_1(parameter_atom)?);
+                .set_transport_send(get_bool_from_0_or_1(parameter_atom, TRANSPORT_SEND)?);
             Ok(())
         }
         PROGRAM_CHANGE_RECEIVE => {
             global
                 .midi_config_mut()
                 .sync_mut()
-                .set_program_change_receive(get_bool_from_0_or_1(parameter_atom)?);
+                .set_program_change_receive(get_bool_from_0_or_1(
+                    parameter_atom,
+                    PROGRAM_CHANGE_RECEIVE,
+                )?);
             Ok(())
         }
         PROGRAM_CHANGE_SEND => {
             global
                 .midi_config_mut()
                 .sync_mut()
-                .set_program_change_send(get_bool_from_0_or_1(parameter_atom)?);
+                .set_program_change_send(get_bool_from_0_or_1(
+                    parameter_atom,
+                    PROGRAM_CHANGE_SEND,
+                )?);
             Ok(())
         }
 
@@ -200,14 +206,14 @@ pub fn handle_global_set_action(
             global
                 .midi_config_mut()
                 .port_config_mut()
-                .set_receive_notes(get_bool_from_0_or_1(parameter_atom)?);
+                .set_receive_notes(get_bool_from_0_or_1(parameter_atom, RECEIVE_NOTES)?);
             Ok(())
         }
         RECEIVE_CC_NRPN => {
             global
                 .midi_config_mut()
                 .port_config_mut()
-                .set_receive_cc_nrpn(get_bool_from_0_or_1(parameter_atom)?);
+                .set_receive_cc_nrpn(get_bool_from_0_or_1(parameter_atom, RECEIVE_CC_NRPN)?);
             Ok(())
         }
 

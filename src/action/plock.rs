@@ -12,7 +12,7 @@ pub mod get;
 pub mod set;
 
 pub fn handle_trig_plock_setter_action(
-    trig: &mut Trig,
+    trig: &Trig,
     selector: &str,
     atoms: &[Atom],
     slice_index: usize,
@@ -29,7 +29,7 @@ pub fn handle_trig_plock_setter_action(
                 if let Some((enum_type, enum_value)) = enum_pair {
                     handle_trig_plock_set_enum_value(trig, enum_type, enum_value)
                 } else {
-                    handle_trig_plock_set_action(trig, action_or_enum_value, atoms, slice_index + 1)
+                    handle_trig_plock_set_action(trig, &action_or_enum_value, atoms, slice_index + 1)
                 }
             }
             PLOCK_GET => {
@@ -39,7 +39,7 @@ pub fn handle_trig_plock_setter_action(
                 if let Some((enum_type, _)) = enum_pair {
                     handle_trig_plock_clear_enum_value(trig, enum_type)
                 } else {
-                    handle_trig_plock_clear_action(trig, action_or_enum_value)
+                    handle_trig_plock_clear_action(trig, &action_or_enum_value)
                 }
             }
             _ => unreachable!("Use this function only with plock selectors."),

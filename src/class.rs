@@ -10,7 +10,7 @@ use crate::rytm::Rytm;
 use median::method::*;
 
 // This trait is for Max specific objects, there is another one for MSP objects.
-impl MaxObjWrapped<Rytm> for Rytm {
+impl MaxObjWrapped<Self> for Rytm {
     // The constructor for your object
     fn new(builder: &mut dyn MaxWrappedBuilder<Self>) -> Self {
         // You can also add inlets/outlets here modifying the builder

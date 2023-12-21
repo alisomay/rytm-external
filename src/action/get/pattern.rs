@@ -45,7 +45,7 @@ pub fn handle_pattern_get_action(action: PatternGetAction) -> Result<(), RytmExt
     } = action;
 
     let value_atom: Atom = match action.to_string()?.as_str() {
-        IS_WORK_BUFFER => Atom::from(pattern.is_work_buffer_pattern() as isize),
+        IS_WORK_BUFFER => Atom::from(isize::from(pattern.is_work_buffer_pattern())),
         VERSION => Atom::from(pattern.structure_version() as isize),
         INDEX => Atom::from(pattern.index() as isize),
         MASTER_LENGTH => Atom::from(pattern.master_length() as isize),
@@ -53,9 +53,9 @@ pub fn handle_pattern_get_action(action: PatternGetAction) -> Result<(), RytmExt
         KIT_NUMBER => Atom::from(pattern.kit_number() as isize),
         SWING_AMOUNT => Atom::from(pattern.swing_amount() as isize),
         GLOBAL_QUANTIZE => Atom::from(pattern.global_quantize() as isize),
-        BPM => Atom::from(pattern.bpm() as f64),
+        BPM => Atom::from(f64::from(pattern.bpm())),
 
-        other => return Err(InvalidActionType(other.to_string()).into()),
+        other => return Err(InvalidActionType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(action);
@@ -77,7 +77,7 @@ pub fn handle_pattern_enum_get_action(
         SPEED => pattern.speed().into(),
         TIME_MODE => pattern.time_mode().into(),
 
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     };
 
     let enum_type_atom = Atom::from(SymbolRef::try_from(enum_type).unwrap());

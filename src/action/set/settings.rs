@@ -41,7 +41,7 @@ pub fn handle_settings_set_enum_value(
             settings.set_sample_recorder_recording_length(enum_value.try_into()?);
             Ok(())
         }
-        other => Err(InvalidEnumType(other.to_string()).into()),
+        other => Err(InvalidEnumType(other.to_owned()).into()),
     }
 }
 
@@ -73,7 +73,10 @@ pub fn handle_settings_set_action(
             Ok(())
         }
         FIXED_VELOCITY_ENABLE => {
-            settings.set_fixed_velocity_enable(get_bool_from_0_or_1(parameter_atom)?);
+            settings.set_fixed_velocity_enable(get_bool_from_0_or_1(
+                parameter_atom,
+                FIXED_VELOCITY_ENABLE,
+            )?);
             Ok(())
         }
         FIXED_VELOCITY_AMOUNT => {
@@ -85,10 +88,13 @@ pub fn handle_settings_set_action(
             Ok(())
         }
         SAMPLE_RECORDER_MONITOR_ENABLE => {
-            settings.set_sample_recorder_monitor_enable(get_bool_from_0_or_1(parameter_atom)?);
+            settings.set_sample_recorder_monitor_enable(get_bool_from_0_or_1(
+                parameter_atom,
+                SAMPLE_RECORDER_MONITOR_ENABLE,
+            )?);
             Ok(())
         }
 
-        other => Err(InvalidActionType(other.to_string()).into()),
+        other => Err(InvalidActionType(other.to_owned()).into()),
     }
 }

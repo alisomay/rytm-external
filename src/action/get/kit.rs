@@ -1,6 +1,7 @@
 use crate::api::kit_action_type::*;
 use crate::api::kit_element_type::*;
 use crate::api::kit_enum_type::*;
+use crate::api::sound_kit::handle_sound_kit_get;
 use crate::error::ActionError::InvalidActionType;
 use crate::error::EnumError::InvalidEnumType;
 use crate::error::RytmExternalError;
@@ -25,7 +26,7 @@ pub fn handle_kit_get_action(
         INDEX => (kit.index() as isize).into(),
         NAME => SymbolRef::from(CString::new(kit.name()).unwrap()).into(),
         FX_DELAY_TIME => (kit.fx_delay().time() as isize).into(),
-        FX_DELAY_PING_PONG => (kit.fx_delay().ping_pong() as isize).into(),
+        FX_DELAY_PING_PONG => isize::from(kit.fx_delay().ping_pong()).into(),
         FX_DELAY_STEREO_WIDTH => (kit.fx_delay().stereo_width()).into(),
         FX_DELAY_FEEDBACK => (kit.fx_delay().feedback() as isize).into(),
         FX_DELAY_HPF => (kit.fx_delay().hpf() as isize).into(),
@@ -49,10 +50,10 @@ pub fn handle_kit_get_action(
         FX_LFO_SPEED => (kit.fx_lfo().speed()).into(),
         FX_LFO_FADE => (kit.fx_lfo().fade()).into(),
         FX_LFO_START_PHASE_OR_SLEW => (kit.fx_lfo().start_phase_or_slew() as isize).into(),
-        FX_LFO_DEPTH => (kit.fx_lfo().depth() as f64).into(),
+        FX_LFO_DEPTH => f64::from(kit.fx_lfo().depth()).into(),
 
         // TODO: Distortion getters when ready
-        other => return Err(InvalidActionType(other.to_string()).into()),
+        other => return Err(InvalidActionType(other.to_owned()).into()),
     };
 
     let action_atom = Atom::from(action);
@@ -78,7 +79,7 @@ pub fn handle_kit_get_enum_value(
         FX_COMP_RATIO => (*kit.fx_compressor().ratio()).into(),
         FX_COMP_SIDE_CHAIN_EQ => (*kit.fx_compressor().side_chain_eq()).into(),
 
-        other => return Err(InvalidEnumType(other.to_string()).into()),
+        other => return Err(InvalidEnumType(other.to_owned()).into()),
     };
 
     let enum_type_atom = Atom::from(SymbolRef::try_from(enum_type).unwrap());
@@ -120,10 +121,10 @@ pub fn handle_kit_get_kit_element(
             (kit.track_retrig_settings(element_index)?.velocity_curve() as isize).into()
         }
         TRACK_RETRIG_ALWAYS_ON => {
-            (kit.track_retrig_settings(element_index)?.always_on() as isize).into()
+            isize::from(kit.track_retrig_settings(element_index)?.always_on()).into()
         }
 
-        other => return Err(InvalidActionType(other.to_string()).into()),
+        other => return Err(InvalidActionType(other.to_owned()).into()),
     };
 
     let element_type_atom = Atom::from(SymbolRef::try_from(element_type).unwrap());
@@ -145,9 +146,10 @@ pub fn handle_kit_get_kit_element(
 }
 
 pub fn handle_kit_get_kit_sound(
-    kit: &Sound,
+    sound: &Sound,
     atoms: &[Atom],
     slice_from_index: usize,
+    out: &OutAnything,
 ) -> Result<(), RytmExternalError> {
-    todo!()
+    handle_sound_kit_get(sound, &atoms[slice_from_index..], out)
 }
