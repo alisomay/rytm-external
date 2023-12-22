@@ -29,7 +29,7 @@ pub fn handle_settings_get_enum_value(
     let enum_value_atom = Atom::from(SymbolRef::try_from(value).unwrap());
 
     if let Err(_stack_overflow_err) =
-        out.send(&[enum_type_atom, Atom::from(0isize), enum_value_atom][..])
+        out.send(&[Atom::from(0isize), enum_type_atom, enum_value_atom][..])
     {
         // Stack overflow ignore
     }
@@ -64,7 +64,7 @@ pub fn handle_settings_get_action(
     };
 
     let action_atom = Atom::from(SymbolRef::from(CString::new(action).unwrap()));
-    if let Err(_stack_overflow_err) = out.send(&[action_atom, Atom::from(0isize), value_atom][..]) {
+    if let Err(_stack_overflow_err) = out.send(&[Atom::from(0isize), action_atom, value_atom][..]) {
         // Stack overflow ignore
     }
 

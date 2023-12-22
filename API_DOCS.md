@@ -3,16 +3,24 @@
 ## How to read this documentation?
 
 Words in these wrapped with `<..>` should be read as placeholders for the actual values.
+
 For example `<selector>` should be read as `query`, `send`, `get` or `set`.
 
 Words in these wrapped with `[]` should be read as optional values.
+
 For example `[<parameter>]` should be read as `<parameter>` or nothing.
 
 Words in these wrapped with `<..>` may include attached range of values to denote the valid range of an index or a parameter.
+
 For example `<index 0..=127>` should be read as an integer between 0 and 127.
+
 Ranges can be inclusive or exclusive. An exclusive range is denoted with `..` and an inclusive range is denoted with `..=`.
 
 MaxMSP types will be denoted as `int`, `float`, `symbol` and `list`.
+
+When using the following identifiers and enums with some getters and setters there could be format differences.
+
+For these, please follow common sense and read the errors in the max window, they will guide you to the right direction.
 
 - `<selector>` A symbol which defines an operation. Available selectors are:
   - `query` Queries the device for data.
@@ -64,6 +72,32 @@ Examples:
 ## Get format
 
 The get format is used to get data from the `rytm` external.
+
+### Output
+
+The default output format for identifier getters:
+
+`<object-index> <identifier-type> <parameter>`
+
+The default output format for enum getters:
+
+`<object-index> <enum-type> <enum-value>`
+
+For some getters an additional parent index is included,
+
+Track getter output format:
+
+`<pattern-index> <track-index> ..`
+
+Trig getter output format:
+
+`<track-index> <trig-index> ..`
+
+For getters which includes an additional element the index of that element is included,
+
+Kit getter with element output format:
+
+`<kit-index> <element-index> ..`
 
 ### Pattern
 
@@ -387,9 +421,9 @@ Accepted formats:
 
 ## Enums
 
-### Pattern
+## Pattern
 
-#### `speed:`
+### `speed:`
 
 | Variants | &nbsp;   | &nbsp;   |
 | -------- | -------- | -------- |
@@ -397,15 +431,15 @@ Accepted formats:
 | **2x**   | **1/2x** |          |
 | **3/2x** | **1/4x** |          |
 
-#### `timemode:`
+### `timemode:`
 
 | Variants   | &nbsp;       | &nbsp; |
 | ---------- | ------------ | ------ |
 | **normal** | **advanced** |        |
 
-### Track
+## Track
 
-#### `rootnote:`
+### `rootnote:`
 
 | Variants | &nbsp; | &nbsp; |
 | -------- | ------ | ------ |
@@ -414,7 +448,7 @@ Accepted formats:
 | **d**    | **f#** | **bb** |
 | **eb**   | **g**  | **b**  |
 
-#### `padscale:`
+### `padscale:`
 
 | Variants            | &nbsp;                  | &nbsp;                  |
 | ------------------- | ----------------------- | ----------------------- |
@@ -431,7 +465,7 @@ Accepted formats:
 | **melodicminor**    | **halfwholediminished** | **ionian25**            |
 | **harmonicminor**   | **spanish**             | **locrianbb3bb7**       |
 
-#### `defaultnotelen:`
+### `defaultnotelen:`
 
 | Variants  | &nbsp;   | &nbsp;    |
 | --------- | -------- | --------- |
@@ -479,9 +513,9 @@ Accepted formats:
 | **3.38**  | **22**   | **inf**   |
 | **3.5**   | **23**   | **unset** |
 
-### Trig
+## Trig
 
-#### `microtime:`
+### `microtime:`
 
 | Variants    | &nbsp;     | &nbsp;     |
 | ----------- | ---------- | ---------- |
@@ -502,7 +536,7 @@ Accepted formats:
 | **-3/128**  | **7/384**  | **23/384** |
 | **-1/48**   | **1/48**   |            |
 
-#### `notelen:`
+### `notelen:`
 
 | Variants  | &nbsp;   | &nbsp;    |
 | --------- | -------- | --------- |
@@ -550,7 +584,7 @@ Accepted formats:
 | **3.38**  | **22**   | **inf**   |
 | **3.5**   | **23**   | **unset** |
 
-#### `retriglen:`
+### `retriglen:`
 
 | Variants  | &nbsp;   | &nbsp;    |
 | --------- | -------- | --------- |
@@ -598,7 +632,7 @@ Accepted formats:
 | **3.38**  | **22**   | **inf**   |
 | **3.5**   | **23**   | **unset** |
 
-#### `retrigrate:`
+### `retrigrate:`
 
 | Variants | &nbsp;   | &nbsp;   |
 | -------- | -------- | -------- |
@@ -609,7 +643,7 @@ Accepted formats:
 | **1/5**  | **1/20** | **1/80** |
 | **1/6**  | **1/24** |          |
 
-#### `trigcondition:`
+### `trigcondition:`
 
 | Variants | &nbsp;      | &nbsp;    |
 | -------- | ----------- | --------- |
@@ -636,25 +670,9 @@ Accepted formats:
 | **99%**  | **4:5**     | **8:8**   |
 | **100%** | **5:5**     | **unset** |
 
-### Kit
+## Kit
 
-#### `controlinmod1target:`
-
-| Variants           | &nbsp;                 | &nbsp;              |
-| ------------------ | ---------------------- | ------------------- |
-| **unset**          | **samplebitreduction** | **filterresonance** |
-| **lfomultiplier**  | **samplestart**        | **ampattack**       |
-| **lfowaveform**    | **sampleend**          | **amphold**         |
-| **lfotrigmode**    | **sampleloop**         | **ampdecay**        |
-| **lfospeed**       | **samplelevel**        | **ampoverdrive**    |
-| **lfofade**        | **filterenvelope**     | **ampvolume**       |
-| **lfophase**       | **filterattack**       | **amppan**          |
-| **lfodepth**       | **filterdecay**        | **ampaccent**       |
-| **sampletune**     | **filtersustain**      | **ampdelaysend**    |
-| **samplefinetune** | **filterrelease**      | **ampreverbsend**   |
-| **sampleslice**    | **filterfrequency**    |                     |
-
-#### `controlinmod2target:`
+### `controlinmod1target:`
 
 | Variants           | &nbsp;                 | &nbsp;              |
 | ------------------ | ---------------------- | ------------------- |
@@ -670,7 +688,23 @@ Accepted formats:
 | **samplefinetune** | **filterrelease**      | **ampreverbsend**   |
 | **sampleslice**    | **filterfrequency**    |                     |
 
-#### `fxlfodest:`
+### `controlinmod2target:`
+
+| Variants           | &nbsp;                 | &nbsp;              |
+| ------------------ | ---------------------- | ------------------- |
+| **unset**          | **samplebitreduction** | **filterresonance** |
+| **lfomultiplier**  | **samplestart**        | **ampattack**       |
+| **lfowaveform**    | **sampleend**          | **amphold**         |
+| **lfotrigmode**    | **sampleloop**         | **ampdecay**        |
+| **lfospeed**       | **samplelevel**        | **ampoverdrive**    |
+| **lfofade**        | **filterenvelope**     | **ampvolume**       |
+| **lfophase**       | **filterattack**       | **amppan**          |
+| **lfodepth**       | **filterdecay**        | **ampaccent**       |
+| **sampletune**     | **filtersustain**      | **ampdelaysend**    |
+| **samplefinetune** | **filterrelease**      | **ampreverbsend**   |
+| **sampleslice**    | **filterfrequency**    |                     |
+
+### `fxlfodest:`
 
 | Variants             | &nbsp;                 | &nbsp;                    |
 | -------------------- | ---------------------- | ------------------------- |
@@ -684,7 +718,7 @@ Accepted formats:
 | **delayreverbsend**  | **reverbmixvolume**    | **compressordrywetmix**   |
 | **delaymixvolume**   | **distortionamount**   | **compressorvolume**      |
 
-#### `fxcompattack:`
+### `fxcompattack:`
 
 | Variants | &nbsp; | &nbsp; |
 | -------- | ------ | ------ |
@@ -692,7 +726,7 @@ Accepted formats:
 | **0.1**  | **3**  |        |
 | **0.3**  | **10** |        |
 
-#### `fxcomprelease:`
+### `fxcomprelease:`
 
 | Variants | &nbsp;  | &nbsp; |
 | -------- | ------- | ------ |
@@ -700,23 +734,23 @@ Accepted formats:
 | **0.2**  | **1**   | **A2** |
 | **0.4**  | **2**   |        |
 
-#### `fxcompratio:`
+### `fxcompratio:`
 
 | Variants | &nbsp;  | &nbsp; |
 | -------- | ------- | ------ |
 | **1:2**  | **1:8** |        |
 | **1:4**  | **max** |        |
 
-#### `fxcompsidechaineq:`
+### `fxcompsidechaineq:`
 
 | Variants | &nbsp;  | &nbsp; |
 | -------- | ------- | ------ |
 | **off**  | **hpf** |        |
 | **lpf**  | **hit** |        |
 
-### Sound
+## Sound
 
-#### `machinetype:`
+### `machinetype:`
 
 | Variants      | &nbsp;         | &nbsp;         |
 | ------------- | -------------- | -------------- |
@@ -733,7 +767,7 @@ Accepted formats:
 | **ohclassic** | **bdsilky**    | **unset**      |
 | **cyclassic** | **sdnatural**  |                |
 
-#### `lfodest:`
+### `lfodest:`
 
 | Variants           | &nbsp;                 | &nbsp;              |
 | ------------------ | ---------------------- | ------------------- |
@@ -749,7 +783,7 @@ Accepted formats:
 | **samplefinetune** | **filterrelease**      | **ampreverb_send**  |
 | **sampleslice**    | **filterfrequency**    | **unset**           |
 
-#### `velmodtarget:`
+### `velmodtarget:`
 
 | Variants          | &nbsp;                 | &nbsp;              |
 | ----------------- | ---------------------- | ------------------- |
@@ -768,7 +802,7 @@ Accepted formats:
 | **syn5**          | **filterdecay**        |                     |
 | **syn6**          | **filtersustain**      |                     |
 
-#### `atmodtarget:`
+### `atmodtarget:`
 
 | Variants          | &nbsp;                 | &nbsp;              |
 | ----------------- | ---------------------- | ------------------- |
@@ -787,7 +821,7 @@ Accepted formats:
 | **syn5**          | **filterdecay**        |                     |
 | **syn6**          | **filtersustain**      |                     |
 
-#### `filtertype:`
+### `filtertype:`
 
 | Variants | &nbsp;  | &nbsp; |
 | -------- | ------- | ------ |
@@ -795,7 +829,7 @@ Accepted formats:
 | **lp1**  | **hp2** |        |
 | **bp**   | **bs**  |        |
 
-#### `lfomultiplier:`
+### `lfomultiplier:`
 
 | Variants | &nbsp;   | &nbsp;   |
 | -------- | -------- | -------- |
@@ -808,7 +842,7 @@ Accepted formats:
 | **x64**  | **.4**   | **.1k**  |
 | **x128** | **.8**   | **.2k**  |
 
-#### `lfowaveform:`
+### `lfowaveform:`
 
 | Variants | &nbsp;  | &nbsp;  |
 | -------- | ------- | ------- |
@@ -816,23 +850,23 @@ Accepted formats:
 | **sin**  | **exp** |         |
 | **sqr**  | **rmp** |         |
 
-#### `lfomode:`
+### `lfomode:`
 
 | Variants | &nbsp;   | &nbsp;   |
 | -------- | -------- | -------- |
 | **free** | **hold** | **half** |
 | **trig** | **one**  |          |
 
-#### `chromaticmode:`
+### `chromaticmode:`
 
 | Variants | &nbsp;       | &nbsp; |
 | -------- | ------------ | ------ |
 | **off**  | **samp**     |        |
 | **syn**  | **syn+samp** |        |
 
-### Global
+## Global
 
-#### `metronometimesig:`
+### `metronometimesig:`
 
 | Variants | &nbsp;   | &nbsp;    |
 | -------- | -------- | --------- |
@@ -864,7 +898,7 @@ Accepted formats:
 | **10/2** | **5/8**  | **16/16** |
 | **11/2** | **6/8**  |           |
 
-#### `autochannel:`
+### `autochannel:`
 
 | Variants | &nbsp; | &nbsp; |
 | -------- | ------ | ------ |
@@ -875,7 +909,7 @@ Accepted formats:
 | **5**    | **11** |        |
 | **6**    | **12** |        |
 
-#### `trackchannels:`
+### `trackchannels:`
 
 | Variants | &nbsp; | &nbsp; |
 | -------- | ------ | ------ |
@@ -886,7 +920,7 @@ Accepted formats:
 | **5**    | **11** |        |
 | **6**    | **12** |        |
 
-#### `trackfxchannel:`
+### `trackfxchannel:`
 
 | Variants | &nbsp; | &nbsp; |
 | -------- | ------ | ------ |
@@ -897,7 +931,7 @@ Accepted formats:
 | **5**    | **11** |        |
 | **6**    | **12** |        |
 
-#### `pgmchangeinchannel:`
+### `pgmchangeinchannel:`
 
 | Variants | &nbsp; | &nbsp; |
 | -------- | ------ | ------ |
@@ -908,7 +942,7 @@ Accepted formats:
 | **5**    | **11** |        |
 | **6**    | **12** |        |
 
-#### `pgmchangeoutchannel:`
+### `pgmchangeoutchannel:`
 
 | Variants | &nbsp; | &nbsp; |
 | -------- | ------ | ------ |
@@ -919,7 +953,7 @@ Accepted formats:
 | **5**    | **11** |        |
 | **6**    | **12** |        |
 
-#### `performancechannel:`
+### `performancechannel:`
 
 | Variants | &nbsp; | &nbsp; |
 | -------- | ------ | ------ |
@@ -930,76 +964,76 @@ Accepted formats:
 | **5**    | **11** |        |
 | **6**    | **12** |        |
 
-#### `outportfunction:`
+### `outportfunction:`
 
 | Variants | &nbsp;    | &nbsp;    |
 | -------- | --------- | --------- |
 | **midi** | **din24** | **din48** |
 
-#### `thruportfunction:`
+### `thruportfunction:`
 
 | Variants | &nbsp;    | &nbsp;    |
 | -------- | --------- | --------- |
 | **midi** | **din24** | **din48** |
 
-#### `inputfrom:`
+### `inputfrom:`
 
 | Variants     | &nbsp;       | &nbsp; |
 | ------------ | ------------ | ------ |
 | **disabled** | **usb**      |        |
 | **midi**     | **midi+usb** |        |
 
-#### `outputto:`
+### `outputto:`
 
 | Variants     | &nbsp;       | &nbsp; |
 | ------------ | ------------ | ------ |
 | **disabled** | **usb**      |        |
 | **midi**     | **midi+usb** |        |
 
-#### `paddest:`
+### `paddest:`
 
 | Variants | &nbsp;      | &nbsp;  |
 | -------- | ----------- | ------- |
 | **int**  | **int+ext** | **ext** |
 
-#### `pressuredest:`
+### `pressuredest:`
 
 | Variants | &nbsp;      | &nbsp;  |
 | -------- | ----------- | ------- |
 | **int**  | **int+ext** | **ext** |
 
-#### `encoderdest:`
+### `encoderdest:`
 
 | Variants | &nbsp;      | &nbsp;  |
 | -------- | ----------- | ------- |
 | **int**  | **int+ext** | **ext** |
 
-#### `mutedest:`
+### `mutedest:`
 
 | Variants | &nbsp;      | &nbsp;  |
 | -------- | ----------- | ------- |
 | **int**  | **int+ext** | **ext** |
 
-#### `usbtomaindb:`
+### `usbtomaindb:`
 
 | Variants | &nbsp;    | &nbsp; |
 | -------- | --------- | ------ |
 | **0db**  | **+12db** |        |
 | **+6db** | **+18db** |        |
 
-#### `paramoutput:`
+### `paramoutput:`
 
 | Variants | &nbsp; | &nbsp; |
 | -------- | ------ | ------ |
 | **nrpn** | **cc** |        |
 
-#### `portsoutputchannel:`
+### `portsoutputchannel:`
 
 | Variants | &nbsp;    | &nbsp; |
 | -------- | --------- | ------ |
 | **auto** | **track** |        |
 
-#### `usbin:`
+### `usbin:`
 
 | Variants       | &nbsp;           | &nbsp;            |
 | -------------- | ---------------- | ----------------- |
@@ -1026,7 +1060,7 @@ Accepted formats:
 | **l:2r:6**     | **l:6r:7:8**     | **l:11:12r:7:8**  |
 | **l:2r:7:8**   | **l:6r:9:10**    | **l:11:12r:9:10** |
 
-#### `usbout:`
+### `usbout:`
 
 | Variants       | &nbsp;           | &nbsp;            |
 | -------------- | ---------------- | ----------------- |
@@ -1053,36 +1087,36 @@ Accepted formats:
 | **l:2r:7:8**   | **l:6r:9:10**    | **l:11:12r:9:10** |
 | **l:2r:9:10**  | **l:6r:11:12**   |                   |
 
-### Settings
+## Settings
 
-#### `parametermenuitem:`
+### `parametermenuitem:`
 
 | Variants | &nbsp;   | &nbsp;  |
 | -------- | -------- | ------- |
 | **trig** | **smpl** | **amp** |
 | **src**  | **fltr** | **lfo** |
 
-#### `fxparametermenuitem:`
+### `fxparametermenuitem:`
 
 | Variants  | &nbsp;     | &nbsp;   |
 | --------- | ---------- | -------- |
 | **trig**  | **reverb** | **comp** |
 | **delay** | **dist**   | **lfo**  |
 
-#### `sequencermode:`
+### `sequencermode:`
 
 | Variants   | &nbsp;    | &nbsp;   |
 | ---------- | --------- | -------- |
 | **normal** | **chain** | **song** |
 
-#### `patternmode:`
+### `patternmode:`
 
 | Variants        | &nbsp;         | &nbsp; |
 | --------------- | -------------- | ------ |
 | **sequential**  | **directjump** |        |
 | **directstart** | **tempjump**   |        |
 
-#### `samplerecordersrc:`
+### `samplerecordersrc:`
 
 | Variants   | &nbsp;    | &nbsp;     |
 | ---------- | --------- | ---------- |
@@ -1092,7 +1126,7 @@ Accepted formats:
 | **bd**     | **mt/ht** | **usbr**   |
 | **sd**     | **ch/oh** | **usbl+r** |
 
-#### `samplerecorderrecordinglen:`
+### `samplerecorderrecordinglen:`
 
 | Variants   | &nbsp;      | &nbsp;       |
 | ---------- | ----------- | ------------ |

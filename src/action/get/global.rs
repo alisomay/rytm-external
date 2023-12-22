@@ -96,7 +96,7 @@ pub fn handle_global_get_enum_value(
     let index_atom = Atom::from(AtomValue::Int(global.index() as isize));
     let enum_value_atom = Atom::from(SymbolRef::try_from(value).unwrap());
 
-    if let Err(_stack_overflow_err) = out.send(&[enum_type_atom, index_atom, enum_value_atom][..]) {
+    if let Err(_stack_overflow_err) = out.send(&[index_atom, enum_type_atom, enum_value_atom][..]) {
         // Stack overflow ignore
     }
 
@@ -178,7 +178,7 @@ pub fn handle_global_get_action(
     let index_atom = Atom::from(AtomValue::Int(global.index() as isize));
     let value_atom = Atom::from(value);
 
-    if let Err(_stack_overflow_err) = out.send(&[action_atom, index_atom, value_atom][..]) {
+    if let Err(_stack_overflow_err) = out.send(&[index_atom, action_atom, value_atom][..]) {
         // Stack overflow ignore
     }
 
