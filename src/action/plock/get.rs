@@ -200,7 +200,6 @@ pub fn handle_trig_plock_get_enum_value(
     let enum_value: Option<&str> = match enum_type {
         kit_enum_type::FX_COMP_ATTACK => trig.plock_get_fx_compressor_attack()?.map(Into::into),
         kit_enum_type::FX_COMP_RELEASE => trig.plock_get_fx_compressor_release()?.map(Into::into),
-        kit_enum_type::FX_DELAY_TIME_ON_THE_GRID => todo!(),
         kit_enum_type::FX_COMP_RATIO => trig.plock_get_fx_compressor_ratio()?.map(Into::into),
         kit_enum_type::FX_COMP_SIDE_CHAIN_EQ => trig
             .plock_get_fx_compressor_side_chain_eq()?

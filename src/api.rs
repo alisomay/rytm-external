@@ -38,7 +38,7 @@ pub mod object_type {
 pub mod kit_element_type {
     pub const TRACK_LEVEL: &str = "tracklevel";
     pub const TRACK_RETRIG_RATE: &str = "trackretrigrate";
-    pub const TRACK_RETRIG_LENGTH: &str = "trackretriglength";
+    pub const TRACK_RETRIG_LENGTH: &str = "trackretriglen";
     pub const TRACK_RETRIG_VEL_OFFSET: &str = "trackretrigveloffset";
     pub const TRACK_RETRIG_ALWAYS_ON: &str = "trackretrigalwayson";
     pub const SOUND: &str = "sound";
@@ -74,10 +74,11 @@ pub mod settings_action_type {
     pub const SELECTED_TRACK: &str = "selectedtrack";
     pub const SELECTED_PAGE: &str = "selectedpage";
     pub const MUTE: &str = "mute";
+    pub const UNMUTE: &str = "unmute";
     pub const FIXED_VELOCITY_ENABLE: &str = "fixedvelocity";
     pub const FIXED_VELOCITY_AMOUNT: &str = "fixedvelocityamt";
     pub const SAMPLE_RECORDER_THR: &str = "samplerecorderthr";
-    pub const SAMPLE_RECORDER_MONITOR_ENABLE: &str = "samplerecordermonitor";
+    pub const SAMPLE_RECORDER_MONITOR_ENABLE: &str = "samplerecordermon";
 }
 
 pub mod global_action_type {
@@ -96,8 +97,8 @@ pub mod global_action_type {
     pub const CLOCK_SEND: &str = "clocksend";
     pub const TRANSPORT_RECEIVE: &str = "transportreceive";
     pub const TRANSPORT_SEND: &str = "transportsend";
-    pub const PROGRAM_CHANGE_RECEIVE: &str = "programchangereceive";
-    pub const PROGRAM_CHANGE_SEND: &str = "programchangesend";
+    pub const PROGRAM_CHANGE_RECEIVE: &str = "pgmchangereceive";
+    pub const PROGRAM_CHANGE_SEND: &str = "pgmchangesend";
 
     pub const RECEIVE_NOTES: &str = "receivenotes";
     pub const RECEIVE_CC_NRPN: &str = "receiveccnrpn";
@@ -106,7 +107,7 @@ pub mod global_action_type {
 
     pub const METRONOME_ACTIVE: &str = "metronomeactive";
     pub const METRONOME_PRE_ROLL_BARS: &str = "metronomeprerollbars";
-    pub const METRONOME_VOLUME: &str = "metronomevolume";
+    pub const METRONOME_VOLUME: &str = "metronomelev";
 }
 
 pub mod kit_action_type {
@@ -117,38 +118,38 @@ pub mod kit_action_type {
     pub const CONTROL_IN_1_MOD_AMT: &str = "ctrlinmod1amt";
     pub const CONTROL_IN_2_MOD_AMT: &str = "ctrlinmod2amt";
 
-    pub const FX_DELAY_TIME: &str = "fxdelaytime";
-    pub const FX_DELAY_PING_PONG: &str = "fxdelaypingpong";
-    pub const FX_DELAY_STEREO_WIDTH: &str = "fxdelaystereowidth";
-    pub const FX_DELAY_FEEDBACK: &str = "fxdelayfeedback";
-    pub const FX_DELAY_HPF: &str = "fxdelayhpf";
-    pub const FX_DELAY_LPF: &str = "fxdelaylpf";
-    pub const FX_DELAY_REVERB_SEND: &str = "fxdelayreverbsend";
-    pub const FX_DELAY_VOLUME: &str = "fxdelayvolume";
+    pub const FX_DELAY_TIME: &str = "fxdeltime";
+    pub const FX_DELAY_PING_PONG: &str = "fxdelpingpong";
+    pub const FX_DELAY_STEREO_WIDTH: &str = "fxdelstereowidth";
+    pub const FX_DELAY_FEEDBACK: &str = "fxdelfeedback";
+    pub const FX_DELAY_HPF: &str = "fxdelhpf";
+    pub const FX_DELAY_LPF: &str = "fxdellpf";
+    pub const FX_DELAY_REVERB_SEND: &str = "fxdelrevsend";
+    pub const FX_DELAY_VOLUME: &str = "fxdellev";
 
-    pub const FX_REVERB_PRE_DELAY: &str = "fxreverbpredelay";
-    pub const FX_REVERB_DECAY: &str = "fxreverbdecay";
-    pub const FX_REVERB_FREQ: &str = "fxreverbfreq";
-    pub const FX_REVERB_GAIN: &str = "fxreverbgain";
-    pub const FX_REVERB_HPF: &str = "fxreverbhpf";
-    pub const FX_REVERB_LPF: &str = "fxreverblpf";
-    pub const FX_REVERB_VOLUME: &str = "fxreverbvolume";
+    pub const FX_REVERB_PRE_DELAY: &str = "fxrevpredel";
+    pub const FX_REVERB_DECAY: &str = "fxrevdecay";
+    pub const FX_REVERB_FREQ: &str = "fxrevfreq";
+    pub const FX_REVERB_GAIN: &str = "fxrevgain";
+    pub const FX_REVERB_HPF: &str = "fxrevhpf";
+    pub const FX_REVERB_LPF: &str = "fxrevlpf";
+    pub const FX_REVERB_VOLUME: &str = "fxrevlev";
 
-    pub const FX_COMP_THRESHOLD: &str = "fxcompthreshold";
+    pub const FX_COMP_THRESHOLD: &str = "fxcompthr";
     pub const FX_COMP_GAIN: &str = "fxcompgain";
     pub const FX_COMP_MIX: &str = "fxcompmix";
-    pub const FX_COMP_VOLUME: &str = "fxcompvolume";
+    pub const FX_COMP_VOLUME: &str = "fxcomplev";
 
     pub const FX_LFO_SPEED: &str = "fxlfospeed";
     pub const FX_LFO_FADE: &str = "fxlfofade";
     pub const FX_LFO_START_PHASE_OR_SLEW: &str = "fxlfostartphase";
     pub const FX_LFO_DEPTH: &str = "fxlfodepth";
 
-    pub const FX_DISTORTION_DELAY_OVERDRIVE: &str = "fxdistdelayoverdrive";
-    pub const FX_DISTORTION_DELAY_POST: &str = "fxdistdelaypost";
-    pub const FX_DISTORTION_REVERB_POST: &str = "fxdistreverbpost";
-    pub const FX_DISTORTION_AMOUNT: &str = "fxdistamount";
-    pub const FX_DISTORTION_SYMMETRY: &str = "fxdistsymmetry";
+    pub const FX_DISTORTION_DELAY_OVERDRIVE: &str = "fxdistdov";
+    pub const FX_DISTORTION_DELAY_POST: &str = "fxdistdelpost";
+    pub const FX_DISTORTION_REVERB_POST: &str = "fxdistrevpost";
+    pub const FX_DISTORTION_AMOUNT: &str = "fxdistamt";
+    pub const FX_DISTORTION_SYMMETRY: &str = "fxdistsym";
 
     pub const KIT_ACTION_TYPES: &[&str] = &[
         VERSION,
@@ -228,12 +229,15 @@ pub mod pattern_action_type {
     pub const IS_WORK_BUFFER: &str = "iswb";
     pub const INDEX: &str = "index";
     pub const VERSION: &str = "version";
-    pub const MASTER_LENGTH: &str = "masterlength";
+    pub const MASTER_LENGTH: &str = "masterlen";
     pub const MASTER_CHANGE: &str = "masterchg";
     pub const KIT_NUMBER: &str = "kitnumber";
     pub const SWING_AMOUNT: &str = "swingamount";
     pub const GLOBAL_QUANTIZE: &str = "globalquantize";
     pub const BPM: &str = "patternbpm";
+
+    // TODO: Newly found settings
+    // pub const PAD_SCALE_PER_TRACK: &str = "padscalepertrack";
 }
 
 pub mod sound_action_type {
@@ -249,7 +253,7 @@ pub mod sound_action_type {
 
     pub const SOUND_TYPE: &str = "type";
 
-    pub const ACCENT_LEVEL: &str = "accentlevel";
+    pub const ACCENT_LEVEL: &str = "accentlev";
 
     pub const MACHINE: &str = "machine";
 
@@ -257,10 +261,10 @@ pub mod sound_action_type {
     pub const AMP_HOLD: &str = "amphold";
     pub const AMP_DECAY: &str = "ampdecay";
     pub const AMP_OVERDRIVE: &str = "ampoverdrive";
-    pub const AMP_DELAY_SEND: &str = "ampdelaysend";
-    pub const AMP_REVERB_SEND: &str = "ampreverbsend";
+    pub const AMP_DELAY_SEND: &str = "ampdelsend";
+    pub const AMP_REVERB_SEND: &str = "amprevsend";
     pub const AMP_PAN: &str = "amppan";
-    pub const AMP_VOLUME: &str = "ampvolume";
+    pub const AMP_VOLUME: &str = "amplev";
 
     pub const FILT_ATTACK: &str = "filtattack";
     pub const FILT_HOLD: &str = "filthold";
@@ -282,7 +286,7 @@ pub mod sound_action_type {
     pub const SAMP_START: &str = "sampstart";
     pub const SAMP_END: &str = "sampend";
     pub const SAMP_LOOP_FLAG: &str = "samploopflag";
-    pub const SAMP_VOLUME: &str = "sampvolume";
+    pub const SAMP_VOLUME: &str = "samplev";
 
     pub const VEL_MOD_AMT: &str = "velmodamt";
     pub const AT_MOD_AMT: &str = "atmodamt";
@@ -347,13 +351,13 @@ pub mod pattern_enum_type {
 pub mod track_enum_type {
     pub const ROOT_NOTE: &str = "rootnote";
     pub const PAD_SCALE: &str = "padscale";
-    pub const DEFAULT_NOTE_LENGTH: &str = "defaultnotelength";
+    pub const DEFAULT_NOTE_LENGTH: &str = "defaultnotelen";
 }
 
 pub mod trig_enum_type {
     pub const MICRO_TIME: &str = "microtime";
-    pub const NOTE_LENGTH: &str = "notelength";
-    pub const RETRIG_LENGTH: &str = "retriglength";
+    pub const NOTE_LENGTH: &str = "notelen";
+    pub const RETRIG_LENGTH: &str = "retriglen";
     pub const RETRIG_RATE: &str = "retrigrate";
     pub const TRIG_CONDITION: &str = "trigcondition";
 }
@@ -362,8 +366,9 @@ pub mod kit_enum_type {
     pub const CONTROL_IN_1_MOD_TARGET: &str = "ctrlinmod1target";
     pub const CONTROL_IN_2_MOD_TARGET: &str = "ctrlinmod2target";
 
-    pub const FX_LFO_DESTINATION: &str = "fxlfodestination";
-    pub const FX_DELAY_TIME_ON_THE_GRID: &str = "fxdelaytimeonthegrid";
+    pub const FX_LFO_DESTINATION: &str = "fxlfodest";
+    // TODO:
+    // pub const FX_DELAY_TIME_ON_THE_GRID: &str = "fxdeltimeonthegrid";
     pub const FX_COMP_ATTACK: &str = "fxcompattack";
     pub const FX_COMP_RELEASE: &str = "fxcomprelease";
     pub const FX_COMP_RATIO: &str = "fxcompratio";
@@ -373,7 +378,8 @@ pub mod kit_enum_type {
         CONTROL_IN_1_MOD_TARGET,
         CONTROL_IN_2_MOD_TARGET,
         FX_LFO_DESTINATION,
-        FX_DELAY_TIME_ON_THE_GRID,
+        // TODO:
+        // FX_DELAY_TIME_ON_THE_GRID,
         FX_COMP_ATTACK,
         FX_COMP_RELEASE,
         FX_COMP_RATIO,
@@ -386,14 +392,14 @@ pub mod settings_enum_type {
     pub const FX_PARAMETER_MENU_ITEM: &str = "fxparametermenuitem";
     pub const SEQUENCER_MODE: &str = "sequencermode";
     pub const PATTERN_MODE: &str = "patternmode";
-    pub const SAMPLE_RECORDER_SOURCE: &str = "samplerecordersource";
-    pub const SAMPLE_RECORDER_RECORDING_LENGTH: &str = "samplerecorderrecordinglength";
+    pub const SAMPLE_RECORDER_SOURCE: &str = "samplerecordersrc";
+    pub const SAMPLE_RECORDER_RECORDING_LENGTH: &str = "samplerecorderrecordinglen";
 }
 
 pub mod sound_enum_type {
     pub const MACHINE_PARAMETERS: &str = "machineparameters";
     pub const MACHINE_TYPE: &str = "machinetype";
-    pub const LFO_DESTINATION: &str = "lfodestination";
+    pub const LFO_DESTINATION: &str = "lfodest";
     pub const VELOCITY_MOD_TARGET: &str = "velmodtarget";
     pub const AFTER_TOUCH_MOD_TARGET: &str = "atmodtarget";
     pub const FILTER_TYPE: &str = "filtertype";
@@ -426,11 +432,11 @@ pub mod sound_machine_enum_type {
 }
 
 pub mod global_enum_type {
-    pub const METRONOME_TIME_SIGNATURE: &str = "metronometimesignature";
+    pub const METRONOME_TIME_SIGNATURE: &str = "metronometimesig";
 
-    pub const ROUTING_USB_IN_OPTIONS: &str = "routingusbin";
-    pub const ROUTING_USB_OUT_OPTIONS: &str = "routingusbout";
-    pub const ROUTING_USB_TO_MAIN_DB: &str = "routingusbtomaindb";
+    pub const ROUTING_USB_IN_OPTIONS: &str = "usbin";
+    pub const ROUTING_USB_OUT_OPTIONS: &str = "usbout";
+    pub const ROUTING_USB_TO_MAIN_DB: &str = "usbtomaindb";
 
     pub const OUT_PORT_FUNCTION: &str = "outportfunction";
     pub const THRU_PORT_FUNCTION: &str = "thruportfunction";
@@ -446,7 +452,7 @@ pub mod global_enum_type {
     pub const AUTO_CHANNEL: &str = "autochannel";
     pub const TRACK_CHANNELS: &str = "trackchannels";
     pub const TRACK_FX_CHANNEL: &str = "trackfxchannel";
-    pub const PROGRAM_CHANGE_IN_CHANNEL: &str = "programchangeinchannel";
-    pub const PROGRAM_CHANGE_OUT_CHANNEL: &str = "programchangeoutchannel";
+    pub const PROGRAM_CHANGE_IN_CHANNEL: &str = "pgmchangeinchannel";
+    pub const PROGRAM_CHANGE_OUT_CHANNEL: &str = "pgmchangeoutchannel";
     pub const PERFORMANCE_CHANNEL: &str = "performancechannel";
 }

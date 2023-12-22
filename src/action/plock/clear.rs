@@ -88,7 +88,6 @@ pub fn handle_trig_plock_clear_enum_value(
     match enum_type {
         kit_enum_type::FX_COMP_ATTACK => Ok(trig.plock_clear_fx_compressor_attack()?),
         kit_enum_type::FX_COMP_RELEASE => Ok(trig.plock_clear_fx_compressor_release()?),
-        kit_enum_type::FX_DELAY_TIME_ON_THE_GRID => todo!(),
         kit_enum_type::FX_COMP_RATIO => Ok(trig.plock_clear_fx_compressor_ratio()?),
         kit_enum_type::FX_COMP_SIDE_CHAIN_EQ => Ok(trig.plock_clear_fx_compressor_side_chain_eq()?),
         kit_enum_type::FX_LFO_DESTINATION => Ok(trig.plock_clear_fx_lfo_destination()?),

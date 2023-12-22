@@ -196,7 +196,6 @@ pub fn handle_trig_plock_set_enum_value(
         kit_enum_type::FX_COMP_RELEASE => {
             Ok(trig.plock_set_fx_compressor_release(enum_value.try_into()?)?)
         }
-        kit_enum_type::FX_DELAY_TIME_ON_THE_GRID => todo!(),
         kit_enum_type::FX_COMP_RATIO => {
             Ok(trig.plock_set_fx_compressor_ratio(enum_value.try_into()?)?)
         }

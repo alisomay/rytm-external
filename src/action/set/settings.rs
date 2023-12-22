@@ -72,6 +72,10 @@ pub fn handle_settings_set_action(
             settings.mute_sound(parameter_atom.get_int() as usize)?;
             Ok(())
         }
+        UNMUTE => {
+            settings.unmute_sound(parameter_atom.get_int() as usize)?;
+            Ok(())
+        }
         FIXED_VELOCITY_ENABLE => {
             settings.set_fixed_velocity_enable(get_bool_from_0_or_1(
                 parameter_atom,
