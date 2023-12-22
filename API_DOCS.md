@@ -239,16 +239,166 @@ Accepted formats:
 
 ## Common identifiers
 
-- `name` -> Name of the object. Type: `symbol` Range: `Only 15 ascii characters are allowed.`
-- `index` -> Index of the object. Type: `int`.
-- `version` -> Version of the object. Type: `int`.
-- `iswb` -> Is work buffer. Type: `int` Range: `0..=1`
+- `name` -> **symbol**, _Only 15 ascii characters are allowed_ (name of the object)
+- `index` -> **int** (index of the object)
+- `parentindex` -> **int** (index of the parent object if there is one)
+- `version` -> **int** (version of the object)
+- `iswb` -> **int**, _0..=1_ (is work buffer object)
 
 ### Pattern
 
-- `masterchg` -> Master length change. Type: `int` Range: `1..=1024`
-- `masterlen` -> Master length. Type: `int` Range: `1..=1024`
-- `kitnumber` -> Kit number. Type: `int` Range: `0..=127`
-- `swingamount` -> Swing amount. Type: `int` Range: `50..=80`
-- `globalquantize` -> Global quantize. Type: `int` Range: `0..=127`
-- `patternbpm` -> Pattern BPM. Type: `float` Range: `30.0..=300.0`
+- `masterchg` -> **int**, _1..=1024_
+- `masterlen` -> **int**, _1..=1024_
+- `kitnumber` -> **int**, _0..=127_
+- `swingamount` -> **int**, _50..=80_
+- `globalquantize` -> **int**, _0..=127_
+- `patternbpm` -> **float**, _30.0..=300.0_
+
+### Track
+
+- `deftrignote` -> **int**, _0..=127_
+- `deftrigvel` -> **int**, _0..=127_
+- `deftrigprob` -> **int**, _0..=100_
+- `steps` -> **int**, _1..=64_
+- `quantizeamount` -> **int**, _0..=127_
+- `sendsmidi` -> **int**, _0..=1_
+- `euc` -> **int**, _0..=1_
+- `pl2` -> **int**, _0..=63_
+- `ro1` -> **int**, _0..=63_
+- `ro2` -> **int**, _0..=63_
+- `tro` -> **int**, _0..=63_
+
+## Trig
+
+- `enable` -> **int**, _0..=1_
+- `retrig` -> **int**, _0..=1_
+- `mute` -> **int**, _0..=1_
+- `accent` -> **int**, _0..=1_
+- `swing` -> **int**, _0..=1_
+- `slide` -> **int**, _0..=1_
+- `note` -> **int**, _0..=127_
+- `vel` -> **int**, _1..=127_
+- `retrigveloffset` -> **int**, _-128..=127_
+- `soundlock` -> **int**, _0..=127_
+
+## Kit
+
+- `ctrlinmod1amt` -> **int**, _-128..=127_
+- `ctrlinmod2amt` -> **int**, _-128..=127_
+- `fxdeltime` -> **int**, _0..=127_
+- `fxdelpingpong` -> **int**, _0..=1_
+- `fxdelstereowidth` -> **int**, _-64..=63_
+- `fxdelfeedback` -> **int**, _0..=198_
+- `fxdelhpf` -> **int**, _0..=127_
+- `fxdellpf` -> **int**, _0..=127_
+- `fxdelrevsend` -> **int**, _0..=127_
+- `fxdellev` -> **int**, _0..=127_
+- `fxrevpredel` -> **int**, _0..=127_
+- `fxrevdecay` -> **int**, _0..=127_
+- `fxrevfreq` -> **int**, _0..=127_
+- `fxrevgain` -> **int**, _0..=127_
+- `fxrevhpf` -> **int**, _0..=127_
+- `fxrevlpf` -> **int**, _0..=127_
+- `fxrevlev` -> **int**, _0..=127_
+- `fxcompthr` -> **int**, _0..=127_
+- `fxcompgain` -> **int**, _0..=127_
+- `fxcompmix` -> **int**, _0..=127_
+- `fxcomplev` -> **int**, _0..=127_
+- `fxlfospeed` -> **int**, _-64..=63_
+- `fxlfofade` -> **int**, _-64..=63_
+- `fxlfostartphase` -> **int**, _0..=127_
+- `fxlfodepth` -> **float**, _-128.0..=127.99_
+- `fxdistdov` -> **int**, _0..=127_
+- `fxdistamt` -> **int**, _0..=127_
+- `fxdistsym` -> **int**, _-64..=63_
+- `fxdistdelpost` -> **int**, _0..=1_
+- `fxdistrevpost` -> **int**, _0..=1_
+
+## Sound
+
+- `ispool` -> **int**, _0..=1_
+- `iskit` -> **int**, _0..=1_
+- `kitnumber` -> **int**, _0..=127_
+- `accentlev` -> **int**, _0..=127_
+- `ampattack` -> **int**, _0..=127_
+- `amphold` -> **int**, _0..=127_
+- `ampdecay` -> **int**, _0..=127_
+- `ampoverdrive` -> **int**, _0..=127_
+- `ampdelsend` -> **int**, _0..=127_
+- `amprevsend` -> **int**, _0..=127_
+- `amppan` -> **int**, _-64..=63_
+- `amplev` -> **int**, _0..=127_
+- `filtattack` -> **int**, _0..=127_
+- `filthold` -> **int**, _0..=127_
+- `filtdecay` -> **int**, _0..=127_
+- `filtrelease` -> **int**, _0..=127_
+- `filtcutoff` -> **int**, _0..=127_
+- `filtres` -> **int**, _0..=127_
+- `filtenvamt` -> **int**, _-64..=63_
+- `lfospeed` -> **int**, _-64..=63_
+- `lfofade` -> **int**, _-64..=63_
+- `lfostartphase` -> **int**, _0..=127_
+- `lfodepth` -> **float**, _-128.0..=127.99_
+- `samptune` -> **int**, _-24..=24_
+- `sampfinetune` -> **int**, _-64..=63_
+- `sampnumber` -> **int**, _0..=127_
+- `sampbitreduction` -> **int**, _0..=127_
+- `sampstart` -> **float**, _0.0..=120.0_
+- `sampend` -> **float**, _0.0..=120.0_
+- `samploopflag` -> **int**, _0..=1_
+- `samplev` -> **int**, _0..=127_
+- `velmodamt` -> **int**, _-127..=128_
+- `atmodamt` -> **int**, _-127..=128_
+- `envresetfilter` -> **int**, _0..=1_
+- `veltovol` -> **int**, _0..=1_
+- `legacyfxsend` -> **int**, _0..=1_
+
+## Global
+
+- `kitreloadonchg` -> **int**, _0..=1_
+- `quantizeliverec` -> **int**, _0..=1_
+- `autotrackswitch` -> **int**, _0..=1_
+- `routetomain` -> **int**, _0..=11_
+- `sendtofx` -> **int**, _0..=11_
+- `clockreceive` -> **int**, _0..=1_
+- `clocksend` -> **int**, _0..=1_
+- `transportreceive` -> **int**, _0..=1_
+- `transportsend` -> **int**, _0..=1_
+- `pgmchangereceive` -> **int**, _0..=1_
+- `pgmchangesend` -> **int**, _0..=1_
+- `receivenotes` -> **int**, _0..=1_
+- `receiveccnrpn` -> **int**, _0..=1_
+- `turbospeed` -> **int**, _0..=1_
+- `metronomeactive` -> **int**, _0..=1_
+- `metronomeprerollbars` -> **int**, _0..=16_
+- `metronomelev` -> **int**, _0..=127_
+
+## Settings
+
+- `projectbpm` -> **float**, _30.0..=300.0_
+- `selectedtrack` -> **int**, _0..=11_
+- `selectedpage` -> **int**, _0..=3_
+- `mute` -> **int**, _0..=11_
+- `unmute` -> **int**, _0..=11_
+- `fixedvelocity` -> **int**, _0..=1_
+- `fixedvelocityamt` -> **int**, _0..=127_
+- `samplerecorderthr` -> **int**, _0..=127_
+- `samplerecordermon` -> **int**, _0..=1_
+
+## Enums
+
+<!-- pub mod pattern_enum_type {
+    pub const SPEED: &str = "speed";
+    pub const TIME_MODE: &str = "timemode";
+} -->
+
+### Pattern
+
+- `speed`
+  - **1x**
+  - **2x**
+  - **3/2x**
+  - **3/4x**
+  - **1/2x**
+  - **1/4x**
+  - **1/8x**

@@ -202,7 +202,7 @@ pub mod trig_action_type {
     // pub const PARAMETER_LOCK_ENV: &str = "parameterlockenv";
 
     pub const NOTE: &str = "note";
-    pub const VELOCITY: &str = "velocity";
+    pub const VELOCITY: &str = "vel";
     pub const RETRIG_VELOCITY_OFFSET: &str = "retrigveloffset";
     pub const SOUND_LOCK: &str = "soundlock";
 }
@@ -217,6 +217,7 @@ pub mod track_action_type {
     pub const NUMBER_OF_STEPS: &str = "steps";
     pub const QUANTIZE_AMOUNT: &str = "quantizeamount";
     pub const SENDS_MIDI: &str = "sendsmidi";
+    // TODO: Revise ranges
     pub const EUCLIDEAN_MODE: &str = "euc";
     pub const EUCLIDEAN_PL1: &str = "pl1";
     pub const EUCLIDEAN_PL2: &str = "pl2";
@@ -250,12 +251,8 @@ pub mod sound_action_type {
     pub const IS_WORK_BUFFER: &str = "iswb";
 
     pub const KIT_NUMBER: &str = "kitnumber";
-
     pub const SOUND_TYPE: &str = "type";
-
     pub const ACCENT_LEVEL: &str = "accentlev";
-
-    pub const MACHINE: &str = "machine";
 
     pub const AMP_ATTACK: &str = "ampattack";
     pub const AMP_HOLD: &str = "amphold";
@@ -305,7 +302,6 @@ pub mod sound_action_type {
         KIT_NUMBER,
         SOUND_TYPE,
         ACCENT_LEVEL,
-        MACHINE,
         AMP_ATTACK,
         AMP_HOLD,
         AMP_DECAY,
