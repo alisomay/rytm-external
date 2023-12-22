@@ -84,6 +84,24 @@ pub fn handle_kit_set_action(
             .set_start_phase(parameter.get_int() as usize)?),
         FX_LFO_DEPTH => Ok(kit.fx_lfo_mut().set_depth(parameter.get_float() as f32)?),
 
+        FX_DISTORTION_DELAY_OVERDRIVE => Ok(kit
+            .fx_distortion_mut()
+            .set_delay_overdrive(parameter.get_int() as usize)?),
+        FX_DISTORTION_DELAY_POST => {
+            kit.fx_distortion_mut()
+                .set_delay_post(get_bool_from_0_or_1(parameter, FX_DISTORTION_DELAY_POST)?);
+            Ok(())
+        }
+        FX_DISTORTION_REVERB_POST => {
+            kit.fx_distortion_mut()
+                .set_reverb_post(get_bool_from_0_or_1(parameter, FX_DISTORTION_REVERB_POST)?);
+            Ok(())
+        }
+        FX_DISTORTION_AMOUNT => Ok(kit
+            .fx_distortion_mut()
+            .set_amount(parameter.get_int() as usize)?),
+        FX_DISTORTION_SYMMETRY => Ok(kit.fx_distortion_mut().set_symmetry(parameter.get_int())?),
+
         other => Err(IdentifierError::InvalidType(other.to_owned()).into()),
     }
 }

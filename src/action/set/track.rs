@@ -4,7 +4,7 @@ use crate::error::EnumError::InvalidEnumType;
 use crate::error::IdentifierError;
 use crate::util::{
     get_bool_from_0_or_1, only_allow_numbers_as_identifier_parameter,
-    try_get_action_value_from_atom_slice,
+    try_get_identifier_value_from_atom_slice,
 };
 use crate::{api::track_action_type::*, api::track_enum_type::*, error::RytmExternalError};
 use median::atom::Atom;
@@ -31,7 +31,7 @@ pub fn track_set(
         handle_set_action(SetAction::Track(TrackSetAction {
             track,
             action: action_or_enum_value,
-            parameter: try_get_action_value_from_atom_slice(select, atoms)?,
+            parameter: try_get_identifier_value_from_atom_slice(select, atoms)?,
         }))
     }
 }

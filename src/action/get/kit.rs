@@ -52,7 +52,12 @@ pub fn handle_kit_get_action(
         FX_LFO_START_PHASE_OR_SLEW => (kit.fx_lfo().start_phase_or_slew() as isize).into(),
         FX_LFO_DEPTH => f64::from(kit.fx_lfo().depth()).into(),
 
-        // TODO: Distortion getters when ready
+        FX_DISTORTION_DELAY_OVERDRIVE => (kit.fx_distortion().delay_overdrive() as isize).into(),
+        FX_DISTORTION_DELAY_POST => (kit.fx_distortion().delay_post() as isize).into(),
+        FX_DISTORTION_REVERB_POST => (kit.fx_distortion().reverb_post() as isize).into(),
+        FX_DISTORTION_AMOUNT => (kit.fx_distortion().amount() as isize).into(),
+        FX_DISTORTION_SYMMETRY => (kit.fx_distortion().symmetry() as isize).into(),
+
         other => return Err(IdentifierError::InvalidType(other.to_owned()).into()),
     };
 

@@ -12,13 +12,13 @@ use crate::{
     error::RytmExternalError,
     rytm::Rytm,
     util::{
-        try_get_atom_value_as_kit_element_or_action_or_enum_value, try_get_index_with_range,
+        try_get_atom_value_as_kit_element_or_identifier_or_enum_value, try_get_index_with_range,
         KitElementOrActionOrEnumTypeAndValue,
     },
 };
 use median::atom::Atom;
 
-use crate::util::try_get_action_value_from_atom_slice;
+use crate::util::try_get_identifier_value_from_atom_slice;
 
 pub fn handle_kit_set(
     rytm: &Rytm,
@@ -27,13 +27,13 @@ pub fn handle_kit_set(
 ) -> Result<(), RytmExternalError> {
     let mut guard = rytm.project.lock().unwrap();
 
-    match try_get_atom_value_as_kit_element_or_action_or_enum_value(2, atoms)? {
+    match try_get_atom_value_as_kit_element_or_identifier_or_enum_value(2, atoms)? {
         KitElementOrActionOrEnumTypeAndValue::Action(action) => {
             // Send for handling..  // Next value should be a param
             handle_kit_set_action(
                 &mut guard.kits_mut()[kit_index],
                 &action,
-                try_get_action_value_from_atom_slice(3, atoms)?,
+                try_get_identifier_value_from_atom_slice(3, atoms)?,
             )
         }
         KitElementOrActionOrEnumTypeAndValue::EnumTypeAndValue(t, v) => {
@@ -48,7 +48,7 @@ pub fn handle_kit_set(
                 12,
                 &format!("kit element ({element_type})"),
             )?;
-            let element_parameter = try_get_action_value_from_atom_slice(3, atoms)?;
+            let element_parameter = try_get_identifier_value_from_atom_slice(3, atoms)?;
 
             handle_kit_set_kit_element(
                 &mut guard.kits_mut()[kit_index],
@@ -77,7 +77,7 @@ pub fn handle_kit_get(
 ) -> Result<(), RytmExternalError> {
     let guard = rytm.project.lock().unwrap();
     let out = &rytm.query_out;
-    match try_get_atom_value_as_kit_element_or_action_or_enum_value(2, atoms)? {
+    match try_get_atom_value_as_kit_element_or_identifier_or_enum_value(2, atoms)? {
         KitElementOrActionOrEnumTypeAndValue::Action(action) => {
             // Send for handling..  // Next value should be a param
             handle_kit_get_action(&guard.kits()[kit_index], action, out)

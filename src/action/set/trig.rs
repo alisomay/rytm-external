@@ -3,7 +3,7 @@ use crate::api::trig_enum_type::*;
 use crate::error::EnumError::InvalidEnumType;
 use crate::error::IdentifierError;
 use crate::util::only_allow_numbers_as_identifier_parameter;
-use crate::util::try_get_action_value_from_atom_slice;
+use crate::util::try_get_identifier_value_from_atom_slice;
 use crate::{error::RytmExternalError, util::get_bool_from_0_or_1};
 use median::atom::Atom;
 use median::symbol::SymbolRef;
@@ -31,7 +31,7 @@ pub fn trig_set(
         handle_set_action(SetAction::Trig(TrigSetAction {
             trig,
             action: action_or_enum_value,
-            parameter: try_get_action_value_from_atom_slice(select, atoms)?,
+            parameter: try_get_identifier_value_from_atom_slice(select, atoms)?,
         }))
     }
 }

@@ -1,7 +1,7 @@
 use crate::error::EnumError::InvalidEnumType;
 use crate::error::IdentifierError;
 use crate::util::{
-    only_allow_numbers_as_identifier_parameter, try_get_action_value_from_atom_slice,
+    only_allow_numbers_as_identifier_parameter, try_get_identifier_value_from_atom_slice,
 };
 use crate::{api::pattern_action_type::*, api::pattern_enum_type::*, error::RytmExternalError};
 use median::atom::Atom;
@@ -29,7 +29,7 @@ pub fn pattern_set(
         handle_set_action(SetAction::Pattern(PatternSetAction {
             pattern,
             action: action_or_enum_value,
-            parameter: try_get_action_value_from_atom_slice(select, atoms)?,
+            parameter: try_get_identifier_value_from_atom_slice(select, atoms)?,
         }))
     }
 }

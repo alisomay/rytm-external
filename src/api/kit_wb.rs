@@ -12,13 +12,13 @@ use crate::{
     error::RytmExternalError,
     rytm::Rytm,
     util::{
-        try_get_atom_value_as_kit_element_or_action_or_enum_value, try_get_index_with_range,
+        try_get_atom_value_as_kit_element_or_identifier_or_enum_value, try_get_index_with_range,
         KitElementOrActionOrEnumTypeAndValue,
     },
 };
 use median::atom::Atom;
 
-use crate::util::try_get_action_value_from_atom_slice;
+use crate::util::try_get_identifier_value_from_atom_slice;
 
 // kit_wb fx... val
 // kit_wb tracklevel 0 0
@@ -41,13 +41,13 @@ use crate::util::try_get_action_value_from_atom_slice;
 pub fn handle_kit_wb_set(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExternalError> {
     let mut guard = rytm.project.lock().unwrap();
 
-    match try_get_atom_value_as_kit_element_or_action_or_enum_value(1, atoms)? {
+    match try_get_atom_value_as_kit_element_or_identifier_or_enum_value(1, atoms)? {
         KitElementOrActionOrEnumTypeAndValue::Action(action) => {
             // Send for handling..  // Next value should be a param
             handle_kit_set_action(
                 guard.work_buffer_mut().kit_mut(),
                 &action,
-                try_get_action_value_from_atom_slice(2, atoms)?,
+                try_get_identifier_value_from_atom_slice(2, atoms)?,
             )
         }
         KitElementOrActionOrEnumTypeAndValue::EnumTypeAndValue(t, v) => {
@@ -62,7 +62,7 @@ pub fn handle_kit_wb_set(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExternal
                 12,
                 &format!("kit element ({element_type})"),
             )?;
-            let element_parameter = try_get_action_value_from_atom_slice(3, atoms)?;
+            let element_parameter = try_get_identifier_value_from_atom_slice(3, atoms)?;
 
             handle_kit_set_kit_element(
                 guard.work_buffer_mut().kit_mut(),
@@ -87,7 +87,7 @@ pub fn handle_kit_wb_set(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExternal
 pub fn handle_kit_wb_get(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExternalError> {
     let guard = rytm.project.lock().unwrap();
     let out = &rytm.query_out;
-    match try_get_atom_value_as_kit_element_or_action_or_enum_value(1, atoms)? {
+    match try_get_atom_value_as_kit_element_or_identifier_or_enum_value(1, atoms)? {
         KitElementOrActionOrEnumTypeAndValue::Action(action) => {
             // Send for handling..  // Next value should be a param
             handle_kit_get_action(guard.work_buffer().kit(), action, out)

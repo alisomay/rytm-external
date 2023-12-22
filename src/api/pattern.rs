@@ -4,9 +4,10 @@ use crate::{
         plock::{handle_trig_plock_getter_action, handle_trig_plock_setter_action},
         set::{pattern::pattern_set, track::track_set, trig::trig_set},
     },
-    error::{GetError, RytmExternalError},
+    error::{GetError, RytmExternalError, SetError},
     rytm::Rytm,
-    traits::Post, util::string_from_atom_slice,
+    traits::Post,
+    util::string_from_atom_slice,
 };
 use median::{
     atom::{Atom, AtomValue},
@@ -14,10 +15,7 @@ use median::{
 };
 
 use super::plock_type::ALL_PLOCK_TYPES;
-use crate::util::try_get_atom_value_assuming_action_or_index_or_enum_value;
-
-const ERR: &str =
-    "Invalid value: Only symbols or integers are allowed in pattern setters or getters.";
+use crate::util::try_get_atom_value_assuming_identifier_or_index_or_enum_value;
 
 pub fn handle_pattern_set(
     rytm: &Rytm,
@@ -26,7 +24,7 @@ pub fn handle_pattern_set(
 ) -> Result<(), RytmExternalError> {
     let mut guard = rytm.project.lock().unwrap();
 
-    match try_get_atom_value_assuming_action_or_index_or_enum_value(2, atoms)? {
+    match try_get_atom_value_assuming_identifier_or_index_or_enum_value(2, atoms)? {
         AtomValue::Symbol(action_or_enum_value) => {
             // Check the next value and finish the list.
             pattern_set(
@@ -40,7 +38,7 @@ pub fn handle_pattern_set(
             if !(0..=12).contains(&track_index) {
                 "Track index must be an integer between 0 and 12".obj_error(rytm.max_obj());
             }
-            match try_get_atom_value_assuming_action_or_index_or_enum_value(3, atoms)? {
+            match try_get_atom_value_assuming_identifier_or_index_or_enum_value(3, atoms)? {
                 AtomValue::Symbol(action_or_enum_value) => {
                     // Check the next value and finish the list.
                     track_set(
@@ -54,7 +52,7 @@ pub fn handle_pattern_set(
                     if !(0..=63).contains(&track_index) {
                         "Trig index must be an integer between 0 and 63".obj_error(rytm.max_obj());
                     }
-                    match try_get_atom_value_assuming_action_or_index_or_enum_value(4, atoms)? {
+                    match try_get_atom_value_assuming_identifier_or_index_or_enum_value(4, atoms)? {
                         AtomValue::Symbol(action_or_enum_value) => {
                             let trig_mut = &mut guard.work_buffer_mut().pattern_mut().tracks_mut()
                                 [track_index as usize]
@@ -73,13 +71,18 @@ pub fn handle_pattern_set(
 
                             trig_set(action_or_enum_value, trig_mut, atoms, 5)
                         }
-                        _ => Err(ERR.into()),
+                        _ => Err(SetError::InvalidPatternSetterFormat(string_from_atom_slice(
+                            atoms,
+                        ))
+                        .into()),
                     }
                 }
-                _ => Err(ERR.into()),
+                _ => {
+                    Err(SetError::InvalidPatternSetterFormat(string_from_atom_slice(atoms)).into())
+                }
             }
         }
-        _ => Err(ERR.into()),
+        _ => Err(SetError::InvalidPatternSetterFormat(string_from_atom_slice(atoms)).into()),
     }
 }
 
@@ -91,7 +94,7 @@ pub fn handle_pattern_get(
     let guard = rytm.project.lock().unwrap();
     let out = &rytm.query_out;
 
-    match try_get_atom_value_assuming_action_or_index_or_enum_value(2, atoms)? {
+    match try_get_atom_value_assuming_identifier_or_index_or_enum_value(2, atoms)? {
         AtomValue::Symbol(action_or_enum_type) => {
             pattern_get(action_or_enum_type, &guard.patterns()[pattern_index], out)
         }
@@ -99,7 +102,7 @@ pub fn handle_pattern_get(
             if !(0..=12).contains(&track_index) {
                 "Track index must be an integer between 0 and 12".obj_error(rytm.max_obj());
             }
-            match try_get_atom_value_assuming_action_or_index_or_enum_value(3, atoms)? {
+            match try_get_atom_value_assuming_identifier_or_index_or_enum_value(3, atoms)? {
                 AtomValue::Symbol(action_or_enum_type) => track_get(
                     action_or_enum_type,
                     &guard.patterns()[pattern_index].tracks()[track_index as usize],
@@ -109,7 +112,7 @@ pub fn handle_pattern_get(
                     if !(0..=63).contains(&track_index) {
                         "Trig index must be an integer between 0 and 63".obj_error(rytm.max_obj());
                     }
-                    match try_get_atom_value_assuming_action_or_index_or_enum_value(4, atoms)? {
+                    match try_get_atom_value_assuming_identifier_or_index_or_enum_value(4, atoms)? {
                         AtomValue::Symbol(action_or_enum_type) => {
                             let trig = &guard.patterns()[pattern_index].tracks()
                                 [track_index as usize]

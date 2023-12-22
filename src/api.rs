@@ -141,12 +141,11 @@ pub mod kit_action_type {
     pub const FX_LFO_START_PHASE_OR_SLEW: &str = "fxlfostartphase";
     pub const FX_LFO_DEPTH: &str = "fxlfodepth";
 
-    // TODO: Enable and revise after fixing the dist in the SDK
-    // pub const FX_DISTORTION_REVERB_SEND: &str = "fxdistortionreverbsend";
-    // pub const FX_DISTORTION_DELAY_OVERDRIVE: &str = "fxdistortiondelayoverdrive";
-    // pub const FX_DISTORTION_REVERB_POST: &str = "fxdistortionreverbpost";
-    // pub const FX_DISTORTION_AMOUNT: &str = "fxdistortionamount";
-    // pub const FX_DISTORTION_SYMMETRY: &str = "fxdistortionsymmetry";
+    pub const FX_DISTORTION_DELAY_OVERDRIVE: &str = "fxdistdelayoverdrive";
+    pub const FX_DISTORTION_DELAY_POST: &str = "fxdistdelaypost";
+    pub const FX_DISTORTION_REVERB_POST: &str = "fxdistreverbpost";
+    pub const FX_DISTORTION_AMOUNT: &str = "fxdistamount";
+    pub const FX_DISTORTION_SYMMETRY: &str = "fxdistsymmetry";
 
     pub const KIT_ACTION_TYPES: &[&str] = &[
         VERSION,
