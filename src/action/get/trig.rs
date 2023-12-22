@@ -62,7 +62,7 @@ pub fn handle_trig_get_action(action: TrigGetAction) -> Result<(), RytmExternalE
     let value_atom = Atom::from(AtomValue::Int(value));
 
     if let Err(_stack_overflow_err) =
-        out.send(&[action_atom, track_index_atom, index_atom, value_atom][..])
+        out.send(&[track_index_atom, index_atom, action_atom, value_atom][..])
     {
         // Stack overflow ignore
     }
@@ -92,9 +92,9 @@ pub fn handle_trig_enum_get_action(
 
     if let Err(_stack_overflow_err) = out.send(
         &[
-            enum_type_atom,
             track_index_atom,
             index_atom,
+            enum_type_atom,
             enum_value_atom,
         ][..],
     ) {

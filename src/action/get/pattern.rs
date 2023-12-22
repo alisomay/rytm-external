@@ -61,7 +61,7 @@ pub fn handle_pattern_get_action(action: PatternGetAction) -> Result<(), RytmExt
     let action_atom = Atom::from(action);
     let index_atom = Atom::from(AtomValue::Int(pattern.index() as isize));
 
-    if let Err(_stack_overflow_err) = out.send(&[action_atom, index_atom, value_atom][..]) {
+    if let Err(_stack_overflow_err) = out.send(&[index_atom, action_atom, value_atom][..]) {
         // Stack overflow ignore
     }
 
@@ -84,7 +84,7 @@ pub fn handle_pattern_enum_get_action(
     let index_atom = Atom::from(AtomValue::Int(pattern.index() as isize));
     let enum_value_atom = Atom::from(SymbolRef::try_from(value).unwrap());
 
-    if let Err(_stack_overflow_err) = out.send(&[enum_type_atom, index_atom, enum_value_atom][..]) {
+    if let Err(_stack_overflow_err) = out.send(&[index_atom, enum_type_atom, enum_value_atom][..]) {
         // Stack overflow ignore
     }
 

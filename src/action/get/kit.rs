@@ -209,8 +209,8 @@ pub fn handle_kit_get_kit_element(
     if let Err(_stack_overflow_err) = out.send(
         &[
             kit_index_atom,
-            element_type_atom,
             element_index_atom,
+            element_type_atom,
             value_atom,
         ][..],
     ) {

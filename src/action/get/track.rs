@@ -66,7 +66,7 @@ pub fn handle_track_get_action(action: TrackGetAction) -> Result<(), RytmExterna
     let value_atom = Atom::from(AtomValue::Int(value as isize));
 
     if let Err(_stack_overflow_err) =
-        out.send(&[action_atom, pattern_index_atom, index_atom, value_atom][..])
+        out.send(&[pattern_index_atom, index_atom, action_atom, value_atom][..])
     {
         // Stack overflow ignore
     }
@@ -94,9 +94,9 @@ pub fn handle_track_enum_get_action(
 
     if let Err(_stack_overflow_err) = out.send(
         &[
-            enum_type_atom,
             pattern_index_atom,
             index_atom,
+            enum_type_atom,
             enum_value_atom,
         ][..],
     ) {

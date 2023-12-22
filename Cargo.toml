@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 median = { git = "https://github.com/Cycling74/median" }
-rytm-rs = { path = "../rytm-rs/rytm" }
+rytm-rs = "0.1"
 thiserror = "1.0.24"
 lazy_static = "1.4.0"
 
