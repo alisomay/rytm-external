@@ -114,6 +114,9 @@ pub mod kit_action_type {
     pub const INDEX: &str = "index";
     pub const NAME: &str = "name";
 
+    pub const CONTROL_IN_1_MOD_AMT: &str = "ctrlinmod1amt";
+    pub const CONTROL_IN_2_MOD_AMT: &str = "ctrlinmod2amt";
+
     pub const FX_DELAY_TIME: &str = "fxdelaytime";
     pub const FX_DELAY_PING_PONG: &str = "fxdelaypingpong";
     pub const FX_DELAY_STEREO_WIDTH: &str = "fxdelaystereowidth";
@@ -356,7 +359,9 @@ pub mod trig_enum_type {
 }
 
 pub mod kit_enum_type {
-    pub const CONTROL_IN_MOD_TARGET: &str = "controlinmodtarget";
+    pub const CONTROL_IN_1_MOD_TARGET: &str = "ctrlinmod1target";
+    pub const CONTROL_IN_2_MOD_TARGET: &str = "ctrlinmod2target";
+
     pub const FX_LFO_DESTINATION: &str = "fxlfodestination";
     pub const FX_DELAY_TIME_ON_THE_GRID: &str = "fxdelaytimeonthegrid";
     pub const FX_COMP_ATTACK: &str = "fxcompattack";
@@ -365,7 +370,8 @@ pub mod kit_enum_type {
     pub const FX_COMP_SIDE_CHAIN_EQ: &str = "fxcompsidechaineq";
 
     pub const KIT_ENUM_TYPES: &[&str] = &[
-        CONTROL_IN_MOD_TARGET,
+        CONTROL_IN_1_MOD_TARGET,
+        CONTROL_IN_2_MOD_TARGET,
         FX_LFO_DESTINATION,
         FX_DELAY_TIME_ON_THE_GRID,
         FX_COMP_ATTACK,

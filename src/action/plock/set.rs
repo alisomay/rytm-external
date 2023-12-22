@@ -190,7 +190,6 @@ pub fn handle_trig_plock_set_enum_value(
     use crate::api::sound_enum_type;
 
     match enum_type {
-        kit_enum_type::CONTROL_IN_MOD_TARGET => todo!(),
         kit_enum_type::FX_COMP_ATTACK => {
             Ok(trig.plock_set_fx_compressor_attack(enum_value.try_into()?)?)
         }

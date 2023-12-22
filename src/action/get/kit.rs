@@ -5,7 +5,6 @@ use crate::api::sound_kit::handle_sound_kit_get;
 use crate::error::EnumError::InvalidEnumType;
 use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
-use crate::error::RytmExternalError::NotYetImplemented;
 use median::atom::{Atom, AtomValue};
 use median::outlet::OutAnything;
 use median::symbol::SymbolRef;
@@ -18,6 +17,7 @@ pub fn handle_kit_get_action(
     kit: &Kit,
     action: SymbolRef,
     out: &OutAnything,
+    maybe_index_atom: Option<&Atom>,
 ) -> Result<(), RytmExternalError> {
     let action_str = action.to_string()?;
 
@@ -25,6 +25,48 @@ pub fn handle_kit_get_action(
         VERSION => (kit.structure_version() as isize).into(),
         INDEX => (kit.index() as isize).into(),
         NAME => SymbolRef::from(CString::new(kit.name()).unwrap()).into(),
+
+        CONTROL_IN_1_MOD_AMT => {
+            let index = maybe_index_atom.ok_or_else(|| {
+                RytmExternalError::from(
+                    "Invalid getter format: ctrlinmod1amt should be followed by an index.",
+                )
+            })?;
+            let index = index.get_int() as usize;
+            match index {
+                0 => (kit.control_in_1_mod_amt_1()).into(),
+                1 => (kit.control_in_1_mod_amt_2()).into(),
+                2 => (kit.control_in_1_mod_amt_3()).into(),
+                3 => (kit.control_in_1_mod_amt_4()).into(),
+                other => {
+                    return Err(format!(
+                        "Invalid range: The index {other} is out of range for ctrlinmod1amt."
+                    )
+                    .into())
+                }
+            }
+        }
+        CONTROL_IN_2_MOD_AMT => {
+            let index = maybe_index_atom.ok_or_else(|| {
+                RytmExternalError::from(
+                    "Invalid getter format: ctrlinmod2amt should be followed by an index.",
+                )
+            })?;
+            let index = index.get_int() as usize;
+            match index {
+                0 => (kit.control_in_2_mod_amt_1()).into(),
+                1 => (kit.control_in_2_mod_amt_2()).into(),
+                2 => (kit.control_in_2_mod_amt_3()).into(),
+                3 => (kit.control_in_2_mod_amt_4()).into(),
+                other => {
+                    return Err(format!(
+                        "Invalid range: The index {other} is out of range for ctrlinmod2amt."
+                    )
+                    .into())
+                }
+            }
+        }
+
         FX_DELAY_TIME => (kit.fx_delay().time() as isize).into(),
         FX_DELAY_PING_PONG => isize::from(kit.fx_delay().ping_pong()).into(),
         FX_DELAY_STEREO_WIDTH => (kit.fx_delay().stereo_width()).into(),
@@ -74,10 +116,38 @@ pub fn handle_kit_get_action(
 pub fn handle_kit_get_enum_value(
     kit: &Kit,
     enum_type: &str,
+    enum_value: &str,
     out: &OutAnything,
 ) -> Result<(), RytmExternalError> {
     let enum_value: &str = match enum_type {
-        CONTROL_IN_MOD_TARGET => return Err(NotYetImplemented),
+        CONTROL_IN_1_MOD_TARGET => match enum_value.parse::<usize>().map_err(|_| {
+            RytmExternalError::from("Invalid getter format: ctrlinmod1target:<integer> is the correct format. Example: ctrlinmod1target:2")
+        })? {
+            0 => kit.control_in_1_mod_target_1().into(),
+            1 => kit.control_in_1_mod_target_2().into(),
+            2 => kit.control_in_1_mod_target_3().into(),
+            3 => kit.control_in_1_mod_target_4().into(),
+            other => {
+                return Err(format!(
+                    "Invalid range: The index {other} is out of range for ctrlinmod1target."
+                )
+                .into())
+            }
+        },
+        CONTROL_IN_2_MOD_TARGET => match enum_value.parse::<usize>().map_err(|_| {
+            RytmExternalError::from("Invalid getter format: ctrlinmod2target:<integer> is the correct format. Example: ctrlinmod2target:2")
+        })? {
+            0 => kit.control_in_2_mod_target_1().into(),
+            1 => kit.control_in_2_mod_target_2().into(),
+            2 => kit.control_in_2_mod_target_3().into(),
+            3 => kit.control_in_2_mod_target_4().into(),
+            other => {
+                return Err(format!(
+                    "Invalid range: The index {other} is out of range for ctrlinmod2target."
+                )
+                .into())
+            }
+        },
         FX_LFO_DESTINATION => (*kit.fx_lfo().destination()).into(),
         FX_COMP_ATTACK => (*kit.fx_compressor().attack()).into(),
         FX_COMP_RELEASE => (*kit.fx_compressor().release()).into(),

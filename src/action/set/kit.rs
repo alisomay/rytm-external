@@ -5,7 +5,6 @@ use crate::api::sound_kit::handle_sound_kit_set;
 use crate::error::EnumError::InvalidEnumType;
 use crate::error::IdentifierError;
 use crate::error::RytmExternalError;
-use crate::error::RytmExternalError::NotYetImplemented;
 use crate::util::get_bool_from_0_or_1;
 use crate::util::only_allow_numbers_as_identifier_parameter;
 use median::atom::AtomType;
@@ -19,6 +18,7 @@ pub fn handle_kit_set_action(
     kit: &mut Kit,
     action: &SymbolRef,
     parameter: &Atom,
+    maybe_next_atom: Option<&Atom>,
 ) -> Result<(), RytmExternalError> {
     let action_str = action.to_string()?;
     if action_str.as_str() == NAME {
@@ -31,6 +31,52 @@ pub fn handle_kit_set_action(
     only_allow_numbers_as_identifier_parameter(parameter)?;
 
     match action_str.as_str() {
+        CONTROL_IN_1_MOD_AMT => {
+            if let Some(next_atom) = maybe_next_atom {
+                if let Some(AtomValue::Int(value)) = next_atom.get_value() {
+                    // TODO: Check if this creates a bug
+                    match parameter.get_int() {
+                        0 => kit.set_control_in_1_mod_amt_1(value)?,
+                        1 => kit.set_control_in_1_mod_amt_2(value)?,
+                        2 => kit.set_control_in_1_mod_amt_3(value)?,
+                        3 => kit.set_control_in_1_mod_amt_4(value)?,
+                        other => {
+                            return Err(format!(
+                            "Invalid range: The index {other} is out of range for ctrlin1modamt."
+                        )
+                            .into())
+                        }
+                    }
+                    return Ok(());
+                }
+                return Err("Invalid setter format: ctrlin1modamt should be followed by an integer ctrlin1mod index. Format: ctrlin1modamt <ctrlin1mod index> <amount>. Example: ctrlin1modamt 2 100".into());
+            }
+            Err("Invalid setter format: ctrlin1modamt should be followed by an integer ctrlin1mod index. Format: ctrlin1modamt <ctrlin1mod index> <amount>. Example: ctrlin1modamt 2 100".into())
+        }
+
+        CONTROL_IN_2_MOD_AMT => {
+            if let Some(next_atom) = maybe_next_atom {
+                if let Some(AtomValue::Int(value)) = next_atom.get_value() {
+                    // TODO: Check if this creates a bug
+                    match parameter.get_int() {
+                        0 => kit.set_control_in_2_mod_amt_1(value)?,
+                        1 => kit.set_control_in_2_mod_amt_2(value)?,
+                        2 => kit.set_control_in_2_mod_amt_3(value)?,
+                        3 => kit.set_control_in_2_mod_amt_4(value)?,
+                        other => {
+                            return Err(format!(
+                            "Invalid range: The index {other} is out of range for ctrlin2modamt."
+                        )
+                            .into())
+                        }
+                    }
+                    return Ok(());
+                }
+                return Err("Invalid setter format: ctrlin2modamt should be followed by an integer ctrlin2mod index. Format: ctrlin2modamt <ctrlin2mod index> <amount>. Example: ctrlin2modamt 2 100".into());
+            }
+            Err("Invalid setter format: ctrlin2modamt should be followed by an integer ctrlin2mod index. Format: ctrlin2modamt <ctrlin2mod index> <amount>. Example: ctrlin2modamt 2 100".into())
+        }
+
         FX_DELAY_TIME => Ok(kit.fx_delay_mut().set_time(parameter.get_int() as usize)?),
         FX_DELAY_PING_PONG => {
             kit.fx_delay_mut()
@@ -110,9 +156,51 @@ pub fn handle_kit_set_enum_value(
     kit: &mut Kit,
     enum_type: &str,
     enum_value: &str,
+    maybe_parameter_atom: Option<&Atom>,
 ) -> Result<(), RytmExternalError> {
     match enum_type {
-        CONTROL_IN_MOD_TARGET => return Err(NotYetImplemented),
+        CONTROL_IN_1_MOD_TARGET => {
+            if let Some(atom) = maybe_parameter_atom {
+                if let Some(AtomValue::Int(index)) = atom.get_value() {
+                    match index {
+                        0 => kit.set_control_in_1_mod_target_1(enum_value.try_into()?),
+                        1 => kit.set_control_in_1_mod_target_2(enum_value.try_into()?),
+                        2 => kit.set_control_in_1_mod_target_3(enum_value.try_into()?),
+                        3 => kit.set_control_in_1_mod_target_4(enum_value.try_into()?),
+                        other => {
+                            return Err(format!(
+                                "Invalid range: The index {other} is out of range for {CONTROL_IN_1_MOD_TARGET}."
+                            )
+                            .into())
+                        }
+                    }
+                    return Ok(());
+                }
+                return Err("Invalid setter format: ctrlinmod1target should be followed by an integer ctrlinmod1 index. Format: ctrlinmod1target:<target> <ctrlinmod1 index>. Example: ctrlinmod1target:lfophase 2".into());
+            }
+            return Err("Invalid setter format: ctrlinmod1target should be followed by an integer ctrlinmod1 index. Format: ctrlinmod1target:<target> <ctrlinmod1 index>. Example: ctrlinmod1target:lfophase 2".into());
+        }
+        CONTROL_IN_2_MOD_TARGET => {
+            if let Some(atom) = maybe_parameter_atom {
+                if let Some(AtomValue::Int(index)) = atom.get_value() {
+                    match index {
+                        0 => kit.set_control_in_2_mod_target_1(enum_value.try_into()?),
+                        1 => kit.set_control_in_2_mod_target_2(enum_value.try_into()?),
+                        2 => kit.set_control_in_2_mod_target_3(enum_value.try_into()?),
+                        3 => kit.set_control_in_2_mod_target_4(enum_value.try_into()?),
+                        other => {
+                            return Err(format!(
+                                "Invalid range: The index {other} is out of range for {CONTROL_IN_2_MOD_TARGET}."
+                            )
+                            .into())
+                        }
+                    }
+                    return Ok(());
+                }
+                return Err("Invalid setter format: ctrlinmod2target should be followed by an integer ctrlinmod2 index. Format: ctrlinmod2target:<target> <ctrlinmod2 index>. Example: ctrlinmod2target:lfophase 2".into());
+            }
+            return Err("Invalid setter format: ctrlinmod2target should be followed by an integer ctrlinmod2 index. Format: ctrlinmod2target:<target> <ctrlinmod2 index>. Example: ctrlinmod2target:lfophase 2".into());
+        }
         FX_LFO_DESTINATION => kit.fx_lfo_mut().set_destination(enum_value.try_into()?),
         FX_DELAY_TIME_ON_THE_GRID => kit.fx_delay_mut().set_time_on_grid(enum_value.try_into()?),
         FX_COMP_ATTACK => kit.fx_compressor_mut().set_attack(enum_value.try_into()?),

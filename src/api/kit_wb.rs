@@ -44,15 +44,18 @@ pub fn handle_kit_wb_set(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExternal
     match try_get_atom_value_as_kit_element_or_identifier_or_enum_value(1, atoms)? {
         KitElementOrActionOrEnumTypeAndValue::Action(action) => {
             // Send for handling..  // Next value should be a param
+            let maybe_next_atom = atoms.get(3);
             handle_kit_set_action(
                 guard.work_buffer_mut().kit_mut(),
                 &action,
                 try_get_identifier_value_from_atom_slice(2, atoms)?,
+                maybe_next_atom,
             )
         }
         KitElementOrActionOrEnumTypeAndValue::EnumTypeAndValue(t, v) => {
             // Send for handling..
-            handle_kit_set_enum_value(guard.work_buffer_mut().kit_mut(), &t, &v)
+            let maybe_next_atom = atoms.get(2);
+            handle_kit_set_enum_value(guard.work_buffer_mut().kit_mut(), &t, &v, maybe_next_atom)
         }
         KitElementOrActionOrEnumTypeAndValue::KitElement(element_type) => {
             let element_index = try_get_index_with_range(
@@ -90,11 +93,12 @@ pub fn handle_kit_wb_get(rytm: &Rytm, atoms: &[Atom]) -> Result<(), RytmExternal
     match try_get_atom_value_as_kit_element_or_identifier_or_enum_value(1, atoms)? {
         KitElementOrActionOrEnumTypeAndValue::Action(action) => {
             // Send for handling..  // Next value should be a param
-            handle_kit_get_action(guard.work_buffer().kit(), action, out)
+            let maybe_next_atom = atoms.get(2);
+            handle_kit_get_action(guard.work_buffer().kit(), action, out, maybe_next_atom)
         }
-        KitElementOrActionOrEnumTypeAndValue::EnumTypeAndValue(t, _) => {
+        KitElementOrActionOrEnumTypeAndValue::EnumTypeAndValue(t, v) => {
             // Send for handling..
-            handle_kit_get_enum_value(guard.work_buffer().kit(), &t, out)
+            handle_kit_get_enum_value(guard.work_buffer().kit(), &t, &v, out)
         }
         KitElementOrActionOrEnumTypeAndValue::KitElement(element_type) => {
             let element_index = try_get_index_with_range(

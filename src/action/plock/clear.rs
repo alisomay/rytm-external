@@ -86,7 +86,6 @@ pub fn handle_trig_plock_clear_enum_value(
     use crate::api::sound_enum_type;
 
     match enum_type {
-        kit_enum_type::CONTROL_IN_MOD_TARGET => todo!(),
         kit_enum_type::FX_COMP_ATTACK => Ok(trig.plock_clear_fx_compressor_attack()?),
         kit_enum_type::FX_COMP_RELEASE => Ok(trig.plock_clear_fx_compressor_release()?),
         kit_enum_type::FX_DELAY_TIME_ON_THE_GRID => todo!(),

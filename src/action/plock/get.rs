@@ -198,7 +198,6 @@ pub fn handle_trig_plock_get_enum_value(
     out: &OutAnything,
 ) -> Result<(), RytmExternalError> {
     let enum_value: Option<&str> = match enum_type {
-        kit_enum_type::CONTROL_IN_MOD_TARGET => todo!(),
         kit_enum_type::FX_COMP_ATTACK => trig.plock_get_fx_compressor_attack()?.map(Into::into),
         kit_enum_type::FX_COMP_RELEASE => trig.plock_get_fx_compressor_release()?.map(Into::into),
         kit_enum_type::FX_DELAY_TIME_ON_THE_GRID => todo!(),
