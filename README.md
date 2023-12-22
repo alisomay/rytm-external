@@ -49,7 +49,7 @@ If you wish you can also edit the default ones which comes with `rytm`'s instant
 To work productively with `rytm` an understanding of these structures and the connection between them is necessary.
 The following sections will explain the structures briefly.
 
-Note that this is a brief introduction to the structures. For more detailed and complete information please refer to the [api docs](), the source code and the community.
+Note that this is a brief introduction to the structures. For more detailed and complete information please refer to the [api docs](API_DOCS.md), the source code and the community.
 
 #### What is the work buffer?
 

@@ -123,7 +123,7 @@ pub enum SetError {
     #[error(
         "Invalid setter format: \"{0}\".
         Accepted formats:
-            set settings <identifier>, 
+            set settings <identifier> <parameter>, 
             set settings <enum>"
     )]
     InvalidSettingsSetterFormat(String),
@@ -131,14 +131,14 @@ pub enum SetError {
     #[error(
         "Invalid setter format: \"{0}\".
         Accepted formats:
-            set global <index> <identifier>  
+            set global <index> <identifier> <parameter>
             set global <index> <enum> [<parameter>]"
     )]
     InvalidGlobalSetterFormat(String),
     #[error(
         "Invalid setter format: \"{0}\".
         Accepted formats:
-            set global_wb <identifier> 
+            set global_wb <identifier> <parameter>
             set global_wb <enum> [<parameter>]"
     )]
     InvalidGlobalWbSetterFormat(String),
@@ -156,11 +156,11 @@ pub enum SetError {
     #[error(
         "Invalid setter format: \"{0}\".
         Accepted formats:
-            set kit_wb <identifier> 
-            set kit_wb <enum> 
-            set kit_wb <element> <element-index>  
-            set kit_wb sound <sound-index> <identifier> [<parameter>] 
-            set kit_wb sound <sound-index> <enum> [<parameter>]"
+            set kit <identifier> <parameter>
+            set kit <enum> 
+            set kit <element> <element-index> <enum>
+            set kit sound <sound-index> <identifier> <parameter> [<parameter>] 
+            set kit sound <sound-index> <enum> [<parameter>]"
     )]
     InvalidKitWbSetterFormat(String),
 
