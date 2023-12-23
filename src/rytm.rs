@@ -127,31 +127,24 @@ impl Rytm {
         }?;
 
         match ObjectTypeSelector::try_from(atom_pair)? {
-            ObjectTypeSelector::Pattern(index) => {
-                PatternQuery::new(index).unwrap().as_sysex().unwrap()
+            ObjectTypeSelector::Pattern(index) => PatternQuery::new(index).unwrap().as_sysex(),
+            ObjectTypeSelector::PatternWorkBuffer => {
+                PatternQuery::new_targeting_work_buffer().as_sysex()
             }
-            ObjectTypeSelector::PatternWorkBuffer => PatternQuery::new_targeting_work_buffer()
-                .as_sysex()
-                .unwrap(),
-            ObjectTypeSelector::Kit(index) => KitQuery::new(index).unwrap().as_sysex().unwrap(),
-            ObjectTypeSelector::KitWorkBuffer => {
-                KitQuery::new_targeting_work_buffer().as_sysex().unwrap()
-            }
-            ObjectTypeSelector::Sound(index) => SoundQuery::new(index).unwrap().as_sysex().unwrap(),
+            ObjectTypeSelector::Kit(index) => KitQuery::new(index).unwrap().as_sysex(),
+            ObjectTypeSelector::KitWorkBuffer => KitQuery::new_targeting_work_buffer().as_sysex(),
+            ObjectTypeSelector::Sound(index) => SoundQuery::new(index).unwrap().as_sysex(),
             ObjectTypeSelector::SoundWorkBuffer(index) => {
                 SoundQuery::new_targeting_work_buffer(index)
                     .unwrap()
                     .as_sysex()
-                    .unwrap()
             }
-            ObjectTypeSelector::Global(index) => {
-                GlobalQuery::new(index).unwrap().as_sysex().unwrap()
-            }
+            ObjectTypeSelector::Global(index) => GlobalQuery::new(index).unwrap().as_sysex(),
             ObjectTypeSelector::GlobalWorkBuffer => {
-                GlobalQuery::new_targeting_work_buffer().as_sysex().unwrap()
+                GlobalQuery::new_targeting_work_buffer().as_sysex()
             }
-            ObjectTypeSelector::Settings => SettingsQuery::new().as_sysex().unwrap(),
-        }
+            ObjectTypeSelector::Settings => SettingsQuery::new().as_sysex(),
+        }?
         .serial_send_int(&self.sysex_out);
 
         Ok(())
@@ -164,51 +157,38 @@ impl Rytm {
         }?;
 
         match ObjectTypeSelector::try_from(atom_pair)? {
-            ObjectTypeSelector::Pattern(index) => self.project.lock().unwrap().patterns()[index]
-                .as_sysex()
-                .unwrap(),
+            ObjectTypeSelector::Pattern(index) => {
+                self.project.lock().unwrap().patterns()[index].as_sysex()
+            }
             ObjectTypeSelector::PatternWorkBuffer => self
                 .project
                 .lock()
                 .unwrap()
                 .work_buffer()
                 .pattern()
-                .as_sysex()
-                .unwrap(),
-            ObjectTypeSelector::Kit(index) => self.project.lock().unwrap().kits()[index]
-                .as_sysex()
-                .unwrap(),
-            ObjectTypeSelector::KitWorkBuffer => self
-                .project
-                .lock()
-                .unwrap()
-                .work_buffer()
-                .kit()
-                .as_sysex()
-                .unwrap(),
-            ObjectTypeSelector::Sound(index) => self.project.lock().unwrap().pool_sounds()[index]
-                .as_sysex()
-                .unwrap(),
-            ObjectTypeSelector::SoundWorkBuffer(index) => {
-                self.project.lock().unwrap().work_buffer().sounds()[index]
-                    .as_sysex()
-                    .unwrap()
+                .as_sysex(),
+            ObjectTypeSelector::Kit(index) => self.project.lock().unwrap().kits()[index].as_sysex(),
+            ObjectTypeSelector::KitWorkBuffer => {
+                self.project.lock().unwrap().work_buffer().kit().as_sysex()
             }
-            ObjectTypeSelector::Global(index) => self.project.lock().unwrap().globals()[index]
-                .as_sysex()
-                .unwrap(),
+            ObjectTypeSelector::Sound(index) => {
+                self.project.lock().unwrap().pool_sounds()[index].as_sysex()
+            }
+            ObjectTypeSelector::SoundWorkBuffer(index) => {
+                self.project.lock().unwrap().work_buffer().sounds()[index].as_sysex()
+            }
+            ObjectTypeSelector::Global(index) => {
+                self.project.lock().unwrap().globals()[index].as_sysex()
+            }
             ObjectTypeSelector::GlobalWorkBuffer => self
                 .project
                 .lock()
                 .unwrap()
                 .work_buffer()
                 .global()
-                .as_sysex()
-                .unwrap(),
-            ObjectTypeSelector::Settings => {
-                self.project.lock().unwrap().settings().as_sysex().unwrap()
-            }
-        }
+                .as_sysex(),
+            ObjectTypeSelector::Settings => self.project.lock().unwrap().settings().as_sysex(),
+        }?
         .serial_send_int(&self.sysex_out);
 
         Ok(())
